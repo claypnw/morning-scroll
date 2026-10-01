@@ -8,6 +8,16 @@ Companion list: **business-size-marks.md** — the Big/Local marks that decide w
 business may be a Scroll merchant feature (Big = Gilded Pages directory only) or is
 eligible (Local), town by town.
 
+## If these files break — ask Clay, never guess
+Clay edits these files himself, and an edit can go sideways. Before each edition Dude
+fetches the GitHub copies of SCROLL-RULES.md and business-size-marks.md and checks them:
+if a file cannot be fetched, is empty or garbled, has lost its headings/sections, a business
+name cannot be matched to its Big/Local mark, or a rule is contradictory or unclear, Dude
+STOPS that part of the work and asks Clay what happened — with tappable options — before
+writing, choosing a merchant, or publishing. Dude never guesses at a broken rule, never
+silently falls back to old saved notes, and never "fixes" Clay's edit on his own. A clean,
+readable GitHub file always wins over saved notes; a broken one is a question, not a guess.
+
 ## People, names, and respect
 - If an event lists a real person's name and/or a private-looking address, flag the item
   to Clay BEFORE publishing. He decides: include as-is, give replacement text, or drop it.
