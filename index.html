@@ -1900,9 +1900,10 @@
       });
 
       // “Return to the First Page” — a parchment-plaque button in each edition
-      // reader: a compact one beneath every page after the first, and a closing
-      // one at the foot of the edition. Each scrolls back to page 1 of the
-      // edition the reader is in (never the archive contents).
+      // reader: a compact one beneath every page after the first. Each scrolls
+      // back to page 1 of the edition the reader is in (never the archive
+      // contents). One button per page — no closing duplicate above the
+      // edition footer.
       (function addReturnToFirstPage() {
         var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -1941,16 +1942,6 @@
             nav.appendChild(button);
             figure.parentNode.insertBefore(nav, figure.nextSibling);
           });
-
-          var footer = view.querySelector('.edition-footer');
-          if (footer) {
-            var endNav = document.createElement('div');
-            endNav.className = 'edition-end-nav';
-            var endButton = makeButton();
-            endButton.addEventListener('click', returnToFirstPage);
-            endNav.appendChild(endButton);
-            footer.parentNode.insertBefore(endNav, footer);
-          }
         });
       }());
 
