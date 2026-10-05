@@ -33,6 +33,8 @@ readable GitHub file always wins over saved notes; a broken one is a question, n
 - The Scroll exists to help Mogollon's Hearth guests find interesting things to do around
   the Payson Hold. Big once-a-year events (fairs, rodeos) get a bigger spread as the date
   nears: early teases, then the featured illustrated box (what/where/when, admission, why go).
+  Pictures for the event will first come from the event website and then 'Old Timey' in the Skyrim
+  style that is in the game.  Always use new pictures for each edition.
 - Tone: light-hearted, hearty, and merry — a warm tavern-tale voice celebrating the town.
   The cheer lives in the voice, never in invented claims. Flavor never obscures the facts.
 - Clay is the Publisher ("The Greybeards of High Hrothgar — Publisher & Proprietor");
@@ -45,6 +47,7 @@ readable GitHub file always wins over saved notes; a broken one is a question, n
 ## The Holds and geography
 - Town order, nearest to furthest from Payson: Payson first, then Pine–Strawberry,
   Camp Verde, Sedona, Show Low, Prescott.
+  When the Rim is depicted in a picture, don't make the Rim overshadow the event, it is just the background view.
 - Pine and Strawberry are a single Hold: twin villages ~4 mi apart on AZ-87 sharing one
   banner ("Rim Country"). Star Valley counts as part of the Payson Hold for merchants.
 - Prescott is the westernmost Hold, Show Low the easternmost ("from Show Low to Prescott");
