@@ -1,0 +1,14 @@
+# Overheard Last Night — log of printed weather-box overheard lines (one per line).
+# Format: YYYY-MM-DD | <line as printed>
+# Read this before writing each edition's line: a fresh saying every day, never repeated or closely resembled.
+# Dragonborn rule (Clay, 2026-10-01): the Dragonborn stars in this line RARELY — never on back-to-back days,
+# roughly once a week at most. The near-miss gag ("here not ten minutes ago") stays special by staying scarce.
+# Default fare is everyday folk humor and tall rumors — creatures in the woods, fair boasts, mead-hall wisdom — light and fun.
+2026-09-29 | Overheard at the historic Oxbow Saloon — from a patron wringing out his cloak: “Why doesn’t the Dragonborn just shout one of those clear skies of his, so a man can walk home dry?” The barkeep only shrugged: “He was here not ten minutes ago.”
+2026-09-30 | A traveler shook his fist at the rain and shouted “Clear Skies!” The barkeep just shrugged: “The Dragonborn was here not ten minutes ago — and the clouds near broke for him.”
+2026-10-01 | A fair-goer swears something tall and hairy stood in the pines above the grounds, counting the pies on the bake-table — twice, careful as a tax man. The barkeep only shrugged: “Aye. Even the woods come down for fair week.”
+2026-10-02 | A trapper swears the quitting horn had a second voice humming underneath it \u2014 deep as a bear in a barrel. The barkeep only shrugged: \u201cThat\u2019s Jethro, practicing his harmonies for fair week.\u201d
+2026-10-03 | A traveler come up from the valley for fair day swears the bagpipes followed him all the way up the Beeline. The barkeep only shrugged: "Aye — they do that. They follow everybody home."
+2026-10-04 | The garlic braid sold out at the market Saturday — the vendor swears she never saw the buyers, only a neat stack of coins on her counter. The barkeep only shrugged: "Aye. They only ever shop when the nights run long."
+2026-10-05 | A traveler come down from the Rim asked the barkeep why the whole forest smells of rain on a dry morning. The barkeep only shrugged: "Aye. The storms left last week, but the pines remember."
+2026-10-06 | A traveler asked the barkeep whether the big elk with the grand antlers accepts tribute. The barkeep only shrugged: "Aye — but he takes red apples only, and he remembers who shorted him."

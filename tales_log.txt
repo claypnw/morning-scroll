@@ -1,0 +1,20 @@
+# Tales from the Treeline — log of published tale premises (one per line).
+# Format: YYYY-MM-DD | theme: <name or none> (episode N, open/closed) | creature(s) | activity and setting
+# Read this before writing each edition's tale; never repeat or closely resemble a logged premise.
+# Theme rules: a themed episode lands about once a week or every couple of weeks, never on back-to-back days;
+# Weather rule (Clay, 2026-09-28): work the day's actual weather into the tale — another perspective for stories.
+# never more than two themes running at once; try to end one theme before starting a new one;
+# a handful of episodes per theme is plenty — stop before it goes stale.
+2026-09-24 (example, unpublished) | theme: none | Mogollon Monster | cinnamon roll caper at a tavern kitchen — wedged in the doorway reaching for the rolls
+2026-09-25 | theme: none | Jethro, Earl, Gus, Mabel, Henny, Flurry | Jethro hangs hats and bottle caps on Earl's antlers as a "hat rack"; Earl freezes with dignity, sneezes, stalks off wearing a pie tin — forest clearing by the woodpile
+2026-09-26 | theme: none | Gus, Flurry, Jethro, Earl, Mabel | Flurry flash-freezes Gus's cooling pies to the tavern windowsill; Jethro rips the whole sill free and parades it like a trophy — clearing by the tavern
+2026-09-27 | theme: Jethro's Welcome Duties (episode 1, open) | Jethro, Earl, Henny (+Mabel cameo) | Jethro holds a one-monster echo concert on the Hearth's front deck; Earl conducts, Henny lays an echoing cluck
+2026-09-28 | theme: none | Jethro, Mabel, Earl | Jethro volunteers as a living scarecrow in Mabel's herb garden in the pouring rain; a crow shelters from the rain on his head and slides into the basil — garden beds at sunrise
+2026-09-29 | theme: none | Warble (guest), Jethro, Mabel, Henny | Warble the goblin bard warbles a storm-song in the goblin tongue on the Hearth's front deck in the thunderstorm; Jethro 'harmonizes' and the sky answers with a thunderclap; Henny lays an egg on the downbeat
+2026-09-30 | theme: none | Flurry, Henny, Gus, Mabel, Jethro | Flurry breathes ice-mist into the Middas drizzle, gilding raindrops into jewels; Gus skids across the iced deck holding his honey-cake tray high — the Hearth front deck
+2026-10-01 | theme: none | Jethro, Earl, Henny, Mabel | Jethro hangs his laundry on Earl's antlers as a clothesline in the sunshine; a billowing sheet drags the dignified elk two steps sideways — the Hearth clearing
+2026-10-02 | theme: none | Henny, Flurry, Jethro, Mabel | Henny goes broody over Flurry's bottle-cap hoard in the hollow log, mistaking the caps for eggs; Mabel tries a mash trade and loses the mash
+2026-10-03 | theme: none | Jethro, Flurry, Earl, Gus | Jethro gives Flurry landing lessons in a sunny clearing; Earl is the tower; Flurry's victory lap ends in Gus's pie rack
+2026-10-04 | theme: Jethro's Welcome Duties (episode 2, open) | Jethro, Flurry, Mabel, Henny, Earl, Gus | Jethro's no-writing guest book (hollow log for shiny offerings) on the sunny Hearth deck; caps roll everywhere; Jethro draws a chicken judging a pinecone
+2026-10-05 | theme: none | Earl, Jethro, Mabel | Earl naps in a sunbeam on the Hearth's front deck; Jethro fans him with a pine bough and pine cones rain down, one crowning his antler
+2026-10-06 | theme: none | Jethro, Gus, Earl, Flurry, Mabel | Jethro hangs Gus's spare copper pie pans as wind chimes on the Hearth's tavern sign; Flurry's ice-mist sneeze glazes them and they ring like temple bells — the Hearth front deck, sunny day

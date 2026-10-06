@@ -1,0 +1,57 @@
+# Tales from the Treeline — recurring cast
+# Read this before writing any tale. Keep every character's personality and
+# appearance consistent across editions. New one-off guest creatures may still
+# wander in for a single tale when a story needs them.
+
+JETHRO — the Mogollon Monster. Big, shaggy, always smiling. The Hearth's
+unofficial innkeeper and gentle troublemaker: means well, wanders into messes
+sideways. Folks say "that dang ol' Jethro" with real affection.
+(First appearance: the great cinnamon-roll caper, 2026-09-24.)
+
+EARL — an elk with enormous antlers. Dignified, takes himself very seriously,
+which makes him the perfect straight man. Has the worst luck in the forest;
+things fall on Earl.
+
+GUS — a friendly orc with a baker's soul. Enormous hands, delicate pastries.
+Speaks softly, drops things loudly. His pies are legendary; his pie dishes
+are endangered.
+
+MABEL — a wood elf, quick-witted and perpetually exasperated. The only
+responsible adult in the forest; sighs like it's her job. Keeps an herb
+garden that others keep crash-landing in.
+
+HENNY — the Hearth's plump Skyrim-style chicken (red comb). An unbothered
+professional; appears in the weather box every day, rain or shine. Loves the
+deck, tolerates the weather.
+
+FLURRY — a young dragon, small enough to perch on a tavern bench. Breathes
+ICE, not fire — he is the Hold's walking icebox (Gus uses him to flash-chill
+pies; the mead stays cold). Backstory: as a hatchling he was showing off
+loop-the-loops over Mabel's garden before his wings were ready, came down
+tail-first into her rain barrel with a thunk heard clean across the Hold; his
+tail has had a kink ever since, so he flies in zigzags and lands wherever the
+wind argues him into. Big ambitions, terrible landings. Hoards shiny bottle
+caps and lost buttons in a hollow log he grandly calls the forest's
+lost-and-found.
+
+# ON DECK — future visitors (drifters passing through for a tale or two)
+# Clay's ideas, saved for later. Introduce when a story wants them; if one
+# steals the show, promote them to the regular cast above.
+
+WARBLE — the traveling Goblin Bard. A wandering goblin minstrel who sings real
+pretty, but nobody knows what he's saying since he can't speak a word of the
+common tongue. Warbles his heart out; the Hold applauds anyway. Notable
+mostly for being the first goblin anyone's met who ISN'T trying to kill them,
+which everyone agrees is a refreshing change of pace.
+
+# Standing rules for the Treeline
+- Character introductions: the first time a character's name appears in a
+  story, follow it with their creature kind in parentheses, e.g.
+  "Flurry (a young ice-breathing dragon)". After that, just the name.
+  (Clay's rule, 2026-09-26.)
+- Fire is completely off-limits: no fire, flames, smoke, embers, or wildfire
+  jokes anywhere in the Treeline, ever. (Real sensitivity in Rim Country.)
+- Folksy small-town-gossip voice: these are neighbors the readers know, not
+  fantasy-novel archetypes.
+- Never mean-spirited; the humor is affectionate.
+- No repeats or near-repeats: check tales_log.txt before writing.
