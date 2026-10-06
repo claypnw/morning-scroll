@@ -94,11 +94,11 @@ readable GitHub file always wins over saved notes; a broken one is a question, n
 ## Look and layout
 - Old-parchment pages with rough torn edges (mixed scallops, notches, rounded bites, fibre
   jitter; darker toward the edges, lighter in the middle); every page tears differently.
-- Stains: at most ONE coffee ring per edition, plus one-to-three other marks (water spot,
-  ale ring, splash, damp blotch), different every day; stains sit behind the text.
+
 - Boxed sections never split across pages. Keep boxes dense — no hollow blank space inside;
   blank space only where it helps reading. Pictures print in full, never cropped.
-- Front-page hero: two smaller pictures side by side when two big events share page one.
+  - Stains: at most ONE ring-shaped stain per edition — a coffee ring plus an ale ring reads as two cup-rings, which is not allowed. When the coffee ring lands, the 1-3 other marks must not be ring-shaped (water spots, splashes, damp blotches only), different every day; stains composite ON TOP of the finished page, crossing pictures and print.
+- Page one sets the theme for the whole Scroll — there is no 'hero.' The picture illustrates the day's events and sets the tone but serves the news, never dominates the page. Two smaller pictures side by side when two big events share page one, one for each.
 - Weather box runs three across (chicken picture · forecast facts · "Overheard" column),
   and the "Overheard" line always carries its title (default "Overheard Last Night").
 - The masthead dateline sections never break mid-phrase; wraps only between sections.
