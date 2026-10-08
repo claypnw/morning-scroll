@@ -80,6 +80,8 @@ Current as of October 8, 2026.
 55. **Text stays inside its box** — no overflow past box edges, on any card. (2026-10-08)
 56. **Broadcast blessing has no name** — "May your [day] be free of [beast]." Period. (2026-10-08)
 57. **Smooth motion, never shaky** — slow Ken Burns drift on pictures, verified jitter-free. (2026-10-08)
+58. **Broadcast uses the Scroll's pictures** — pulled from that day's edition, not separately generated lookalikes. Never one picture for multiple stories. (2026-10-08)
+59. **Three-way sync** — narration, picture, and on-screen text all tell the same story at the same moment. The editor checks all three. (2026-10-08)
 
 ## Publishing & files
 
