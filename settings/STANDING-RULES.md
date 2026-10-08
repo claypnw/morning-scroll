@@ -40,7 +40,7 @@ Current as of October 8, 2026.
 18. **Engravings only, never real photos** — all pictures are old-timey engravings, tinted to look printed on the parchment. (2026-09-29)
 19. **Skyrim, not generic medieval** — Nordic timber-and-stone, game-accurate armor (horned iron helmets and the like), fur-trimmed Nordic garb. Never shining plate knights, gothic cathedrals, or generic "ye olde" filler. (2026-10-01)
 20. **Skyrim-ify modern things** — real-life objects get reimagined in-world for pictures (a car becomes a wagon with a mysterious propulsion system); words may name the real thing lightly. Never depict cars, not even old-timey ones. (2026-10-05)
-21. **Birds: a natural few, never a swarm** — a scattered handful at most; sometimes no birds at all. Natural skies, not a rule. (2026-10-01, refined 2026-10-08)
+21. **Birds: ask Clay first, every time** — NEVER put birds in any picture (paper or broadcast) without asking Clay first, and ask him HOW MANY birds he wants. No judgment calls, no "natural few," no exceptions. (2026-10-08, hard rule — supersedes the old "natural few" guidance)
 22. **The cats star in the weather box** — Gandy (solid grey tuxedo, NO stripes) and Maevy (grey tabby). Same lodge and deck every day; only the sky, weather, and their antics change — and the antics must be NEW every day, never repeated. (2026-10-04, 2026-10-08)
 23. **Fresh pictures every edition** — recurring events get a new illustration each day, true to that day's actual advertised program (I read the real flyers first). Never reuse an event's picture across days. (2026-09-29, 2026-10-04)
 24. **The "Overheard" line is fresh daily** — never repeated; the Dragonborn appears in it only rarely (never back-to-back). (2026-10-01)
