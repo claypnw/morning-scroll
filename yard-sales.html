@@ -17,10 +17,12 @@
     padding: 24px 20px 28px; justify-content: center;
   }
   .wrap { width: 100%; max-width: 520px; }
-  a.back {
-    display: inline-block; margin-bottom: 18px; padding: 10px 16px; min-height: 44px;
-    color: var(--gold); font-weight: 700; text-decoration: none;
-    border: 2px solid #8f8068; border-radius: 10px; background: rgba(0,0,0,.25);
+  a.menu-back {
+    position: absolute; top: 12px; left: 12px; z-index: 50;
+    display: inline-block; padding: 10px 16px;
+    color: #e8b64c; background: rgba(24,15,9,.85);
+    border: 2px solid #8f8068; border-radius: 10px;
+    font-weight: 700; font-size: 1rem; text-decoration: none;
   }
   h1 {
     font-family: Georgia, serif; font-size: 1.7rem; margin: 0 0 2px;
@@ -40,8 +42,8 @@
 </style>
 </head>
 <body>
+  <a class="menu-back" href="https://claypnw.github.io/menu/">← Menu</a>
   <div class="wrap">
-    <a class="back" href="https://claypnw.github.io/menu/">← Menu</a>
     <h1>Yard &amp; Estate Sales</h1>
     <p class="sub">Garage sales, yard sales, and estate sales around the Holds — rebuilt every morning.</p>
     <a class="btn" href="payson-yard-estate-sales.pdf">
