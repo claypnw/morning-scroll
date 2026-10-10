@@ -10,12 +10,8 @@
   <link rel="apple-touch-icon" href="icon.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <title>Morning Scroll Archive</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
   <style>
     :root {
       color-scheme: light dark;
@@ -105,7 +101,7 @@
     h1, h2, h3, p { margin-top: 0; }
     .masthead h1 {
       margin: 21px 0 6px;
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: "Libre Caslon Display", Georgia, serif;
       font-size: clamp(2.85rem, 8vw, 6.25rem);
       font-weight: 400;
       letter-spacing: -.055em;
@@ -116,9 +112,47 @@
       max-width: 680px;
       margin: 0;
       color: var(--muted);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: clamp(1rem, 2vw, 1.18rem);
       font-style: italic;
+    }
+
+    .gilded-link {
+      display: block;
+      margin-top: 24px;
+      padding: 16px 18px 17px;
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--accent);
+      background: var(--paper);
+      text-decoration: none;
+    }
+    .gilded-link:hover .gilded-link-title,
+    .gilded-link:focus-visible .gilded-link-title { color: var(--accent-ink); }
+    .gilded-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .gilded-link-kicker {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--accent-ink);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .gilded-link-title {
+      display: block;
+      font-family: "Libre Caslon Display", Georgia, serif;
+      font-size: clamp(1.25rem, 3vw, 1.7rem);
+      line-height: 1.08;
+      transition: color .18s ease;
+    }
+    .gilded-link-desc {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-family: Georgia, serif;
+      font-size: .96rem;
+      font-style: italic;
+      line-height: 1.45;
     }
 
     .archive-search {
@@ -143,7 +177,7 @@
       position: absolute;
       left: 15px;
       color: var(--muted);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: 1.35rem;
       pointer-events: none;
     }
@@ -203,7 +237,7 @@
     }
     .date-range-value {
       color: var(--accent-ink);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: .92rem;
       font-variant-numeric: tabular-nums;
       text-align: right;
@@ -306,7 +340,7 @@
     }
     .search-result-title {
       margin-bottom: 6px;
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: "Libre Caslon Display", Georgia, serif;
       font-size: 1.45rem;
       line-height: 1.1;
       transition: color .18s ease;
@@ -314,7 +348,7 @@
     .search-result-snippet {
       margin: 0;
       color: var(--muted);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: .94rem;
       line-height: 1.48;
     }
@@ -376,7 +410,7 @@
     .issue-link:focus-within .issue-title { color: var(--accent-ink); }
     .issue-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
     .issue-date {
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: 1rem;
       line-height: 1.35;
     }
@@ -385,13 +419,13 @@
     .greeting {
       margin-bottom: 7px;
       color: var(--accent-ink);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: 1.02rem;
       font-style: italic;
     }
     .issue-title {
       margin: 0;
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: "Libre Caslon Display", Georgia, serif;
       font-size: clamp(1.7rem, 3.8vw, 3rem);
       font-weight: 400;
       letter-spacing: -.025em;
@@ -507,7 +541,7 @@
     }
     .edition-heading h1 {
       margin-bottom: 8px;
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: "Libre Caslon Display", Georgia, serif;
       font-size: clamp(2.1rem, 5.5vw, 4.7rem);
       font-weight: 400;
       letter-spacing: -.04em;
@@ -517,7 +551,7 @@
     .edition-heading .edition-greeting {
       margin: 0;
       color: var(--muted);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: 1.08rem;
       font-style: italic;
     }
@@ -640,7 +674,7 @@
       border-radius: 1px;
       background: var(--paper);
       color: var(--ink);
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: "Libre Caslon Display", Georgia, serif;
       font-size: 1rem;
       letter-spacing: .045em;
       line-height: 1.2;
@@ -648,7 +682,7 @@
       transition: background .18s ease, color .18s ease;
     }
     .back-to-first .return-arrow {
-      font-family: "Alegreya SC", Georgia, serif;
+      font-family: Georgia, serif;
       font-size: 1.05em;
       line-height: 1;
     }
@@ -749,7 +783,17 @@
           <p class="deck">All the news worth knowing before the mead hall opens.</p>
         </header>
 
+        <a class="gilded-link" href="https://claypnw.github.io/gilded-pages/" target="_blank" rel="noopener" aria-label="Open The Gilded Pages of the Holds — a guide to the merchants">
+          <span class="gilded-link-kicker">For guests of the Hearth</span>
+          <span class="gilded-link-title">The Gilded Pages of the Holds — a guide to the merchants →</span>
+          <span class="gilded-link-desc">Feasts, forges, sweetrolls and more — the merchants the Scroll commends to you.</span>
+        </a>
 
+        <a class="gilded-link" href="payson-yard-estate-sales-2026-10-06.pdf" target="_blank" rel="noopener" aria-label="Open the Yard and Estate Sales sheet">
+          <span class="gilded-link-kicker">How about yard sales?</span>
+          <span class="gilded-link-title">Yard &amp; Estate Sales of the Holds →</span>
+          <span class="gilded-link-desc">Garage sales, yard sales, and estate sales around Payson — this week's pickings.</span>
+        </a>
 
         <section class="archive-search" aria-labelledby="search-label">
           <label class="search-label" id="search-label" for="edition-search">Search every edition</label>
@@ -767,8 +811,8 @@
               <span class="date-range-track" aria-hidden="true"></span>
               <span class="date-range-fill" id="date-range-fill" aria-hidden="true"></span>
               <!-- Bounds emitted from the ordered distinct dates in scroll-search-index.json during this build. -->
-              <input id="date-range-start" type="range" min="0" max="14" step="1" value="0" data-min-date="2026-09-24" data-max-date="2026-10-09" aria-label="Start edition date" />
-              <input id="date-range-end" type="range" min="0" max="14" step="1" value="14" data-min-date="2026-09-24" data-max-date="2026-10-09" aria-label="End edition date" />
+              <input id="date-range-start" type="range" min="0" max="15" step="1" value="0" data-min-date="2026-09-24" data-max-date="2026-10-10" aria-label="Start edition date" />
+              <input id="date-range-end" type="range" min="0" max="15" step="1" value="15" data-min-date="2026-09-24" data-max-date="2026-10-10" aria-label="End edition date" />
             </div>
           </div>
           <p class="search-status" id="search-status" aria-live="polite" hidden></p>
@@ -780,6 +824,7 @@
             <span>October 2026</span>
             <span class="count">8 editions</span>
           </summary>
+                    <div class="issue-link"><a class="issue-open" href="#edition-2026-10-10" aria-label="Read the October 10, 2026 edition: Thunder on the Rim: The Big Show Rolls Into Green Valley Park"></a><div class="issue-date"><strong>Saturday,</strong> October 10, 2026</div><div class="issue-copy"><p class="greeting">"Hail, traveler, and lend the morning sky your ear — the Rim wakes with thunder in its throat and a grand day in its parks. PAYSON — the thirty-third Beeline Cruise-In Classic Car Show rolls into Green Valley Park this morn…"</p><h2 class="issue-title">Thunder on the Rim: The Big Show Rolls Into Green Valley Park</h2><div class="issue-number">Vol. 2610 · No. 10</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span><a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-10.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 10, 2026 PDF">Download PDF</a></div></div>
                     <div class="issue-link"><a class="issue-open" href="#edition-2026-10-09" aria-label="Read the October 9, 2026 edition: Wagons Gleam, Cannons Boom: A Grand Weekend Rides In"></a><div class="issue-date"><strong>Friday,</strong> October 9, 2026</div><div class="issue-copy"><p class="greeting">"PAYSON — Hail, friend of the Hearth! Friday strolls over the Rim with sun on its shoulders and a promise of bigger weather behind it — savor today’s 82…"</p><h2 class="issue-title">Wagons Gleam, Cannons Boom: A Grand Weekend Rides In</h2><div class="issue-number">Vol. 2610 · No. 09</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span><a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-09.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 9, 2026 PDF">Download PDF</a></div></div>
                     <div class="issue-link"><a class="issue-open" href="#edition-2026-10-07" aria-label="Read the October 7, 2026 edition: Wagons in Payson, Homecoming in the Verde"></a><div class="issue-date"><strong>Wednesday,</strong> October 7, 2026</div><div class="issue-copy"><p class="greeting">"PAYSON — Hail, friend of the Hearth, and a bright Middas morning to you: the sun is out in force over the Rim and the Holds are stirring like a mead h…"</p><h2 class="issue-title">Wagons in Payson, Homecoming in the Verde</h2><div class="issue-number">Vol. 2610 · No. 07</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span><a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-07.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 7, 2026 PDF">Download PDF</a></div></div>
                     <div class="issue-link"><a class="issue-open" href="#edition-2026-10-06" aria-label="Read the October 6, 2026 edition: Parade Season Rides Into the Holds"></a><div class="issue-date"><strong>Tuesday,</strong> October 6, 2026</div><div class="issue-copy"><p class="greeting">"PAYSON — Hail, travelers of the early light: the pines wear their autumn gold this Tuesday morning, and the sun holds the whole Hold to itself before the week’s pageantry begins. Saturday brings the 7…"</p><h2 class="issue-title">Parade Season Rides Into the Holds</h2><div class="issue-number">Vol. 2610 · No. 06</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span><a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-06.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 6, 2026 PDF">Download PDF</a></div></div>
@@ -929,7 +974,33 @@
       </div>
     </section>
 
-        <section class="edition-view" id="edition-2026-10-09" hidden aria-labelledby="edition-title-2026-10-09">
+        <section class="edition-view" id="edition-2026-10-10" hidden aria-labelledby="edition-title-2026-10-10">
+      <nav class="back-row" aria-label="Archive navigation">
+        <a class="back-link" href="#archive"><span aria-hidden="true">←</span> All editions</a>
+        <a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-10.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 10, 2026 PDF">Download PDF</a>
+        <span class="issue-number">Vol. 2610 · No. 10</span>
+      </nav>
+
+      <article class="edition-sheet">
+        <header class="edition-heading">
+          <div>
+            <p class="date">Saturday, October 10, 2026</p>
+            <h1 id="edition-title-2026-10-10">Thunder on the Rim: The Big Show Rolls Into Green Valley Park</h1>
+            <p class="edition-greeting">“Hail, traveler, and lend the morning sky your ear — the Rim wakes with thunder in its throat and a grand day in its parks. PAYSON — the thirty-third Beeline Cruise-In Classic Car Show rolls into Green Valley Park this morning, classics and rat rods on the grass from 8 AM to 3 PM, with the town's own Payson Days celebration — live music, vendors, and fireworks — to close the night, storms permitting. Camp Verde answers with drum and cannon for the seventieth Fort Verde Days, Sedona crams an arts festival, a blues festival, and warbirds into a single Saturday, and the school mountain-bike championships race the rain. Read on — and mind the flood watch: it runs from 11 AM through Monday morning.”</p>
+          </div>
+        </header>
+
+        <div class="reader-label">
+          <p>Tap a page to read it full-size.</p>
+        </div>
+        <div class="page-reader">
+          <img src="scroll-2026-10-10-page-1-r1-630c38ca.png" alt="Page 1 of the October 10, 2026 edition">
+          <img src="scroll-2026-10-10-page-2-r1-c15fc45d.png" alt="Page 2 of the October 10, 2026 edition">
+          <img src="scroll-2026-10-10-page-3-r1-3d64a6fa.png" alt="Page 3 of the October 10, 2026 edition">
+          <img src="scroll-2026-10-10-page-4-r1-b2f3ecad.png" alt="Page 4 of the October 10, 2026 edition">
+          <img src="scroll-2026-10-10-page-5-r1-67a18816.png" alt="Page 5 of the October 10, 2026 edition">
+        </div>
+<section class="edition-view" id="edition-2026-10-09" hidden aria-labelledby="edition-title-2026-10-09">
       <nav class="back-row" aria-label="Archive navigation">
         <a class="back-link" href="#archive"><span aria-hidden="true">←</span> All editions</a>
         <a class="pdf-button" href="https://claypnw.github.io/morning-scroll/payson-morning-scroll-2026-10-09.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the October 9, 2026 PDF">Download PDF</a>
@@ -1996,6 +2067,9 @@
       var archive = document.getElementById('archive');
       var editions = {
         
+                '#edition-2026-10-10': {
+          element: document.getElementById('edition-2026-10-10'),
+        },
                 '#edition-2026-10-09': {
           element: document.getElementById('edition-2026-10-09'),
         },
@@ -2660,7 +2734,7 @@
         updateDateRange(dateRangeEnd);
         renderSearch();
       });
-      fetch('scroll-search-index.json?v=20261009')
+      fetch('scroll-search-index.json?v=20261010')
         .then(function (response) {
           if (!response.ok) throw new Error('Search index unavailable');
           return response.json();
