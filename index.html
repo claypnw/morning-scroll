@@ -519,6 +519,13 @@
       text-decoration: none;
     }
     .back-link:hover, .back-link:focus-visible { color: var(--accent-ink); }
+    .menu-back {
+      position: absolute; top: 12px; left: 12px; z-index: 50;
+      display: inline-block; padding: 10px 16px;
+      color: #e8b64c; background: rgba(24,15,9,.85);
+      border: 2px solid #8f8068; border-radius: 10px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+    }
     .edition-sheet { padding: clamp(22px, 3vw, 42px); }
     .edition-heading {
       padding-bottom: 24px;
@@ -763,10 +770,10 @@
   </style>
 </head>
 <body>
+  <a class="menu-back" href="https://claypnw.github.io/menu/">← Menu</a>
   <main class="site-shell">
     <section class="archive-view" id="archive" aria-labelledby="archive-title">
       <div class="archive-sheet">
-        <a class="back-link" href="https://claypnw.github.io/menu/"><span aria-hidden="true">←</span> Menu</a>
         <header class="masthead">
           <div class="masthead-line">
             <span>Payson, Arizona</span>
