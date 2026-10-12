@@ -1,5 +1,9 @@
 # Morning Scroll — Daily Publish Runbook
 
+**Mirrored on GitHub:** `claypnw/morning-scroll/settings/PUBLISH-RUNBOOK.md`
+(Clay's request 2026-10-05 — second copy in case anything happens to this one.
+Update both when the procedure changes.)
+
 **Purpose:** The exact steps to publish a Morning Scroll edition to the public
 archive. Follow this every time. Do not rely on memory. Do not improvise the
 order. Clay taps **Publish** once — that is the only authorization needed.
@@ -41,6 +45,21 @@ scroll-YYYY-MM-DD-page-N-r1-<sha1[:8]>.png
 ```
 
 Compute with: `sha1sum <file> | cut -c1-8`
+
+## Step 2b — Refresh index.html from GitHub (added 2026-10-12)
+
+The copy of `index.html` in `publish-upload/` goes stale. Direct fixes made
+on GitHub (e.g. the Oct 10 promo-card removal, commit b074f4f) exist only
+there — editing the old local copy and uploading it silently reintroduces
+removed content. This is exactly what happened on the Oct 12 publish: the
+stale local copy still had the Gilded Pages and yard-sales promo cards Clay
+had ordered removed, and uploading it put them back on the live site.
+
+Before making Step 3's edits, download the current `index.html` from
+`https://raw.githubusercontent.com/claypnw/morning-scroll/main/index.html`
+and save it over `publish-upload/index.html`. Apply Step 3's edits to this
+fresh copy. Do the same for `scroll-search-index.json` if it was ever edited
+directly on GitHub.
 
 Upload set for each edition = **7 files**:
 1. `index.html` (updated — see Step 3)
@@ -89,6 +108,9 @@ Open the local `publish-upload/index.html` in a browser and confirm:
 - [ ] Search loads (no disabled search box)
 - [ ] Searching a distinctive term from the new edition returns it first
 - [ ] Date slider spans the full range through the new date
+- [ ] Month edition counts are correct (count the issue entries per month)
+- [ ] Previously removed elements stay removed (e.g. no `class="gilded-link"`
+      promo cards — Clay ordered these off the archive page 2026-10-10)
 
 ## Step 6 — Push to GitHub
 
