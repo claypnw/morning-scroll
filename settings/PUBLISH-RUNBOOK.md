@@ -99,18 +99,67 @@ Prepend the new edition entry. Schema keys (exact):
 `vol` = YYMM of the edition date (e.g. `2610`), `no` = zero-padded day
 (e.g. `05`).
 
-## Step 5 — Validate locally BEFORE uploading
+## Step 5 — Publisher's Pre-Publication Checklist (industry standards, adopted 2026-10-12)
 
-Open the local `publish-upload/index.html` in a browser and confirm:
-- [ ] New edition is newest in the list
-- [ ] All page images open (filenames match actual files on disk)
-- [ ] PDF link works
-- [ ] Search loads (no disabled search box)
-- [ ] Searching a distinctive term from the new edition returns it first
+Based on newsroom copy-desk practice (Reynolds Center / Detroit Free Press
+accuracy-checklist lineage), digital-publishing QC, and print preflight.
+Run every phase in order. No publication without the Phase 5 sign-off.
+
+### Phase 1 — Content accuracy (the copy-desk pass)
+- [ ] Spell-check run; every suggestion reviewed (not blindly accepted)
+- [ ] Every fact verified: names and titles, numbers and calculations,
+      dates, quotes with correct attribution
+- [ ] Headlines, captions, and blurbs checked — consistent with body copy
+- [ ] Any real person's name or private-looking address: flagged to Clay
+      FIRST (include as-is / replacement text / drop) — never silently
+
+### Phase 2 — Links, references & interactive elements
+- [ ] Every link in the PDF clicked AND its destination read — right
+      organization, right town — not just that it loads. A link that
+      resolves but points at the wrong page is a broken link
+      (Oct 12: council "live stream" pointed at Amherst, VA).
+- [ ] The "Ask the Hearth" mailto button uses an ASCII-only subject line —
+      no em dashes or other non-ASCII in the mailto: URL (Oct 12: the em
+      dash broke the button on Clay's Android PDF viewer).
+- [ ] No invented URLs — only URLs actually seen during research.
+
+### Phase 3 — Visuals & layout
+- [ ] All images present, correctly placed, captions match the picture
+- [ ] No unintended blank pages; page count and page order correct
+- [ ] No overflow text (text running past its box or column)
+- [ ] Blank-space rule (Clay, 2026-10-12): minimize empty space — fill the
+      page; some whitespace is unavoidable, the rule is to try
+- [ ] Edition checked on the phone path (page-image reader) — Clay reads
+      on his phone
+
+### Phase 4 — File integrity (preflight)
+- [ ] PDF opens without corruption; page dimensions correct
+- [ ] Page images match the PDF (filenames on disk match index.html,
+      count matches)
+- [ ] PDF link works from the archive page
+- [ ] Search index updated (new edition prepended); cache-buster bumped
+      (`scroll-search-index.json?v=YYYYMMDD`); search loads, no disabled
+      search box; a distinctive term from the new edition returns it first
+- [ ] New edition is newest in the issue list
 - [ ] Date slider spans the full range through the new date
 - [ ] Month edition counts are correct (count the issue entries per month)
 - [ ] Previously removed elements stay removed (e.g. no `class="gilded-link"`
       promo cards — Clay ordered these off the archive page 2026-10-10)
+- [ ] Working copy was refreshed from GitHub per Step 2b (no stale-copy
+      regressions)
+
+### Phase 5 — Sign-off (the publisher's gate)
+- [ ] One final cold read of the checklist above, top to bottom, after all
+      fixes are in. Record sign-off: date + edition (one line in the daily
+      memory log). No publication without it.
+
+### Phase 6 — Post-publish verification & corrections
+- [ ] Live site verified in a signed-out session: new edition newest, pages
+      open, search works, reader checked on mobile emulation
+- [ ] Corrections policy: when a mistake is found after publishing, fix and
+      republish promptly; the corrected file overwrites the original
+- [ ] Defect log: each defect gets its root cause and preventive action
+      recorded (this is the frustration root-cause rule, 2026-10-12)
 
 ## Step 6 — Push to GitHub
 
