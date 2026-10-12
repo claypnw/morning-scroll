@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>The Steward's Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #241a12; --paper: #f3eee3; --ink: #211e19; --muted: #6b6257;
+    --wood: #542d1b; --wood-deep: #2f1a12; --ember: #b54f24; --gold: #e8b64c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(120% 90% at 50% 0%, #3a2a1c 0%, var(--bg) 60%, #180f09 100%);
+    color: var(--paper); font-family: "Source Sans 3", "Trebuchet MS", sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    padding: 24px 20px 28px; justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 520px; }
+  a.menu-back {
+    position: absolute; top: 12px; left: 12px; z-index: 50;
+    display: inline-block; padding: 10px 16px;
+    color: #e8b64c; background: rgba(24,15,9,.85);
+    border: 2px solid #8f8068; border-radius: 10px;
+    font-weight: 700; font-size: 1rem; text-decoration: none;
+  }
+  h1 {
+    font-family: "Alegreya SC", Georgia, serif; font-size: 1.7rem; margin: 0 0 2px;
+    color: var(--gold); letter-spacing: 1px; text-align: center;
+  }
+  .sub { color: #c9bda9; margin: 0 0 18px; text-align: center; font-size: .95rem; }
+  .note {
+    background: rgba(243,238,227,.06); border: 1px solid #8f8068; border-radius: 10px;
+    padding: 16px 18px; color: #c9bda9; font-size: .95rem; line-height: 1.5;
+    text-align: center;
+  }
+  footer { margin-top: 20px; color: #8a7c68; font-size: .78rem; text-align: center; }
+</style>
+</head>
+<body>
+  <a class="menu-back" href="https://claypnw.github.io/menu/">← Menu</a>
+  <div class="wrap">
+    <h1>The Steward's Ledger</h1>
+    <p class="sub">Public meetings of the Payson Hold — documented for its citizens.</p>
+    <div class="note">
+      The first edition is being prepared. The Ledger will document Town Council,
+      Planning &amp; Zoning, county, fire district, and other public meetings —
+      with agendas, minutes, and timestamped video guides.
+    </div>
+    <footer>Made for the Hearth · opens in your browser, no apps needed</footer>
+  </div>
+</body>
+</html>
