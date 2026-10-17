@@ -8,6 +8,20 @@ Update both when the procedure changes.)
 archive. Follow this every time. Do not rely on memory. Do not improvise the
 order. Clay taps **Publish** once — that is the only authorization needed.
 
+**BATCH CHAIN (2026-10-17, Clay's direction — the mechanical steps below are
+batch jobs now):** Steps 1, 2, 2b, 3, 4, and 7 are performed by the programs
+in `~/workspace/morning-post/batch/` — `run_chain.sh YYYY-MM-DD` runs
+build + build-output sanity checks (page count, dimensions, parchment
+spot-check), staging, archive insert (with previous-edition base guard and
+`node --check` JS validation), the publish manifest (md5 + size per file),
+and the bundle check, then stops at the Step 6 GATE: the browser upload,
+taken from `publish.py`'s printed file list exactly. `run_chain.sh --finish
+YYYY-MM-DD` runs the Step 7 checksum verify and the Step 8 mirror refresh.
+The steps below remain the specification the batch programs implement; the
+runbook and the programs change together or not at all. Re-running the build
+for an already-published date refuses before touching anything (deliberate
+rebuilds: `--force`, which prints a loud FORCED line).
+
 **Canonical site:** https://claypnw.github.io/morning-scroll/
 **Repo:** `claypnw/morning-scroll` (branch `main`, files at root)
 **Backup mirror:** `~/workspace/BACKUP-github-websites-only/morning-scroll/`
@@ -179,15 +193,41 @@ after he called it out on Oct 5 is a trust hit.
 
 Commit message: `Publish <Mon DD, YYYY> edition (Vol. YYMM, No. DD)`
 
-## Step 7 — Verify the live site
+## Step 7 — Verify the live site (BATCH CHAIN, 2026-10-17)
 
-After the push completes:
-1. Open https://claypnw.github.io/morning-scroll/ in a **signed-out** browser
-   session (never relay an unverified "it's live" claim).
-2. Confirm the new edition is newest, pages open, search works.
-3. Check the reader in **mobile emulation** (Android Chrome has no inline PDF
-   viewer — the page-image reader is the phone path; never claim a builder's
-   "verified on mobile" without reproducing it yourself).
+Verification is a checksum compare, not an eyeball. The batch chain
+(`~/workspace/morning-post/batch/`, critical-review PASS 2026-10-17) performs
+it: after the Step 6 upload, run
+
+```bash
+~/workspace/morning-post/batch/run_chain.sh --finish YYYY-MM-DD
+```
+
+`verify.py` downloads every file in `batch/manifest-YYYY-MM-DD.txt` from
+https://claypnw.github.io/morning-scroll/ and compares **md5 + size** against
+the manifest, checks the live PDF's page count and the manifest's reader-page
+count, and prints one PASS/FAIL line per file — a PASS line carries both
+checksums ("live md5 … == manifest md5 …") so the pair can be quoted verbatim.
+Failures retry on a ~15-minute span (Pages can lag 5–15 minutes), and failures
+are classified: download errors (a failure of the CHECK, not the site),
+md5 mismatches (the site), and manifest inconsistencies (the manifest's own
+page numbers — rebuild it, re-uploading cannot fix it) each get their own
+plain NEXT STEP. The verdict and full log land in `batch/logs/`. On PASS,
+`--finish` also refreshes the Step 8 backup mirror — hashing each
+publish-upload source against the manifest BEFORE copying, so a bad source
+can never overwrite a good mirror copy.
+
+A second, independent net runs on the clock: the systemd timer
+`scroll-verify.timer` runs `verify.py` daily at **06:10 Arizona time**
+against **today's manifest, picked by edition date**, and writes its verdict
+to `batch/logs/clock-verify-YYYY-MM-DD.txt`. The morning briefing quotes both
+verdicts (see the morning job's step 10); a missing or FAIL clock verdict is
+reported, never silent.
+
+The signed-out eyeball check (edition newest, pages open, search works,
+reader in mobile emulation) remains a useful supplement — but the checksum
+compare is the verification of record. Never relay an unverified "it's live"
+claim.
 
 ## Step 8 — Refresh the backup mirror
 
