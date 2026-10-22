@@ -1,0 +1,13 @@
+[Unit]
+Description=Morning Scroll live-site verification (today's publish manifest, by edition date)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/hatch/workspace/morning-post
+EnvironmentFile=/etc/environment
+ExecStart=/home/hatch/workspace/morning-post/venv/bin/python /home/hatch/workspace/morning-post/batch/verify.py
+
+[Install]
+WantedBy=multi-user.target

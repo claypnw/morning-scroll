@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Morning Scroll live-site verification daily at 06:10 Arizona time
+
+[Timer]
+OnCalendar=*-*-* 06:10:00 America/Phoenix
+Persistent=true
+Unit=scroll-verify.service
+
+[Install]
+WantedBy=timers.target
