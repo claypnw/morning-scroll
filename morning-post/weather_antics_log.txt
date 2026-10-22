@@ -1,0 +1,12 @@
+# Weather-box antics log — one line per edition.
+# Rule (Clay, 2026-10-08): the lodge/deck scene is the same every day, but the
+# cats' antics must be FRESH every day — never the same antic two days running,
+# even when the weather repeats. Check this log before generating weather.jpg.
+2026-10-05 | sunny | Maevy chases a butterfly; Gandy basks half-asleep
+2026-10-06 | sunny | Maevy chases a butterfly; Gandy basks half-asleep (repeat of 10-05 — the drift Clay caught)
+2026-10-07 | sunny | Maevy hunts a butterfly; Gandy basks (repeat again)
+2026-10-08 | sunny | Maevy steals the sunniest plank, sprawled upside-down in the sunbeam; Gandy keeps his grump in the shade
+2026-10-09 | drizzle | Gandy hunched grumpily under the dry eaves; Maevy bats at raindrops
+2026-10-09 | partly cloudy | Gandy shields eyes from bright patches, lounging in porch shade; Maevy stalks a grasshopper across the deck (replaces drizzle version)
+2026-10-10 | rain | Gandy glares at the storm from deep under the eaves; Maevy bats raindrops on the railing
+2026-10-11 | heavy rain | Gandy glowers dry under the eaves; Maevy bats raindrops off the railing
