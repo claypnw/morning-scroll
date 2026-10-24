@@ -1,13 +1,13 @@
 # Small local business candidates — by Hold
 
-Starter list started 2026-09-30 at Clay's request. This is a **candidate roster, not a verified directory**.
+Starter list started 2026-09-30 at the admin's request. This is a **candidate roster, not a verified directory**.
 
 ## How businesses are found
 
 1. Start from what is already known, so nothing repeats:
    - `featured_merchants.txt` — 7 Scroll merchants already featured, never to repeat.
    - The Gilded Pages vendor pages — same 7 real vendors at present.
-   - `large_business_exclusions.md` — Clay's Big/Local marks (53 Big / 64 Local across 117 businesses, 2026-09-30; the checklist itself was 44 Big across 108, plus nine Star Valley directory-only entries added at Clay's direction). Anything marked **Big** is out for a Scroll feature.
+   - `large_business_exclusions.md` — the admin's Big/Local marks (53 Big / 64 Local across 117 businesses, 2026-09-30; the checklist itself was 44 Big across 108, plus nine Star Valley directory-only entries added at the admin's direction). Anything marked **Big** is out for a Scroll feature.
 2. Search by Hold and by merchant category, rotating the categories the Scroll uses: diners & cafes, thrift & antiques, outfitters, hardware/maker supply, breweries & pubs, bakeries & markets, coffee shops, plus book/gift shops where they exist.
 3. Sources used for leads: public place/web search results, chamber and visitor directories, local papers and guides, TripAdvisor/local guide listings, and each business's own website, Facebook page, or listing where available.
 4. Cross-check every lead against the Big/Local list and the featured log before it goes on this list.
@@ -23,7 +23,7 @@ Chains and Big-marked businesses found in searches were deliberately left off th
 
 ## Payson (including Star Valley)
 
-Standing rule (Clay, 2026-09-30): Star Valley, the small incorporated town just east of Payson on AZ-260, counts as part of the Payson Hold for merchant purposes — its small local businesses are covered here, listed under Payson.
+Standing rule (the admin, 2026-09-30): Star Valley, the small incorporated town just east of Payson on AZ-260, counts as part of the Payson Hold for merchant purposes — its small local businesses are covered here, listed under Payson.
 
 Already featured:
 - The Piñon Cafe — diner/cafe — featured 2026-09-24
@@ -129,7 +129,7 @@ Candidates:
 - Elote Cafe — Southwest/Mexican restaurant, 350 Jordan Rd — elotecafe.com; upscale/pricey — check fit for a Scroll feature before choosing
 - The Hike House Sedona — hiking outfitter lead from a visitor forum post — needs verification from its own site/listing
 - Sweet Treats No Wheats — bakery lead at the same address/phone as Karen's in listings — needs verification; may be related or a duplicate, do not list separately until clarified
-- Wildflower (Shops at Pinon Pointe) — **needs verification / likely exclude:** Wildflower Bread Company is an Arizona regional chain; do not feature unless Clay marks it Local
+- Wildflower (Shops at Pinon Pointe) — **needs verification / likely exclude:** Wildflower Bread Company is an Arizona regional chain; do not feature unless the admin marks it Local
 
 Excluded while gathering: resort dining (Enchantment, L'Auberge, Amara, Hilton, Hyatt etc. are Big-marked), Whole Foods, Safeway, Starbucks.
 
@@ -137,7 +137,7 @@ Gaps to deepen: non-resort local restaurants beyond Elote, art galleries with a 
 
 ## Show Low
 
-No featured merchants yet. Note: several listings below are in Lakeside/Pinetop, the adjoining communities south of Show Low. Verify whether Clay wants them counted inside the Show Low Hold before featuring.
+No featured merchants yet. Note: several listings below are in Lakeside/Pinetop, the adjoining communities south of Show Low. Verify whether the admin wants them counted inside the Show Low Hold before featuring.
 
 Candidates:
 - Arizona Mountain Coffee Co. — coffee/cafe/bakery, 151 N White Mountain Rd, Show Low — azmountaincoffeeco.com; veteran-owned per its own description. A second Pinetop location appeared in listings; feature only the verified Show Low shop.
