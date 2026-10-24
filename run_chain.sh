@@ -19,7 +19,7 @@
 #
 # No AI judgment inside; each step is a batch program in this directory.
 #
-# Rule log (Clay's design, 2026-10-18 — RULE-LOG-DESIGN.md): every run keeps
+# Rule log (the admin's design, 2026-10-18 — RULE-LOG-DESIGN.md): every run keeps
 # a rule log in ~/workspace/batch/rule-logs/ via ~/workspace/batch/rulelog.py.
 # Steps: 1 build_and_manifest, 2 publish (bundle check), 3 verify live,
 # 4 mirror refresh. The run-phase writes steps 1-2 and stops at the gate;
