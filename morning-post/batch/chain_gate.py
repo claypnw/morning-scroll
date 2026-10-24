@@ -143,9 +143,9 @@ def build_99(date_str, rule_log):
     fixed = all(p.is_file() and p.stat().st_size > 0 for p in instruction_files)
     runbook_text = RUNBOOK.read_text(encoding="utf-8") if RUNBOOK.is_file() else ""
     # The batch conversion was talked through before the build: the
-    # runbook's BATCH CHAIN note records it as Clay's direction
+    # runbook's BATCH CHAIN note records it as the admin's direction
     # (2026-10-17). Absence of that note would make this false.
-    full_talk = "BATCH CHAIN" in runbook_text and "Clay's direction" in runbook_text
+    full_talk = "BATCH CHAIN" in runbook_text and "the admin's direction" in runbook_text
     mechanical = []
     if (BATCH_DIR / "build_and_manifest.py").is_file():
         mechanical.append("build")
@@ -160,7 +160,7 @@ def build_99(date_str, rule_log):
                   BATCH_DIR / "verify.py")
         if p.is_file()
     )
-    # A change-without-Clay flag file is the chain's only record of an
+    # A change-without-the admin flag file is the chain's only record of an
     # unauthorized instruction change; none on record -> false.
     changed_flag = LOGS_DIR / f"batch-changed-without-clay-{date_str}.txt"
     return {
