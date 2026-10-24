@@ -6,12 +6,19 @@ in a fixed shape, so the same values feed the paper identically every run
 Pulls Open-Meteo hourly + daily for the Hearth's exact coordinates
 (34.2362, -111.3149, America/Phoenix):
   - the four "By the Hours" blocks at fixed hours 09 / 12 / 17 / 21 with
-    Clay's exact labels: Morning, Noon, Late Afternoon, Evening;
+    The admin's exact labels: Morning, Noon, Late Afternoon, Evening;
   - the weather-box fields (high, low, conditions, rain chance, sunrise,
     sunset, tomorrow line) in the paper JSON's existing shape.
 Each block also carries an ART KEY naming one of the six fixed engraved sky
 pictures in ~/workspace/morning-post/images/sky/ (sunny, partly, cloudy,
 drizzle, lightrain, hardrain) — picked here, by condition code, never daily.
+Each block ALSO carries the hour's wind (wind_speed_10m in mph and
+wind_direction_10m in degrees, Open-Meteo hourly) and a WINDSOCK key naming
+one of the three fixed engraved windsock pictures in
+~/workspace/morning-post/images/windsock/ (limp, half, straight) — picked
+here, by wind speed, never daily. The bands (the admin, 2026-10-23):
+under 5 mph limp, 5-12 mph half, 13 mph and up straight. The paper prints
+the windsock picture in the hour block with the mph number under it.
 
 Usage:  weather_pull.py [YYYY-MM-DD]     (default: today, America/Phoenix)
 Writes: batch/weather-YYYY-MM-DD.json and prints the same values.
@@ -170,6 +177,18 @@ def wmo(code, hour=None):
     return ("Cloudy", "cloudy")
 
 
+def sock_key(speed_mph):
+    """Wind speed (mph, already rounded) -> windsock art key. The bands
+    (the admin, 2026-10-23): under 5 mph the sock hangs limp, 5-12 mph
+    it stands half-raised, 13 mph and up it flies straight out. The key
+    is always one of the three fixed pictures in images/windsock/."""
+    if speed_mph < 5:
+        return "limp"
+    if speed_mph < 13:
+        return "half"
+    return "straight"
+
+
 def fmt_time(iso):
     """'2026-10-18T06:24' -> '6:24 AM'"""
     dt = datetime.fromisoformat(iso)
@@ -190,9 +209,10 @@ def main():
     nxt = (day + timedelta(days=1)).isoformat()
     url = (
         "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s"
-        "&hourly=temperature_2m,weather_code,precipitation_probability"
+        "&hourly=temperature_2m,weather_code,precipitation_probability,"
+        "wind_speed_10m,wind_direction_10m"
         "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
-        "&temperature_unit=fahrenheit&timezone=America%%2FPhoenix"
+        "&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%%2FPhoenix"
         "&start_date=%s&end_date=%s" % (LAT, LON, date, nxt)
     )
     try:
@@ -213,10 +233,14 @@ def main():
             key = "%sT%02d:00" % (date, hour)
             i = hidx[key]
             word, art = wmo(int(hourly["weather_code"][i]), hour)
+            wspeed = int(round(hourly["wind_speed_10m"][i]))
             blocks.append({
                 "label": label, "hour": hour,
                 "temp": int(round(hourly["temperature_2m"][i])),
                 "condition": word, "art": art,
+                "wind_speed": wspeed,
+                "wind_direction": int(round(hourly["wind_direction_10m"][i])),
+                "sock": sock_key(wspeed),
             })
         daily = data["daily"]
         didx = {t: i for i, t in enumerate(daily["time"])}
@@ -258,8 +282,9 @@ def main():
           % (weather["high"], weather["low"], weather["conditions"], weather["rain"],
              weather["sunrise"], weather["sunset"], weather["tomorrow"]))
     for b in blocks:
-        print("block: %-14s %2d:00  %s°  %-14s art %s"
-              % (b["label"], b["hour"], b["temp"], b["condition"], b["art"]))
+        print("block: %-14s %2d:00  %s°  %-14s art %s  wind %s mph from %s°  sock %s"
+              % (b["label"], b["hour"], b["temp"], b["condition"], b["art"],
+                 b["wind_speed"], b["wind_direction"], b["sock"]))
     _write_finish_line(f"WEATHER PULL OK for {date}", path)
     return 0
 
