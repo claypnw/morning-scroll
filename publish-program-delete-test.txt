@@ -1,1 +1,0 @@
-publish program delete test — throwaway file, safe to remove
