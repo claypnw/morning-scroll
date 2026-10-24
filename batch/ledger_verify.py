@@ -52,7 +52,7 @@ INDEX_MIRROR = WORKSPACE / "BACKUP-github-websites-only" / "morning-scroll" / "s
 INDEX_LIVE = "https://claypnw.github.io/morning-scroll/stewards-ledger.html"
 PHOENIX = ZoneInfo("America/Phoenix")
 
-# --- Rule log (Clay's design, 2026-10-18) ---------------------------------
+# --- Rule log (the admin's design, 2026-10-18) ---------------------------------
 # This program writes its own rule-log marks via ~/workspace/batch/rulelog.py
 # (design: ~/workspace/morning-post/RULE-LOG-DESIGN.md). Marks are decided by
 # values this program itself computed — never by exit code alone and never
