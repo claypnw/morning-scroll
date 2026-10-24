@@ -3,7 +3,7 @@
 
 Bundle check + gate print for one edition.
 
-The upload itself uses Clay's saved GitHub browser session per the
+The upload itself uses the admin's saved GitHub browser session per the
 runbook (Step 6) — a plain program has no GitHub credential on this VM
 and gh is not logged in. This program mechanizes everything except the
 browser click: it checks publish-upload/ against batch/manifest-DATE.txt
@@ -177,7 +177,7 @@ def main():
 
     print("")
     print("=== BROWSER UPLOAD INSTRUCTIONS (runbook Step 6) ===")
-    print("Upload via the browser task (Clay's saved GitHub session) to https://github.com/claypnw/morning-scroll")
+    print("Upload via the browser task (the admin's saved GitHub session) to https://github.com/claypnw/morning-scroll")
     print("")
     print("Updated files (2) — upload with 'Add file' > 'Upload files' (overwrites same-named files):")
     for name in UPDATED_FILES:
