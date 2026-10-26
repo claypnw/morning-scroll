@@ -61,5 +61,38 @@
     </a>
     <footer>Made for the Hearth · opens in your browser, no apps needed</footer>
   </div>
+<script>
+// Return road (added 2026-10-25): the "← Menu" link takes the visitor back
+// to the menu they came from. The menu that opened this page named itself in
+// the address (?from=...). No name in the address: the link printed in this
+// page stands as the default. The same name is carried forward on links to
+// our other pages, so the road home survives the whole visit.
+(function(){
+  var MENUS={
+    "admin":"https://claypnw.github.io/menu/admin-menu.html",
+    "locals":"https://claypnw.github.io/menu/locals-menu.html",
+    "locals-admin":"https://claypnw.github.io/menu/locals-menu.html?from=admin",
+    "hearth":"https://claypnw.github.io/menu/hearth-menu.html",
+    "hearth-admin":"https://claypnw.github.io/menu/hearth-menu.html?from=admin",
+    "front":"https://claypnw.github.io/menu/"
+  };
+  var from=new URLSearchParams(window.location.search).get("from");
+  if(!from||!MENUS[from])return;
+  var back=document.querySelectorAll("a.menu-back");
+  for(var i=0;i<back.length;i++)back[i].href=MENUS[from];
+  var links=document.querySelectorAll("a[href]");
+  for(var j=0;j<links.length;j++){
+    var a=links[j];
+    if(a.classList&&a.classList.contains("menu-back"))continue;
+    var h=a.getAttribute("href");
+    if(!h||h.charAt(0)==="#")continue;
+    if(/\.pdf($|\?)/i.test(h))continue;
+    if(/^https?:\/\//i.test(h)&&h.indexOf("claypnw.github.io")<0)continue;
+    if(!/(\.html|\/)([?#]|$)/.test(h))continue;
+    if(/[?&]from=/.test(h))continue;
+    a.setAttribute("href",h+(h.indexOf("?")<0?"?":"&")+"from="+from);
+  }
+})();
+</script>
 </body>
 </html>
