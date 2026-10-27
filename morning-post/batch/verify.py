@@ -36,11 +36,17 @@ Usage:
                                   [--retry-waits 300,600]
 """
 import argparse
+import base64
 import hashlib
+import http.client
+import json
+import os
 import re
 import shutil
+import ssl
 import sys
 import time
+import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -196,6 +202,254 @@ def write_clock_verdict(manifest_date, verdict, log_path):
     return path
 
 
+def voice_and_rolloff_lines(manifest_date):
+    """The voice lines verify reads into the morning record: the notes
+    the build wrote for this date (batch/voice-notes-DATE.txt — a
+    recording that failed, landed on retry, or stalled), the loud line
+    for a recording still missing at verify time (its date stands in
+    the standing queue, batch/voice-queue.json), and the roll-off
+    names for this publish (batch/rolloff-DATE.txt). Plain lines for
+    the verify log — the log is what the morning reporting quotes, so
+    this is where Clay is told, the same morning, never silently."""
+    lines = []
+    batch_dir = Path(__file__).resolve().parent
+    notes_path = batch_dir / f"voice-notes-{manifest_date}.txt"
+    if notes_path.is_file():
+        for raw in notes_path.read_text(encoding="utf-8").splitlines():
+            if raw.strip():
+                lines.append(raw.strip())
+    # Facts this run's notes already announced, by (date, state): the
+    # queue lines below speak for standing states the notes did NOT
+    # cover, so a fact is never stated twice in one finish record —
+    # a stall or a landing the build's notes announced today is not
+    # announced again here; on a later day, when the notes are
+    # silent, the standing state is named from the queue.
+    noted = set()
+    for line in lines:
+        m = re.search(r"(\d{4}-\d{2}-\d{2})", line)
+        if not m:
+            continue
+        if "STALLED" in line:
+            noted.add((m.group(1), "stalled"))
+        if "landed on retry" in line:
+            noted.add((m.group(1), "landed"))
+    queue_path = batch_dir / "voice-queue.json"
+    try:
+        queue = json.loads(queue_path.read_text(encoding="utf-8"))
+    except Exception:
+        queue = []
+    if isinstance(queue, list):
+        for entry in queue:
+            if not isinstance(entry, dict) or not entry.get("date"):
+                continue
+            edate = entry["date"]
+            if entry.get("status") == "stalled":
+                if (edate, "stalled") in noted:
+                    continue
+                lines.append(
+                    f"VOICE: the recording for {edate} is STALLED — "
+                    f"{entry.get('stall_reason', 'it cannot be rebuilt')}. "
+                    f"It stands in the queue (batch/voice-queue.json) "
+                    f"for Clay's word; it is not retried and not dropped.")
+            elif entry.get("landed_run") == manifest_date:
+                if (edate, "landed") in noted:
+                    continue
+                lines.append(
+                    f"VOICE: the recording for {edate} landed on retry "
+                    f"and stands on this publish's bundle; its queue "
+                    f"entry clears below if this verify passes.")
+            elif edate == manifest_date:
+                lines.append(
+                    f"VOICE: the recording for {manifest_date} is still "
+                    f"MISSING — the edition published without its reading. "
+                    f"Background retry is queued (batch/voice-queue.json) "
+                    f"and the work continues until it lands or Clay says stop.")
+            else:
+                lines.append(
+                    f"VOICE: the recording for {edate} is still missing — "
+                    f"background retry continues (batch/voice-queue.json).")
+    rolloff_path = batch_dir / f"rolloff-{manifest_date}.txt"
+    if rolloff_path.is_file():
+        for raw in rolloff_path.read_text(encoding="utf-8").splitlines():
+            name = raw.strip()
+            if name:
+                lines.append(
+                    f"ROLLOFF: {name} is named for removal in this "
+                    f"publish (recordings are kept 45 days, rolling); "
+                    f"each removal is confirmed on the live site below, "
+                    f"and only a confirmed removal leaves the mirror.")
+    return lines
+
+
+def _fetch_once(url, timeout, range_from=None, read_limit=None):
+    """One GET, driven through the connection engine (http.client)
+    directly, along the machine's proxy road when a proxy is set.
+
+    Returns a dict: status (the site's answer number), data (the
+    bytes read — partial when the read was cut short), expected
+    (the whole file's size when the answer names it, else None),
+    cut (True when the read ended before the whole piece arrived).
+    Raises when no answer arrives at all.
+
+    Why the engine directly (2026-10-26 record): the urllib layer
+    over this same engine was cut on every fetch from the live site
+    that morning, while the engine driven directly, the requests
+    library, and curl each brought the same files down whole."""
+    parts = urllib.parse.urlsplit(url)
+    host = parts.hostname
+    port = parts.port or 443
+    path = parts.path or "/"
+    if parts.query:
+        path += "?" + parts.query
+    headers = {}
+    if range_from is not None:
+        headers["Range"] = f"bytes={range_from}-"
+    proxy = os.environ.get("https_proxy") or os.environ.get("HTTPS_PROXY")
+    ctx = ssl.create_default_context()
+    if proxy:
+        pp = urllib.parse.urlsplit(proxy if "//" in proxy
+                                   else "//" + proxy)
+        conn = http.client.HTTPSConnection(pp.hostname,
+                                           pp.port or 3128,
+                                           timeout=timeout,
+                                           context=ctx)
+        tunnel_headers = {}
+        if pp.username:
+            raw = (f"{urllib.parse.unquote(pp.username)}:"
+                   f"{urllib.parse.unquote(pp.password or '')}")
+            tunnel_headers["Proxy-Authorization"] = (
+                "Basic " + base64.b64encode(raw.encode()).decode())
+        conn.set_tunnel(host, port, headers=tunnel_headers)
+    else:
+        conn = http.client.HTTPSConnection(host, port,
+                                           timeout=timeout,
+                                           context=ctx)
+    try:
+        conn.request("GET", path, headers=headers)
+        resp = conn.getresponse()
+        status = resp.status
+        expected = None
+        if status == 200:
+            length = resp.getheader("Content-Length")
+            if length is not None and length.isdigit():
+                expected = int(length)
+        elif status == 206:
+            range_header = resp.getheader("Content-Range") or ""
+            if "/" in range_header:
+                tail = range_header.rsplit("/", 1)[1]
+                if tail.isdigit():
+                    expected = int(tail)
+        cut = False
+        if read_limit is not None:
+            data = resp.read(read_limit) or b""
+        else:
+            try:
+                data = resp.read() or b""
+            except http.client.IncompleteRead as exc:
+                data = exc.partial or b""
+                cut = True
+            if status == 200 and expected is not None \
+                    and len(data) < expected:
+                cut = True
+            if status == 206 and expected is not None \
+                    and range_from is not None \
+                    and len(data) < expected - range_from:
+                cut = True
+        return {"status": status, "data": data,
+                "expected": expected, "cut": cut}
+    finally:
+        conn.close()
+
+
+def site_file_stands(name):
+    """Probe the live site for one file: True when it answers,
+    False when it answers 404, None when the probe itself could not
+    tell. One short try — this is a presence check, not a download.
+    Rides the same engine road as download() (2026-10-26)."""
+    url = f"{SITE_BASE}/{name}?v=verify{int(time.time())}"
+    try:
+        answer = _fetch_once(url, timeout=30, read_limit=1)
+    except Exception:
+        return None
+    if answer["status"] == 404:
+        return False
+    if answer["status"] == 200:
+        return True
+    return None
+
+
+def apply_mirror_rolloff(manifest_date):
+    """Mirror this publish's roll-off removals — but only the
+    confirmed ones. Each named recording is probed on the live site:
+    gone means the delete landed, so the mirror copy goes too;
+    still standing means the delete did NOT land — the mirror copy
+    is KEPT, so the next run's roll-off (which is computed from the
+    mirror) names it again, and the line below names the failure in
+    this finish record. An unreadable site also keeps the copy.
+    Returns the lines for the verify log."""
+    lines = []
+    rolloff_path = Path(__file__).resolve().parent / f"rolloff-{manifest_date}.txt"
+    if not rolloff_path.is_file():
+        return lines
+    for raw in rolloff_path.read_text(encoding="utf-8").splitlines():
+        name = raw.strip()
+        if not name:
+            continue
+        stands = site_file_stands(name)
+        dest = MIRROR_DIR / name
+        if stands is False:
+            if dest.is_file():
+                dest.unlink()
+            lines.append(f"MIRROR ROLLOFF: {name} is confirmed gone from the "
+                         f"site; its mirror copy is removed (45-day roll)")
+        elif stands is True:
+            lines.append(f"ROLLOFF NOT CONFIRMED: {name} still stands on the "
+                         f"site past 45 days — the delete did not land. Its "
+                         f"mirror copy is kept, so the next publish names "
+                         f"it again.")
+        else:
+            lines.append(f"ROLLOFF NOT CHECKED: {name} — the site could not "
+                         f"be read for the confirmation; its mirror copy "
+                         f"is kept and it will be named again next run.")
+    return lines
+
+
+def queue_clear_lines(manifest_date, verified):
+    """The voice queue's clearing step, run at the end of verify.
+    A queue entry whose recording landed on this publish's bundle
+    (landed_run == the manifest date) is cleared ONLY when this
+    verify passed — the recording has then been confirmed on the
+    live site like every other bundle file. On a failed verify the
+    entries stand, and the next run's drain lands the recordings
+    again. Returns the lines for the verify log."""
+    lines = []
+    queue_path = Path(__file__).resolve().parent / "voice-queue.json"
+    try:
+        queue = json.loads(queue_path.read_text(encoding="utf-8"))
+    except Exception:
+        queue = []
+    if not isinstance(queue, list):
+        return lines
+    landed = [e for e in queue if isinstance(e, dict)
+              and e.get("landed_run") == manifest_date]
+    if not landed:
+        return lines
+    if verified:
+        kept = [e for e in queue if e not in landed]
+        queue_path.write_text(json.dumps(kept, indent=2) + "\n", encoding="utf-8")
+        for entry in landed:
+            lines.append(f"VOICE QUEUE: the recording for {entry['date']} is "
+                         f"confirmed on the live site; its queue entry "
+                         f"is cleared.")
+    else:
+        for entry in landed:
+            lines.append(f"VOICE QUEUE: the recording for {entry['date']} "
+                         f"landed on this bundle, but the publish is NOT "
+                         f"verified — its queue entry stands, and the "
+                         f"next run lands it again.")
+    return lines
+
+
 def parse_manifest(path):
     meta = {}
     entries = []
@@ -220,25 +474,104 @@ def pick_manifest(args):
 
 
 def download(url, name):
-    """One file, with one retry after a short wait (review fix Q5).
+    """One file, fetched down a ladder of different ways (the
+    step-down rule, 2026-10-26: a retry never repeats the same ask
+    when anything can be changed):
 
-    A single transient timeout through the egress proxy must not fail a
-    whole attempt — observed 2026-10-17: index.html timed out once at
-    60s while the other 7 files passed seconds later. So: 90s timeout,
-    and on any download error wait 15 seconds and try the file once more
-    before calling it a failure.
+    Rung 1: the connection engine asks for the whole file at once.
+    Rung 2: the file is picked up in pieces — each piece asks only
+            for the bytes still missing — until the file is whole.
+    Rung 3: the old road (urllib) asks for the whole file; a
+            different layer, kept last.
+
+    The 2026-10-26 record behind the ladder: urllib's top layer was
+    cut on every fetch from the live site that morning, while the
+    engine underneath it, driven directly, brought the same files
+    down whole. An error answer from the site (the file is not
+    there) is not a cut and is not laddered; it is raised at once.
+    The rounds around this function (verify attempts with their
+    waits) are unchanged.
     """
-    last_exc = None
-    for try_no in (1, 2):
-        try:
-            with urllib.request.urlopen(url, timeout=90) as resp:
-                return resp.read()
-        except Exception as exc:
-            last_exc = exc
-            if try_no == 1:
-                log(f"download of {name} failed ({exc}); waiting 15 seconds and retrying the file once")
-                time.sleep(15)
-    raise last_exc
+    errors = []
+    have = b""
+    expected = None
+    # Rung 1: the whole file, via the engine.
+    try:
+        answer = _fetch_once(url, timeout=90)
+        if answer["status"] >= 400:
+            raise RuntimeError(f"HTTP {answer['status']}")
+        if answer["status"] != 200:
+            raise RuntimeError(f"unexpected HTTP {answer['status']}")
+        have = answer["data"]
+        expected = answer["expected"]
+        if not answer["cut"] and (expected is None
+                                  or len(have) == expected):
+            return have
+        errors.append(f"rung 1 cut at {len(have)} bytes")
+    except Exception as exc:
+        if isinstance(exc, RuntimeError) \
+                and str(exc).startswith("HTTP"):
+            raise
+        errors.append(f"rung 1 failed: {exc}")
+    # Rung 2: pick the file up in pieces.
+    try:
+        stalls = 0
+        pieces = 0
+        while pieces < 12:
+            if expected is not None and len(have) >= expected:
+                return have[:expected]
+            pieces += 1
+            answer = _fetch_once(url, timeout=90,
+                                 range_from=len(have))
+            if answer["status"] == 416 and have:
+                # The ask starts past the end: the file is whole.
+                return have
+            if answer["status"] >= 400:
+                raise RuntimeError(f"HTTP {answer['status']}")
+            if answer["status"] == 200:
+                # The Range ask was ignored and the file came from
+                # the top; keep whichever copy stands longer.
+                if not answer["cut"] and (
+                        answer["expected"] is None
+                        or len(answer["data"]) == answer["expected"]):
+                    return answer["data"]
+                if len(answer["data"]) > len(have):
+                    have = answer["data"]
+                    expected = answer["expected"]
+                    stalls = 0
+                else:
+                    stalls += 1
+            elif answer["status"] == 206:
+                if answer["expected"] is not None:
+                    expected = answer["expected"]
+                if answer["data"]:
+                    have += answer["data"]
+                    stalls = 0
+                else:
+                    stalls += 1
+            else:
+                raise RuntimeError(
+                    f"unexpected HTTP {answer['status']}")
+            if expected is not None and len(have) >= expected:
+                return have[:expected]
+            if stalls >= 2:
+                break
+        errors.append(
+            f"rung 2 stopped at {len(have)} of "
+            f"{expected if expected is not None else '?'} bytes")
+    except Exception as exc:
+        if isinstance(exc, RuntimeError) \
+                and str(exc).startswith("HTTP"):
+            raise
+        errors.append(f"rung 2 failed: {exc}")
+    # Rung 3: the old road, the whole file at once.
+    try:
+        with urllib.request.urlopen(url, timeout=90) as resp:
+            return resp.read()
+    except Exception as exc:
+        errors.append(f"rung 3 failed: {exc}")
+    raise RuntimeError(f"download of {name} failed on every rung — "
+                       + "; ".join(errors))
 
 
 def run_attempt(attempt_no, entries, want_pages, pdf_name):
@@ -362,9 +695,15 @@ def main():
     log(f"verify: site {SITE_BASE}")
     log(f"verify: mode {'clock (today by edition date)' if clock_mode else 'explicit'}")
 
-    # Reader page count cross-check (Q6): manifest PNG entries must equal
-    # the edition's page count, same number the PDF check uses.
-    png_entries = [name for name, _, _ in entries if name.endswith(".png")]
+    # Reader page count cross-check (Q6): the manifest's reader page
+    # PNG entries must equal the edition's page count, same number the
+    # PDF check uses. Reader pages only: the bundle also carries the
+    # edition web page's pictures under images/ (the web-page road,
+    # 2026-10-26), and a picture that happens to be a PNG is not a
+    # reader page.
+    png_entries = [name for name, _, _ in entries
+                   if re.match(r"^scroll-\d{4}-\d{2}-\d{2}-page-\d+-r1-.+\.png$",
+                               name)]
     counts_ok = len(png_entries) == want_pages and want_pages > 0
     if counts_ok:
         log(f"PASS reader-page-count ({len(png_entries)} page PNGs in manifest == {want_pages} pages)")
@@ -392,6 +731,8 @@ def main():
         verdict_ok = counts_ok and verdict_ok
 
     log(f"VERDICT: {'PASS' if verdict_ok else 'FAIL'}")
+    for line in voice_and_rolloff_lines(manifest_date):
+        log(line)
     if not verdict_ok:
         if last_mismatches > 0:
             log("NEXT STEP: the live site does not match the manifest above. "
@@ -446,6 +787,10 @@ def main():
                     f"mirror copy left untouched")
                 mirror_ok = False
                 continue
+            # A manifest name may carry a folder (the edition's
+            # recording stands under audio/): make the folder in the
+            # mirror before the copy, or the copy itself fails.
+            dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(src, dest)
             copied += 1
             h2 = hashlib.md5()
@@ -457,11 +802,20 @@ def main():
                     f"!= manifest md5 {want_md5} size {want_size}")
                 mirror_ok = False
         log(f"MIRROR: {'PASS' if mirror_ok else 'FAIL'} ({copied} files copied to {MIRROR_DIR})")
+        for line in apply_mirror_rolloff(manifest_date):
+            log(line)
         if not mirror_ok:
             mirror_failed = True
             exit_code = 1
     elif args.mirror:
         log("MIRROR: SKIPPED (verdict was FAIL)")
+
+    # The voice queue clears here, and only here: an entry whose
+    # recording landed on this bundle is cleared when this verify
+    # has confirmed the bundle on the live site, and stands
+    # otherwise (see queue_clear_lines).
+    for line in queue_clear_lines(manifest_date, verdict_ok):
+        log(line)
 
     if exit_code != 0:
         # A failed verdict opens an error record in the one shared
