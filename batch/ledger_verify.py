@@ -33,6 +33,7 @@ import os
 import stat
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime
@@ -335,13 +336,46 @@ def finish(passed, failures):
 
 
 def download(url, dest):
-    req = urllib.request.Request(url, headers={"User-Agent": "ledger_verify/1.0"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        if getattr(resp, "status", 200) != 200:
-            raise RuntimeError(f"HTTP {resp.status} for {url}")
-        data = resp.read()
-    Path(dest).write_bytes(data)
-    return dest
+    """Download url to dest. Returns dest; raises on failure.
+
+    The tries climb a step-down ladder (2026-10-26): try 1 exactly
+    as before (one read, 30-second limit); try 2 after a 10-second
+    wait at a 60-second limit; try 3 after a 20-second wait at a
+    120-second limit. A transfer whose bytes fall short of the
+    length the server stated counts as a failed try, never as a
+    downloaded file — a cut read raises as one, and a short read
+    that raises nothing is caught by the count. Each failed try is
+    written to the log; after the third, the last error is raised,
+    as the one try raised before.
+    """
+    last_exc = None
+    for try_no, timeout in ((1, 30), (2, 60), (3, 120)):
+        if try_no > 1:
+            wait = 10 if try_no == 2 else 20
+            emit(f"download of {url}: try {try_no - 1} failed ({last_exc}); "
+                 f"waiting {wait} seconds before try {try_no}")
+            time.sleep(wait)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "ledger_verify/1.0"})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                if getattr(resp, "status", 200) != 200:
+                    raise RuntimeError(f"HTTP {resp.status} for {url}")
+                data = resp.read()
+                length = resp.headers.get("Content-Length")
+                if length is not None:
+                    try:
+                        expected = int(length)
+                    except ValueError:
+                        expected = None
+                    if expected is not None and len(data) < expected:
+                        raise OSError(
+                            f"download came up short: got {len(data)} of "
+                            f"{expected} bytes from {url}")
+            Path(dest).write_bytes(data)
+            return dest
+        except Exception as exc:
+            last_exc = exc
+    raise last_exc
 
 
 def _main():
