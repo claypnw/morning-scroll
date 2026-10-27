@@ -28,6 +28,7 @@ Exit code 0 on PASS, 1 on FAIL.
 import contextlib
 import hashlib
 import io
+import subprocess
 import sys
 import tempfile
 import time
@@ -236,15 +237,307 @@ def md5_and_size(path):
     return h.hexdigest(), size
 
 
+# The download's tries climb a step-down ladder (2026-10-26,
+# second form after the fresh-eyes review). The first form
+# repeated the same whole request at longer limits, accepted a
+# transfer with no usable stated length as the download (the
+# review's probe: a cut file with no length stated, and one with
+# an unparseable length, both returned as successes), and retried
+# answers no retry can fix down the whole ladder. The second form:
+#   Try 1 — the standing read (one read, 60-second limit), with
+#     one guard added: the answer must state a usable length, and
+#     the bytes must reach it. A transfer short of the stated
+#     length, or with no usable length stated, is a failed try,
+#     never a downloaded file — wholeness that cannot be proven
+#     is not accepted, because the file this returns is compared
+#     against the built sheet and a scrap would call a correct
+#     site wrong. (The live sheet files are served with a stated
+#     length; the guard was checked against their live headers.)
+#   Try 2, after a 10-second wait — the file read in parts of at
+#     most PART_BYTES, resuming from the bytes the earlier try
+#     left in dest and asking only for the missing tail. Each part
+#     is checked against the range the server says it sent; a part
+#     starting at the wrong byte, or a size changing mid-read,
+#     fails the try. A "no such range" answer (416) completes the
+#     download only when its stated total equals the bytes in
+#     dest. Per-request limit 120 seconds.
+#   Try 3, after a 20-second wait — the same address fetched by
+#     curl (a total limit of 180 seconds). What proves the curl
+#     file whole depends on the shape of curl's answer, and the
+#     program checks it after curl finishes: an answer that
+#     stated a length — curl itself refuses to come up short of
+#     it, and the program compares the file's size to it as well;
+#     an answer in chunks (chunked) — curl's clean finish proves
+#     the end marker arrived; an answer whose length an earlier
+#     try stated — the file's size must equal that length. An
+#     answer that gives none of those proofs (no stated length,
+#     not chunked, nothing learned earlier) is REFUSED, whole or
+#     not: with that shape a cut cannot be told from a finish.
+#     (The live road always states a length, checked 2026-10-26.)
+# Tries 2 and 3 together are bounded by DOWNLOAD_DEADLINE_SECONDS
+# (600) counted from the first failure. Answers no later try can
+# fix — an HTTP 4xx other than 408 (time-out) and 429 (busy) — are
+# raised at once on any try, in the standing HTTPError form. Each
+# failed try is written to the log; after the third, the last
+# error is raised, as the one try raised before.
+DOWNLOAD_DEADLINE_SECONDS = 600
+PART_BYTES = 256 * 1024
+_UA = {"User-Agent": "yard_verify/1.0"}
+
+
+def _retryable_http(code):
+    return code in (408, 429) or 500 <= code <= 599
+
+
+def _stated_length(headers):
+    """The answer's stated length as an int, or None when the
+    header is absent or does not parse."""
+    raw = headers.get("Content-Length") if headers else None
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _content_range(value):
+    """'bytes 100-199/500' -> (100, 199, 500); a total of '*' -> None
+    total; 'bytes */500' (the 416 form) -> (None, None, 500)."""
+    if not value:
+        return None, None, None
+    try:
+        unit, rest = value.split(None, 1)
+        range_part, _, total_part = rest.partition("/")
+        total = None if total_part in ("", "*") else int(total_part)
+        if range_part == "*":
+            return None, None, total
+        start_s, _, end_s = range_part.partition("-")
+        return int(start_s), int(end_s), total
+    except (ValueError, AttributeError):
+        return None, None, None
+
+
+def _parts_road(url, dest, deadline_end):
+    """Try 2: resume dest in validated parts. Returns the file's
+    total size, proven. Raises on any failure."""
+    total = None
+    stalls = 0
+    start = dest.stat().st_size if dest.exists() else 0
+    while total is None or start < total:
+        if time.monotonic() > deadline_end:
+            raise TimeoutError("the download deadline ran out during the parts read")
+        req = urllib.request.Request(
+            url, headers={**_UA, "Range": f"bytes={start}-{start + PART_BYTES - 1}"})
+        try:
+            resp = urllib.request.urlopen(req, timeout=120)
+        except urllib.error.HTTPError as err:
+            if err.code == 416:
+                _, _, stated_total = _content_range(
+                    err.headers.get("Content-Range") if err.headers else None)
+                if start > 0 and (stated_total == start or total == start):
+                    return start
+                raise OSError(
+                    f"range refused (416) with {start} bytes in hand "
+                    f"and no proof they reach the end of the file")
+            raise
+        with resp:
+            status = getattr(resp, "status", 200)
+            if status == 200:
+                # The Range ask was ignored: the answer is the whole
+                # file. It must state a usable length that the body
+                # reaches — the same guard as try 1.
+                expected = _stated_length(resp.headers)
+                if expected is None:
+                    raise OSError(
+                        "the whole answer stated no usable length; the "
+                        "download's wholeness cannot be proven")
+                if total is not None and expected != total:
+                    raise OSError("the file changed size during the download")
+                got = 0
+                with open(dest, "wb") as out:
+                    while True:
+                        chunk = resp.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        out.write(chunk)
+                        got += len(chunk)
+                        if time.monotonic() > deadline_end:
+                            raise TimeoutError(
+                                "the download deadline ran out mid-read")
+                if got != expected:
+                    raise OSError(
+                        f"download came up short: got {got} of {expected} "
+                        f"bytes from {url}")
+                return expected
+            if status != 206:
+                raise OSError(f"unexpected answer {status} to a part request")
+            p_start, p_end, p_total = _content_range(
+                resp.headers.get("Content-Range") if resp.headers else None)
+            if p_start != start:
+                raise OSError(
+                    f"a part began at byte {p_start}; byte {start} was asked for")
+            if p_total is not None:
+                if total is not None and p_total != total:
+                    raise OSError("the file changed size during the download")
+                total = p_total
+            length_n = _stated_length(resp.headers)
+            span = (p_end - p_start + 1) if p_end is not None else None
+            if length_n is not None and span is not None and length_n != span:
+                raise OSError("a part's stated length does not match its stated range")
+            got_part = 0
+            with open(dest, "ab") as out:
+                while True:
+                    chunk = resp.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    out.write(chunk)
+                    got_part += len(chunk)
+                    if time.monotonic() > deadline_end:
+                        raise TimeoutError("the download deadline ran out mid-read")
+            if span is not None and got_part > span:
+                raise OSError("a part carried more bytes than its stated range")
+            start += got_part
+            if got_part == 0:
+                stalls += 1
+                if stalls >= 3:
+                    raise OSError("the parts read stopped advancing")
+            else:
+                stalls = 0
+            if total is not None and start > total:
+                raise OSError("the read ran past the file's stated size")
+    return total
+
+
+def _curl_answer_proof(dump_path):
+    """Read the header dump curl wrote (-D) and return (the stated
+    length or None, whether the answer came in chunks). The last
+    answer block in the dump is the one judged."""
+    try:
+        text = dump_path.read_text(errors="replace")
+    except OSError:
+        return None, False
+    blocks = [b for b in text.replace("\r\n", "\n").split("\n\n")
+              if b.startswith("HTTP/")]
+    if not blocks:
+        return None, False
+    stated = None
+    chunked = False
+    for line in blocks[-1].splitlines()[1:]:
+        name, _, value = line.partition(":")
+        name = name.strip().lower()
+        value = value.strip()
+        if name == "content-length":
+            try:
+                stated = int(value)
+            except ValueError:
+                stated = None
+        elif name == "transfer-encoding" and "chunked" in value.lower():
+            chunked = True
+    return stated, chunked
+
+
 def download(url, dest):
-    """Download url to dest (in a temp dir). Raises on failure."""
-    req = urllib.request.Request(url, headers={"User-Agent": "yard_verify/1.0"})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        if getattr(resp, "status", 200) != 200:
-            raise urllib.error.HTTPError(url, resp.status, "non-200 response", resp.headers, None)
-        with open(dest, "wb") as out:
-            for chunk in iter(lambda: resp.read(1024 * 1024), b""):
-                out.write(chunk)
+    """Download url to dest (in a temp dir). Raises on failure.
+    The ladder is described in the note above download()."""
+    last_exc = None
+    learned_total = None
+    # Try 1: the standing read, with the length guard.
+    try:
+        req = urllib.request.Request(url, headers=_UA)
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            if getattr(resp, "status", 200) != 200:
+                raise urllib.error.HTTPError(url, resp.status, "non-200 response", resp.headers, None)
+            expected = _stated_length(resp.headers)
+            if expected is None:
+                raise OSError(
+                    f"the answer for {url} stated no usable length; the "
+                    f"download's wholeness cannot be proven")
+            learned_total = expected
+            got = 0
+            with open(dest, "wb") as out:
+                for chunk in iter(lambda: resp.read(1024 * 1024), b""):
+                    out.write(chunk)
+                    got += len(chunk)
+        if got < expected:
+            raise OSError(f"download came up short: got {got} of {expected} bytes from {url}")
+        if got > expected:
+            raise OSError(f"download overran its stated length: got {got} of {expected} bytes from {url}")
+        return
+    except urllib.error.HTTPError as exc:
+        if not _retryable_http(exc.code):
+            raise
+        last_exc = exc
+    except Exception as exc:
+        last_exc = exc
+    # The 600 seconds for tries 2-3 are counted from this failure:
+    # the deadline is set before the first wait.
+    deadline_end = time.monotonic() + DOWNLOAD_DEADLINE_SECONDS
+    emit(f"download of {url}: try 1 failed ({last_exc}); "
+         f"waiting 10 seconds before try 2 (the read in parts)")
+    time.sleep(10)
+    # Try 2: the read in parts.
+    try:
+        _parts_road(url, dest, deadline_end)
+        return
+    except urllib.error.HTTPError as exc:
+        if not _retryable_http(exc.code):
+            raise
+        last_exc = exc
+    except Exception as exc:
+        last_exc = exc
+    emit(f"download of {url}: try 2 failed ({last_exc}); "
+         f"waiting 20 seconds before try 3 (the curl road)")
+    if time.monotonic() >= deadline_end:
+        raise TimeoutError(
+            f"the {DOWNLOAD_DEADLINE_SECONDS}-second limit for one "
+            f"download ran out (last error: {last_exc})")
+    time.sleep(20)
+    # Try 3: the curl road. Curl's answer headers are dumped to a
+    # file beside dest so the file it wrote can be judged by the
+    # answer's shape, as the ladder note states.
+    remaining = int(deadline_end - time.monotonic())
+    if remaining <= 0:
+        raise TimeoutError(
+            f"the {DOWNLOAD_DEADLINE_SECONDS}-second limit for one "
+            f"download ran out (last error: {last_exc})")
+    dump_path = dest.with_name(dest.name + ".curlheaders")
+    try:
+        proc = subprocess.run(
+            ["/usr/bin/curl", "-fsS", "-H", "User-Agent: yard_verify/1.0",
+             "--max-time", str(min(180, remaining)),
+             "-D", str(dump_path), "-o", str(dest), url],
+            capture_output=True)
+        if proc.returncode != 0:
+            raise OSError(
+                f"the curl road failed (exit {proc.returncode}): "
+                f"{proc.stderr.decode('utf-8', 'replace').strip()}")
+        stated, chunked = _curl_answer_proof(dump_path)
+        size = dest.stat().st_size
+        if stated is not None:
+            if size != stated:
+                raise OSError(
+                    f"the curl road's file is {size} bytes; its answer "
+                    f"stated {stated}; the download's wholeness is "
+                    f"not proven")
+        elif learned_total is not None:
+            if size != learned_total:
+                raise OSError(
+                    f"the curl road's file is {size} bytes; the "
+                    f"first answer stated {learned_total}; the "
+                    f"download's wholeness is not proven")
+        elif not chunked:
+            raise OSError(
+                f"the curl road's answer for {url} stated no length "
+                f"and did not arrive in chunks; a cut cannot be told "
+                f"from a finish, so the download's wholeness cannot "
+                f"be proven")
+    finally:
+        try:
+            dump_path.unlink()
+        except OSError:
+            pass
+    return
 
 
 def _main():
