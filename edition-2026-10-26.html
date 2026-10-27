@@ -237,6 +237,15 @@ img { max-width: 100%; }
   .headrow { flex-direction: column; }
   .mcols td { display: block; width: auto; padding: 0 0 6px 0; }
   .mcols td.mtext2 { border-left: none; padding-left: 0; }
+  /* The By the Hours strip on a narrow screen: each hour's words
+     and pictures stand side by side as two table cells, and the
+     picture cell cannot shrink below its pictures — in Chrome the
+     pictures paint over the next hour's degrees and run past the
+     sheet's edge. Stack them instead: the words over the pictures,
+     inside each hour's own quarter of the strip. */
+  .wxmain { display: block; }
+  .wxwords { display: block; }
+  .wxpics { display: block; width: auto; padding-left: 0; text-align: center; }
 }
 </style>
 </head>
