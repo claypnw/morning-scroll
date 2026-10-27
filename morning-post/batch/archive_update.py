@@ -7,6 +7,13 @@ Mechanizes PUBLISH-RUNBOOK Steps 2b + 3 + 4 for one edition date:
   - Prepend the new edition to scroll-search-index.json.
   - Add the issue item, reader section, date-slider range, JS edition
     map entry, and cache buster to index.html.
+  - Point every edition's title link at that edition's web page
+    (the admin's ruling, 2026-10-26: the reading road is the web
+    page — tonight's and later editions link to their HTML edition
+    page; earlier editions link to their standing reader section
+    on this page), and take every Download PDF button off the
+    archive (the same ruling: the PDF file itself still publishes
+    at its address every day; only the buttons go).
 
 No AI judgment inside: every string is built from edition-meta.json,
 search-text.txt, and the date, by fixed rules. Prints a plain log,
@@ -24,6 +31,8 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.error
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +41,42 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_UPLOAD_DIR = ROOT / "publish-upload"
 RAW_BASE = "https://raw.githubusercontent.com/claypnw/morning-scroll/main"
 SITE_BASE = "https://claypnw.github.io/morning-scroll"
+
+# An edition's title link on the archive page (the empty overlay
+# anchor that makes the whole issue card tappable). The admin's
+# ruling (2026-10-26): the reading road is the web page. Editions
+# from WEB_PAGE_START on carry an HTML edition page on the site
+# (edition-DATE.html, published by the chain as part of the
+# bundle), and their title links point at it; earlier editions
+# point at their standing reader section on this page
+# (#edition-DATE). web_title_links() converts every title link
+# that arrives in any older shape (a reader-section link, a PDF
+# address, an edition-page address) to the shape its date calls
+# for; it changes nothing once converted (idempotent), and the
+# new item below is generated with its own address directly.
+WEB_PAGE_START = "2026-10-26"
+ISSUE_OPEN_RE = re.compile(
+    r'(<a class="issue-open" href=")(?:#edition-|'
+    + re.escape(SITE_BASE) + r'/payson-morning-scroll-|'
+    + re.escape(SITE_BASE) + r'/edition-)(\d{4}-\d{2}-\d{2})'
+    r'(?:\.pdf|\.html)?(")')
+
+
+def title_target(date_str):
+    """Where one edition's title link points, by its date: the
+    HTML edition page from WEB_PAGE_START on, the standing reader
+    section before it."""
+    if date_str >= WEB_PAGE_START:
+        return f"{SITE_BASE}/edition-{date_str}.html"
+    return f"#edition-{date_str}"
+
+
+def web_title_links(text):
+    """Convert every edition title link in `text` to the address
+    its date calls for. Returns (new_text, converted_count)."""
+    return ISSUE_OPEN_RE.subn(
+        lambda mo: f"{mo.group(1)}{title_target(mo.group(2))}{mo.group(3)}",
+        text)
 
 
 # --- Shared error program (standards wiring step A, 2026-10-21) -------------
@@ -103,6 +148,216 @@ def fail(message, kind="check_failed"):
     sys.exit(result["exit_code"] if result else 1)
 
 
+# The two fresh-file downloads climb a step-down ladder
+# (2026-10-26, second form after the fresh-eyes review). The first
+# form repeated the same whole download at new time limits — and
+# its first limit (60 seconds) also changed the success path,
+# because the standing download had NO limit: a slow download that
+# once landed in one read would have been cut off and restarted.
+# The second form keeps the success path exactly as it stood and
+# changes only what happens after a failure surfaces:
+#   try 1 — the standing call itself, unchanged: one whole read
+#     with no time limit set. A download that lands, however
+#     slowly, lands as it always did. A silent hang on this try
+#     remains governed by the chain's own time budget, exactly as
+#     before this change — named here, not hidden.
+#   try 2, after a 10-second wait — the file read in parts of at
+#     most PART_BYTES, keeping the bytes that arrived and asking
+#     only for the missing tail. Each part is checked against the
+#     range the server says it sent; a part starting at the wrong
+#     byte, or a size changing mid-read, ends the try — pieces of
+#     two versions are never joined. A "no such range" answer
+#     (416) ends the read only when its stated total equals the
+#     bytes in hand. Per-request limit 120 seconds.
+#   try 3, after a 20-second wait — the same address fetched by
+#     curl, the road that came down whole in the 2026-10-26
+#     diagnosis, with a total limit of 180 seconds.
+# Tries 2 and 3 together are bounded by DOWNLOAD_DEADLINE_SECONDS
+# (600) counted from the first failure, checked between requests
+# and between pulls of a body (bodies are pulled with single-pull
+# reads so a slow-drip answer cannot hold a read past it). The
+# limits on those tries bound each socket operation, not the
+# whole read; the deadline is the whole-read bound for them.
+# Answers no later try can fix — an HTTP 4xx other than 408
+# (time-out) and 429 (busy) — raise at once on any try, named.
+# Each failed try is printed with its error; after the third, the
+# last error is raised, so the caller's standing failure path
+# runs unchanged.
+DOWNLOAD_DEADLINE_SECONDS = 600
+PART_BYTES = 256 * 1024
+
+
+def _retryable_http(code):
+    return code in (408, 429) or 500 <= code <= 599
+
+
+def _read_body(resp, deadline_end):
+    """Read a response body in pulls, enforcing the deadline
+    between pulls; a stated length the body does not reach raises,
+    so a short read is a failed try, never a short result."""
+    pull = getattr(resp, "read1", None) or resp.read
+    chunks = []
+    got = 0
+    while True:
+        chunk = pull(256 * 1024)
+        if not chunk:
+            break
+        chunks.append(chunk)
+        got += len(chunk)
+        if time.monotonic() > deadline_end:
+            raise TimeoutError("the download deadline ran out mid-read")
+    data = b"".join(chunks)
+    stated = resp.headers.get("Content-Length") if resp.headers else None
+    if stated is not None:
+        try:
+            stated_n = int(stated)
+        except (TypeError, ValueError):
+            stated_n = None
+        if stated_n is not None and got != stated_n:
+            raise OSError(f"short read: got {got} of {stated_n} bytes")
+    return data
+
+
+def _parse_content_range(value):
+    """'bytes 100-199/500' -> (100, 199, 500); a total of '*' -> None
+    total; 'bytes */500' (the 416 form) -> (None, None, 500)."""
+    if not value:
+        return None, None, None
+    try:
+        unit, rest = value.split(None, 1)
+        range_part, _, total_part = rest.partition("/")
+        total = None if total_part in ("", "*") else int(total_part)
+        if range_part == "*":
+            return None, None, total
+        start_s, _, end_s = range_part.partition("-")
+        return int(start_s), int(end_s), total
+    except (ValueError, AttributeError):
+        return None, None, None
+
+
+def _read_parts_road(url, timeout, deadline_end):
+    got = bytearray()
+    total = None
+    stalls = 0
+    while total is None or len(got) < total:
+        if time.monotonic() > deadline_end:
+            raise TimeoutError("the download deadline ran out during the parts read")
+        start = len(got)
+        request = urllib.request.Request(
+            url, headers={"Range": f"bytes={start}-{start + PART_BYTES - 1}"})
+        try:
+            resp = urllib.request.urlopen(request, timeout=timeout)
+        except urllib.error.HTTPError as err:
+            if err.code == 416:
+                _, _, stated_total = _parse_content_range(
+                    err.headers.get("Content-Range") if err.headers else None)
+                if len(got) > 0 and (stated_total == len(got) or total == len(got)):
+                    return bytes(got)
+                raise OSError(
+                    f"range refused (416) with {len(got)} bytes in hand "
+                    f"and no proof they reach the end of the file")
+            raise
+        with resp:
+            if resp.status == 200:
+                # The Range ask was ignored: the answer is the whole
+                # file from the start. It replaces the kept bytes —
+                # pieces are never joined across answers.
+                body = _read_body(resp, deadline_end)
+                if total is not None and len(body) != total:
+                    raise OSError(
+                        "the whole answer does not match the size "
+                        "learned earlier in this read")
+                return body
+            if resp.status != 206:
+                raise OSError(
+                    f"unexpected answer {resp.status} to a part request")
+            p_start, p_end, p_total = _parse_content_range(
+                resp.headers.get("Content-Range") if resp.headers else None)
+            if p_start != start:
+                raise OSError(
+                    f"a part began at byte {p_start}; byte {start} was asked for")
+            if p_total is not None:
+                if total is not None and p_total != total:
+                    raise OSError("the file changed size during the read")
+                total = p_total
+            part = _read_body(resp, deadline_end)
+            span = (p_end - p_start + 1) if p_end is not None else len(part)
+            if len(part) > span:
+                raise OSError("a part carried more bytes than its stated range")
+            got.extend(part)
+            if len(part) == 0:
+                stalls += 1
+                if stalls >= 3:
+                    raise OSError("the parts read stopped advancing")
+            else:
+                stalls = 0
+            if total is not None and len(got) > total:
+                raise OSError("the read ran past the file's stated size")
+            if total is None and len(part) < PART_BYTES:
+                return bytes(got)
+    return bytes(got)
+
+
+def _read_curl_road(url, timeout, deadline_end):
+    remaining = int(deadline_end - time.monotonic())
+    if remaining <= 0:
+        raise TimeoutError("the download deadline ran out before the curl try")
+    proc = subprocess.run(
+        ["/usr/bin/curl", "-fsS", "--max-time", str(min(timeout, remaining)), url],
+        capture_output=True)
+    if proc.returncode != 0:
+        raise OSError(
+            f"the curl road failed (exit {proc.returncode}): "
+            f"{proc.stderr.decode('utf-8', 'replace').strip()}")
+    return proc.stdout
+
+
+def _download_ladder(url, what):
+    """Download one file down the step-down ladder described above
+    and return its bytes. After the third failed try the last error
+    is raised, so the caller's standing failure path runs."""
+    try:
+        with urllib.request.urlopen(url) as resp:
+            return resp.read()
+    except urllib.error.HTTPError as exc:
+        if not _retryable_http(exc.code):
+            print(f"{what}: answer {exc.code} cannot be fixed by "
+                  f"another try; not retrying", flush=True)
+            raise
+        last_exc = exc
+    except Exception as exc:
+        last_exc = exc
+    # The 600 seconds for tries 2-3 are counted from this failure:
+    # the deadline is set before the first wait and checked again
+    # before the second wait, so the bound the notes state is the
+    # bound the program keeps (up to one body pull already in
+    # flight when the deadline passes; pulls are the short reads
+    # the parts reader makes).
+    deadline_end = time.monotonic() + DOWNLOAD_DEADLINE_SECONDS
+    print(f"{what}: try 1 failed ({last_exc}); waiting 10 seconds "
+          f"before try 2 (the read in parts)", flush=True)
+    time.sleep(10)
+    try:
+        return _read_parts_road(url, 120, deadline_end)
+    except urllib.error.HTTPError as exc:
+        if not _retryable_http(exc.code):
+            print(f"{what}: answer {exc.code} cannot be fixed by "
+                  f"another try; not retrying", flush=True)
+            raise
+        last_exc = exc
+    except Exception as exc:
+        last_exc = exc
+    print(f"{what}: try 2 failed ({last_exc}); waiting 20 seconds "
+          f"before try 3 (the curl road)", flush=True)
+    if time.monotonic() >= deadline_end:
+        raise TimeoutError(
+            f"{what}: the {DOWNLOAD_DEADLINE_SECONDS}-second limit "
+            f"for the simpler tries was reached; the last error "
+            f"was: {type(last_exc).__name__}: {last_exc}")
+    time.sleep(20)
+    return _read_curl_road(url, 180, deadline_end)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Update the Morning Scroll archive files for one edition.")
     parser.add_argument("date", help="Edition date, YYYY-MM-DD")
@@ -110,6 +365,13 @@ def main():
                         help="Directory holding index.html / scroll-search-index.json to write (default: publish-upload)")
     parser.add_argument("--from-dir", default=None,
                         help="Test mode: copy index.html + scroll-search-index.json from this directory instead of downloading")
+    parser.add_argument("--button-mode", default=None, choices=["new", "retry", "none"],
+                        help="Where the Read button goes this run (default: read "
+                             "batch/button-mode-DATE.json, written by "
+                             "build_and_manifest.py; no file means 'new')")
+    parser.add_argument("--button-date", default=None,
+                        help="For --button-mode retry: the edition whose section "
+                             "carries the button")
     args = parser.parse_args()
 
     global _STEP
@@ -161,14 +423,48 @@ def main():
         source_desc = f"copied from {from_dir}"
     else:
         try:
-            with urllib.request.urlopen(f"{RAW_BASE}/index.html") as resp:
-                index_bytes = resp.read()
-            with urllib.request.urlopen(f"{RAW_BASE}/scroll-search-index.json") as resp:
-                search_bytes = resp.read()
+            index_bytes = _download_ladder(f"{RAW_BASE}/index.html",
+                                           "download of the fresh archive page")
+            search_bytes = _download_ladder(f"{RAW_BASE}/scroll-search-index.json",
+                                            "download of the fresh search list")
         except Exception as exc:
             fail(f"download of fresh archive files failed: {exc}", kind="foreseen")
         source_desc = f"downloaded from {RAW_BASE}"
     index_text = index_bytes.decode("utf-8")
+
+    # ---- Read-button placement for this run ------------------------------
+    # build_and_manifest.py works out where the button goes and writes
+    # batch/button-mode-DATE.json; the explicit flags win over the file,
+    # and no file and no flags means "new" — the button on this
+    # edition, the plain case (and the only case before this change).
+    # "new": this edition's recording stands, the button goes on this
+    # edition. "retry": this edition's recording is missing, but a
+    # queued earlier recording landed this run, so the button goes on
+    # that edition (button_date). "none": no button moves — the one
+    # standing, on the newest edition that has a recording, stays.
+    _STEP = "read-button placement"
+    button_mode = args.button_mode
+    button_date = args.button_date
+    if button_mode is None:
+        mode_path = Path(__file__).resolve().parent / f"button-mode-{date_str}.json"
+        if mode_path.is_file():
+            try:
+                mode_data = json.loads(mode_path.read_text(encoding="utf-8"))
+                button_mode = mode_data.get("mode")
+                button_date = mode_data.get("button_date")
+            except Exception as exc:
+                fail(f"button-mode file {mode_path} did not read as JSON: {exc}",
+                     kind="foreseen")
+        else:
+            button_mode = "new"
+    if button_mode not in ("new", "retry", "none"):
+        fail(f"bad button mode {button_mode!r} (want new, retry, or none)")
+    if button_mode == "retry" and not button_date:
+        fail("button mode 'retry' needs a button date (the landed edition)")
+    input_btn_count = index_text.count('<button class="scroll-read-btn"')
+    print(f"read-button placement: mode {button_mode}"
+          + (f", button edition {button_date}" if button_mode == "retry" else "")
+          + f" (buttons on the incoming page: {input_btn_count})")
     try:
         search_data = json.loads(search_bytes.decode("utf-8"))
     except Exception as exc:
@@ -217,6 +513,20 @@ def main():
         fail(f"REFUSED: edition {date_str} already appears in index.html (id=\"edition-{date_str}\")")
     if any(isinstance(e, dict) and e.get("date") == date_str for e in search_data):
         fail(f"REFUSED: edition {date_str} already appears in scroll-search-index.json")
+
+    # ---- take the Download PDF buttons off (2026-10-26 ruling) ----------
+    # The reading road is the web page now, so no Download PDF
+    # button stands anywhere on the archive: the buttons in the
+    # downloaded base (one on each issue card, one in each reader
+    # section) come off here, and the new item and reader section
+    # below are generated without one. The PDF file itself still
+    # publishes at its address every day — only the buttons go.
+    # The self-check at the end fails the run if any button
+    # survives.
+    _STEP = "download-button removal"
+    index_text, removed_btns = re.subn(
+        r'<a class="pdf-button"[^>]*>Download PDF</a>', "", index_text)
+    print(f"edit: {removed_btns} Download PDF button(s) taken off the archive page")
 
     # ---- place the fresh copies in the upload dir ------------------------
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -275,6 +585,20 @@ def main():
         fail('anchor check failed: no existing <section class="edition-view"> found')
     print(f"anchor check: all anchors found exactly once (edition sections before: {section_count_before})")
 
+    # a0. Edition title links point at the editions' web pages ---------
+    # The admin's ruling (2026-10-26), see web_title_links() above:
+    # every existing edition's title link is converted to the
+    # address its date calls for, and the new item below is
+    # generated with its own address directly. Nothing else on the
+    # page changes.
+    converted = 0
+    for i, ln in enumerate(lines):
+        new_ln, n = web_title_links(ln)
+        if n:
+            lines[i] = new_ln
+            converted += n
+    print(f"edit: {converted} existing edition title link(s) now point at their web pages")
+
     headline_esc = html.escape(headline, quote=True)
     greeting_esc = html.escape(greeting, quote=True)
     teaser_raw = greeting if len(greeting) <= 200 else greeting[:200].rstrip() + "…"
@@ -282,16 +606,13 @@ def main():
 
     issue_item = (
         " " * 40
-        + f'<div class="issue-link"><a class="issue-open" href="#edition-{date_str}" '
+        + f'<div class="issue-link"><a class="issue-open" href="{title_target(date_str)}" '
           f'aria-label="Read the {long_date} edition: {headline_esc}"></a>'
           f'<div class="issue-date"><strong>{weekday},</strong> {month_day_year}</div>'
           f'<div class="issue-copy"><p class="greeting">"{teaser_esc}"</p>'
           f'<h2 class="issue-title">{headline_esc}</h2>'
           f'<div class="issue-number">Vol. {vol} · No. {no}</div></div>'
-          f'<div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span>'
-          f'<a class="pdf-button" href="{SITE_BASE}/payson-morning-scroll-{date_str}.pdf" '
-          f'target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" '
-          f'aria-label="Download the {long_date} PDF">Download PDF</a></div></div>'
+          f'<div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span></div></div>'
     )
 
     # a. Issue item + month count ------------------------------------------
@@ -348,8 +669,8 @@ def main():
         " " * 32 + f'<section class="edition-view" id="edition-{date_str}" hidden aria-labelledby="edition-title-{date_str}">',
         '        <nav class="back-row" aria-label="Archive navigation">',
         '          <a class="back-link" href="#archive"><span aria-hidden="true">←</span> All editions</a>',
-        f'          <a class="pdf-button" href="{SITE_BASE}/payson-morning-scroll-{date_str}.pdf" target="_blank" rel="noopener" referrerpolicy="origin" type="application/pdf" aria-label="Download the {long_date} PDF">Download PDF</a>',
         f'          <span class="issue-number">Vol. {vol} · No. {no}</span>',
+        '          <button class="scroll-read-btn" id="scroll-read-btn" type="button">Read this edition aloud</button>',
         '        </nav>',
         '        <article class="edition-sheet">',
         '          <header class="edition-heading">',
@@ -377,6 +698,68 @@ def main():
     first_section = next(i for i, ln in enumerate(lines) if '<section class="edition-view"' in ln)
     lines[first_section:first_section] = reader_lines
     print(f"edit: reader section for {date_str} inserted before the previous newest section ({len(pngs)} page images)")
+
+    # b2. Read-button placement. The button lives on exactly one
+    # edition: the newest one whose recording stands. Which edition
+    # that is comes from the placement read at the top of this run
+    # (build_and_manifest.py works it out from the recording and the
+    # retry queue): "new" — this edition's recording stands; the
+    # button is in the reader lines just inserted, and it comes off
+    # every earlier section. "retry" — this edition's recording is
+    # missing, but a queued earlier recording landed this run; the
+    # button goes on that edition's section (button_date) and off
+    # every other. "none" — this edition's recording is missing and
+    # nothing landed; the just-inserted section's button line comes
+    # off, and the button standing on an earlier edition stays where
+    # it is. A section spans from its edition-id line to its own
+    # closing </section>.
+    def section_span(sec_id):
+        start = next((i for i, ln in enumerate(lines) if f'id="{sec_id}"' in ln), None)
+        if start is None:
+            return None
+        end = next((i for i in range(start, len(lines)) if '</section>' in lines[i]), None)
+        return (start, end) if end is not None else None
+
+    btn_line = ('          <button class="scroll-read-btn" id="scroll-read-btn" '
+                'type="button">Read this edition aloud</button>')
+    if button_mode in ("new", "retry"):
+        target_id = f"edition-{date_str if button_mode == 'new' else button_date}"
+        span = section_span(target_id)
+        if span is None:
+            fail(f"button placement failed: no reader section {target_id} on the page")
+        removed = 0
+        for i in range(len(lines) - 1, -1, -1):
+            if '<button class="scroll-read-btn"' in lines[i] and not (span[0] <= i <= span[1]):
+                del lines[i]
+                removed += 1
+        span = section_span(target_id)
+        in_target = [i for i in range(span[0], span[1] + 1)
+                     if '<button class="scroll-read-btn"' in lines[i]]
+        if len(in_target) > 1:
+            fail(f"button placement failed: section {target_id} carries "
+                 f"{len(in_target)} read buttons (want one)")
+        if not in_target:
+            nav_idx = [i for i in range(span[0], span[1] + 1)
+                       if '<span class="issue-number">' in lines[i]]
+            if len(nav_idx) != 1:
+                fail(f"button placement failed: no issue-number line in section "
+                     f"{target_id} to set the button beside")
+            lines.insert(nav_idx[0] + 1, btn_line)
+            print(f"edit: read button set on {target_id} (mode {button_mode})")
+        else:
+            print(f"edit: read button stands on {target_id} (mode {button_mode})")
+        if removed:
+            print(f"edit: read button removed from {removed} other section(s) — "
+                  f"it lives on the newest edition whose recording stands")
+    else:
+        span = section_span(f"edition-{date_str}")
+        if span is not None:
+            for i in range(span[1], span[0] - 1, -1):
+                if '<button class="scroll-read-btn"' in lines[i]:
+                    del lines[i]
+                    print(f"edit: no read button on edition {date_str} — its "
+                          f"recording is missing, so the edition publishes "
+                          f"without one (mode none)")
 
     # c. Date slider ----------------------------------------------------------
     dates = sorted({e.get("date") for e in new_search_data if isinstance(e, dict) and e.get("date")})
@@ -435,9 +818,114 @@ def main():
         fail(f"self-check failed: new date {date_str} is not the max date ({dates[-1]})")
     if final_text.count(f'id="edition-{date_str}"') != 1:
         fail(f'self-check failed: id="edition-{date_str}" does not appear exactly once after edits')
+    # Title-link audit (the admin's ruling, 2026-10-26): every
+    # edition's title link must point where its date calls for —
+    # the HTML edition page for WEB_PAGE_START and later, the
+    # standing reader section for earlier editions — and no other
+    # shape may stand on the page.
+    for _m in re.finditer(r'class="issue-open" href="([^"]+)"', final_text):
+        _href = _m.group(1)
+        _dm = re.search(r'(\d{4}-\d{2}-\d{2})', _href)
+        if not _dm or _href != title_target(_dm.group(1)):
+            fail(f"self-check failed: an edition title link points at "
+                 f"{_href!r}, not at the web page its date calls for")
+    if 'class="pdf-button"' in final_text or '>Download PDF<' in final_text:
+        fail("self-check failed: a Download PDF button still stands "
+             "on the archive page")
     if new_search_data[0].get("date") != date_str:
         fail("self-check failed: new search entry is not first")
-    print(f"self-check: sections {section_count_before} -> {section_count_after}, max date {dates[-1]}, OK")
+    btn_total = final_text.count('<button class="scroll-read-btn"')
+    if button_mode in ("new", "retry"):
+        target_id = f"edition-{date_str if button_mode == 'new' else button_date}"
+        sec_start = final_text.find(f'id="{target_id}"')
+        sec_end = final_text.find('</section>', sec_start) if sec_start >= 0 else -1
+        btn_at = final_text.find('<button class="scroll-read-btn"')
+        if btn_total != 1 or sec_start < 0 or not (sec_start < btn_at < sec_end):
+            fail(f'self-check failed: the read button must appear exactly once, '
+                 f'inside section {target_id} (mode {button_mode}); found '
+                 f'{btn_total} on the page')
+    else:
+        if btn_total != input_btn_count or btn_total > 1:
+            fail(f'self-check failed: button mode "none" must leave the page '
+                 f'button as it stood ({input_btn_count}); found {btn_total}')
+    print(f"self-check: sections {section_count_before} -> {section_count_after}, max date {dates[-1]}, "
+          f"read button count {btn_total} (mode {button_mode}), OK")
+
+    # h. Read-button furniture: the button styles and the player script.
+    # They are page furniture, not per-edition content: inserted once,
+    # on the first run of this change, and left standing after that —
+    # the guard is the "scroll-read-player" marker in the script. The
+    # player takes the edition date from the button's own section id,
+    # so the same script serves each day's newest edition. If the
+    # recording cannot load or play, the player shows a plain-words
+    # line under the button saying so — a failed tap is never silent.
+    # Runs before
+    # the JS validation below, so the player is syntax-checked with
+    # the rest of the page script on every run.
+    if "scroll-read-player" not in final_text:
+        if final_text.count("</head>") != 1 or final_text.count("</body>") != 1:
+            fail("anchor check failed: read-button furniture needs exactly one "
+                 "</head> and one </body> to attach to")
+        style_block = (
+            "<style>\n"
+            ".scroll-read-btn{font:inherit;font-size:0.9em;padding:8px 16px;"
+            "border:1px solid #8a6d3b;border-radius:6px;background:#f7f0dc;"
+            "color:#3a2f16;cursor:pointer}\n"
+            ".scroll-read-btn.reading{background:#8a6d3b;color:#fff}\n"
+            ".scroll-read-note{display:block;margin-top:6px;font-size:0.9em;"
+            "color:#7a1f1f}\n"
+            ".scroll-read-note[hidden]{display:none}\n"
+            "</style>\n"
+        )
+        final_text = final_text.replace("</head>", style_block + "</head>", 1)
+        player_block = (
+            "<script>\n"
+            "/* scroll-read-player */\n"
+            "(function(){\n"
+            "  var audio = new Audio();\n"
+            "  audio.preload = 'none';\n"
+            "  var btn = document.querySelector('.scroll-read-btn');\n"
+            "  if (!btn) return;\n"
+            "  var section = btn.closest('section');\n"
+            "  var date = section ? section.id.replace('edition-', '') : '';\n"
+            "  var note = document.createElement('span');\n"
+            "  note.className = 'scroll-read-note';\n"
+            "  note.setAttribute('role', 'status');\n"
+            "  note.hidden = true;\n"
+            "  btn.after(note);\n"
+            "  function showNote(){\n"
+            "    note.textContent = 'The reading could not be played. The recording for this edition is not available right now.';\n"
+            "    note.hidden = false;\n"
+            "  }\n"
+            "  function stopAll(){\n"
+            "    audio.pause();\n"
+            "    try { audio.currentTime = 0; } catch(e) {}\n"
+            "    btn.textContent = 'Read this edition aloud';\n"
+            "    btn.classList.remove('reading');\n"
+            "  }\n"
+            "  audio.addEventListener('ended', stopAll);\n"
+            "  audio.addEventListener('error', function(){\n"
+            "    if (btn.classList.contains('reading')){ stopAll(); showNote(); }\n"
+            "  });\n"
+            "  btn.addEventListener('click', function(){\n"
+            "    if (!audio.paused){ stopAll(); return; }\n"
+            "    note.hidden = true;\n"
+            "    if (!date){ showNote(); return; }\n"
+            "    if (!audio.src) audio.src = 'audio/morning-scroll-' + date + '.mp3';\n"
+            "    btn.textContent = 'Stop';\n"
+            "    btn.classList.add('reading');\n"
+            "    var p = audio.play();\n"
+            "    if (p && p.catch) p.catch(function(){ stopAll(); showNote(); });\n"
+            "  });\n"
+            "})();\n"
+            "</script>\n"
+        )
+        final_text = final_text.replace("</body>", player_block + "</body>", 1)
+        print("edit: read-button styles and player script added to the page "
+              "(first run of this change)")
+    else:
+        print("read-button styles and player script already stand on the page — "
+              "left as they are")
 
     # g. JavaScript validation (Q8, runbook Step 3.4) --------------------------
     # The edition-map entry was just inserted into the page's script; a
