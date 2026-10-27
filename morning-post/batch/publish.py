@@ -175,6 +175,16 @@ def main():
                       f"edition (Vol. {vol}, No. {no})")
     new_names = [name for name, _, _ in entries if name not in UPDATED_FILES]
 
+    # Roll-off deletions: recordings past the 45-day keep, named by
+    # the build in batch/rolloff-DATE.txt. They leave the site in this
+    # same publish — the delete commands print with the upload list so
+    # the send step runs them together.
+    rolloff_names = []
+    rolloff_path = BATCH_DIR / f"rolloff-{date_str}.txt"
+    if rolloff_path.is_file():
+        rolloff_names = [ln.strip() for ln in
+                         rolloff_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+
     print("")
     print("=== BROWSER UPLOAD INSTRUCTIONS (runbook Step 6) ===")
     print("Upload via the browser task (the admin's saved GitHub session) to https://github.com/claypnw/morning-scroll")
@@ -187,6 +197,13 @@ def main():
     for name in new_names:
         print(f"  {UPLOAD_DIR / name}")
     print("")
+    if rolloff_names:
+        print(f"Roll-off deletions ({len(rolloff_names)}) — recordings past the 45-day keep "
+              f"roll off in this same publish; delete each from the repository with the "
+              f"GitHub key program:")
+        for name in rolloff_names:
+            print(f"  github_publish.py --repo morning-scroll --delete {name}")
+        print("")
     print("Commit directly to main.")
     print(f"Commit message: {commit_message}")
     print("=====================================================")
