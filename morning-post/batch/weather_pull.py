@@ -19,6 +19,15 @@ one of the three fixed engraved windsock pictures in
 here, by wind speed, never daily. The bands (the admin, 2026-10-23):
 under 5 mph limp, 5-12 mph half, 13 mph and up straight. The paper prints
 the windsock picture in the hour block with the mph number under it.
+The weather box ALSO carries four more fields (2026-10-26, for the
+quarter-size weather area the admin approved): "wind" — the day's
+strongest hourly wind, in mph; "feels" — the day's feels-like high
+(Open-Meteo daily apparent_temperature_max); "uv" — the day's highest
+UV index with its band word (uv_band below); and "call" — a one-line
+plain-words call on the day, made by the fixed rule in call_sentence
+below from the day's condition word, high, strongest wind, and rain
+chance. No field is ever guessed: if the forecast answer lacks any of
+them, the run takes the standing FAIL path with the rest.
 
 Usage:  weather_pull.py [YYYY-MM-DD]     (default: today, America/Phoenix)
 Writes: batch/weather-YYYY-MM-DD.json and prints the same values.
@@ -27,6 +36,7 @@ Exit 0 on success; exit 1 with a plain reason on any failure.
 import json
 import os
 import sys
+import time
 import urllib.request
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -189,6 +199,87 @@ def sock_key(speed_mph):
     return "straight"
 
 
+def uv_band(uv):
+    """A day's highest UV index (already rounded) -> its band word, on
+    the standard scale: 0-2 Low, 3-5 Moderate, 6-7 High, 8-10 Very
+    high, 11 and up Extreme."""
+    if uv <= 2:
+        return "Low"
+    if uv <= 5:
+        return "Moderate"
+    if uv <= 7:
+        return "High"
+    if uv <= 10:
+        return "Very high"
+    return "Extreme"
+
+
+# The plain-words call on the day (2026-10-26) is made by ONE fixed
+# rule from facts this pull already holds — the day's condition word,
+# high, strongest wind, and rain chance — never written freehand:
+#   "A {sky word}, {warmth word} day — {skies}, {wind}, and {rain}."
+# The sky words key off the condition word wmo() returns, so every
+# condition the pull can name has a call.
+_CALL_SKY = {
+    "Sunny": ("bright", "sunny skies"),
+    "Clear": ("bright", "clear skies"),
+    "Mostly sunny": ("bright", "mostly sunny skies"),
+    "Partly cloudy": ("fair", "partly cloudy skies"),
+    "Cloudy": ("grey", "cloudy skies"),
+    "Overcast": ("grey", "overcast skies"),
+    "Foggy": ("grey", "foggy skies"),
+    "Drizzle": ("grey", "drizzle through the day"),
+    "Light rain": ("wet", "light rain"),
+    "Rain": ("wet", "rain through the day"),
+    "Hard rain": ("wet", "hard rain"),
+    "Showers": ("wet", "showers passing through"),
+    "Thunderstorms": ("grey", "thunderstorms"),
+    "Snow": ("white", "snow falling"),
+}
+
+
+def _call_warmth(high):
+    if high >= 90:
+        return "hot"
+    if high >= 80:
+        return "warm"
+    if high >= 65:
+        return "mild"
+    if high >= 50:
+        return "cool"
+    if high >= 35:
+        return "cold"
+    return "bitter cold"
+
+
+def _call_wind(mph):
+    if mph < 8:
+        return "light winds"
+    if mph < 16:
+        return "a steady breeze"
+    if mph < 25:
+        return "strong winds"
+    return "high winds"
+
+
+def _call_rain(pct):
+    if pct <= 0:
+        return "no rain in it"
+    if pct <= 40:
+        return "a chance of rain"
+    if pct <= 70:
+        return "rain likely"
+    return "rain through the day"
+
+
+def call_sentence(conditions, high, wind_mph, rain_pct):
+    """The day's plain-words call, by the fixed rule above."""
+    adj, skies = _CALL_SKY.get(conditions, ("fair", "changing skies"))
+    return "A %s, %s day — %s, %s, and %s." % (
+        adj, _call_warmth(high), skies, _call_wind(wind_mph),
+        _call_rain(rain_pct))
+
+
 def fmt_time(iso):
     """'2026-10-18T06:24' -> '6:24 AM'"""
     dt = datetime.fromisoformat(iso)
@@ -211,17 +302,53 @@ def main():
         "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s"
         "&hourly=temperature_2m,weather_code,precipitation_probability,"
         "wind_speed_10m,wind_direction_10m"
-        "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
+        "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset,"
+        "apparent_temperature_max,uv_index_max"
         "&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%%2FPhoenix"
         "&start_date=%s&end_date=%s" % (LAT, LON, date, nxt)
     )
-    try:
-        with urllib.request.urlopen(url, timeout=60) as fh:
-            data = json.load(fh)
-    except Exception as exc:
-        print("WEATHER PULL FAIL: could not fetch Open-Meteo forecast: %s" % exc)
+    # The fetch climbs a step-down ladder (2026-10-26): up to 3 tries,
+    # each allowed more time than the one before — 60, then 90, then
+    # 120 seconds — with a wait before try 2 (15 seconds) and try 3
+    # (30 seconds). A failed try is printed as it happens, flushed so
+    # the line reaches the log at once even if the run is stopped
+    # later. An answer of JSON null counts as a failed try, with the
+    # empty answer named as its reason — before this was named, a
+    # null answer ended the ladder after one try while the FAIL line
+    # below claimed 3 tries and gave "None" as the reason. Only the
+    # last try's failure takes the standing FAIL path below, with the
+    # last error, exactly as the single try did before.
+    # Time bound: the ladder's worst case is 60+15+90+30+120 = 315
+    # seconds. The invoking record — step 5 of the morning briefing
+    # job (daily, 03:30), which runs this program as a step and reads
+    # its output — names no outer time limit or kill for the step, so
+    # nothing ends the program before the ladder and its FAIL path
+    # have run.
+    data = None
+    last_exc = None
+    for try_no, timeout in ((1, 60), (2, 90), (3, 120)):
+        if try_no > 1:
+            wait = 15 if try_no == 2 else 30
+            print("weather fetch try %d failed (%s); waiting %d seconds "
+                  "before try %d" % (try_no - 1, last_exc, wait, try_no),
+                  flush=True)
+            time.sleep(wait)
+        try:
+            with urllib.request.urlopen(url, timeout=timeout) as fh:
+                data = json.load(fh)
+            if data is None:
+                last_exc = ValueError(
+                    "the forecast answer was empty (JSON null)")
+                continue
+            break
+        except Exception as exc:
+            data = None
+            last_exc = exc
+    if data is None:
+        print("WEATHER PULL FAIL: could not fetch Open-Meteo forecast "
+              "in 3 tries: %s" % last_exc, flush=True)
         _report_to_shared_error(
-            "fetch forecast", f"could not fetch Open-Meteo forecast: {exc}",
+            "fetch forecast", f"could not fetch Open-Meteo forecast: {last_exc}",
             kind="foreseen")
         return 1
 
@@ -247,16 +374,31 @@ def main():
         d0, d1 = didx[date], didx[nxt]
         probs = [hourly["precipitation_probability"][hidx["%sT%02d:00" % (date, h)]]
                  for h in range(24) if hourly["precipitation_probability"][hidx["%sT%02d:00" % (date, h)]] is not None]
+        rain_pct = int(max(probs)) if probs else 0
+        speeds = [hourly["wind_speed_10m"][hidx["%sT%02d:00" % (date, h)]]
+                  for h in range(24)
+                  if hourly["wind_speed_10m"][hidx["%sT%02d:00" % (date, h)]] is not None]
+        if not speeds:
+            raise ValueError("forecast answer carried no wind speeds for %s" % date)
+        wind_max = int(round(max(speeds)))
+        feels = int(round(daily["apparent_temperature_max"][d0]))
+        uv = int(round(daily["uv_index_max"][d0]))
         tword, _ = wmo(int(daily["weather_code"][d1]))
+        _high = int(round(daily["temperature_2m_max"][d0]))
+        _conditions = wmo(int(daily["weather_code"][d0]))[0]
         weather = {
-            "high": int(round(daily["temperature_2m_max"][d0])),
+            "high": _high,
             "low": int(round(daily["temperature_2m_min"][d0])),
-            "conditions": wmo(int(daily["weather_code"][d0]))[0],
-            "rain": "%d%%" % max(probs) if probs else "0%",
+            "conditions": _conditions,
+            "rain": "%d%%" % rain_pct,
             "sunrise": fmt_time(daily["sunrise"][d0]),
             "sunset": fmt_time(daily["sunset"][d0]),
             "tomorrow": "%s, %d/%d" % (tword, int(round(daily["temperature_2m_max"][d1])),
                                        int(round(daily["temperature_2m_min"][d1]))),
+            "wind": "%d mph" % wind_max,
+            "feels": feels,
+            "uv": "%d (%s)" % (uv, uv_band(uv)),
+            "call": call_sentence(_conditions, _high, wind_max, rain_pct),
         }
     except Exception as exc:
         print("WEATHER PULL FAIL: forecast response missing expected fields: %r" % exc)
@@ -281,6 +423,9 @@ def main():
     print("weather: high %s / low %s, %s, rain %s, sunrise %s, sunset %s, tomorrow %s"
           % (weather["high"], weather["low"], weather["conditions"], weather["rain"],
              weather["sunrise"], weather["sunset"], weather["tomorrow"]))
+    print("weather box extras: wind %s, feels like %s, uv %s"
+          % (weather["wind"], weather["feels"], weather["uv"]))
+    print("call: %s" % weather["call"])
     for b in blocks:
         print("block: %-14s %2d:00  %s°  %-14s art %s  wind %s mph from %s°  sock %s"
               % (b["label"], b["hour"], b["temp"], b["condition"], b["art"],
