@@ -1,0 +1,10 @@
+Story the admin flagged on 2026-10-26 (from the Payson Roundup's Instagram, account paysonroundup): the new Tonto Apache Pub opened in Payson and drew crowds through its opening weekend — customers stopped in Friday, Oct. 9 and returned Saturday, Oct. 10, 2026 despite rainy weather. Work it into the paper as a story (the lead, or the part it belongs to), in the paper's voice.
+
+Verified facts, each from its named source (checked the evening of Oct 26, 2026):
+- Name: Tonto Apache Pub — the business's own site, https://www.tontoapachepub.org/ ; the Places record agrees.
+- What it is: a sports bar / pub serving food — "Premium Craft Beers," "Superior Cocktails," "Gourmet Plates," and "every screen is a window to the game" (its own site). Places categories: Sports Bar, Restaurant, Food & Drink. Price: moderate (Places price level 2).
+- Where: Highway 87, Mile Marker 251, Payson, AZ — on the left side of the Mazatzal Hotel & Casino building, with its own outside entrance, not accessible from inside the casino (its own site). The street address unit letter conflicts across sources (own site "100 D E. Scout Lp"; Places "100 G E. Scout Loop"; a rodeo page "100 B") — print the Highway 87 / casino-building description, not a unit letter, unless the run confirms the letter from the business.
+- Hours and phone conflict across sources (own site vs Places disagree on both) — do not print hours or a phone number for the pub unless the run confirms them from the business itself.
+- Website: https://www.tontoapachepub.org/
+
+One caution, a standing rule (~/workspace/morning-post/large_business_exclusions.md): no casino merchant feature — the pub stands in the Mazatzal Hotel & Casino building, so do NOT feature it as Merchant of the Hold. The story itself is welcome in the paper; fun and uplifting Tonto Apache Tribe stories remain welcome under the same rule.
