@@ -25,16 +25,20 @@ or
 Exit 0 on PASS, 1 on FAIL.
 """
 import argparse
+import base64
 import contextlib
 import hashlib
+import http.client
 import io
 import json
 import os
+import ssl
 import stat
 import sys
 import tempfile
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -335,47 +339,194 @@ def finish(passed, failures):
     return 1
 
 
+def _fetch_once(url, timeout, range_from=None):
+    """One GET, driven through the connection engine (http.client)
+    directly, along the machine's proxy road when a proxy is set.
+    Returns a dict: status, data (partial when the read was cut
+    short), expected (the whole file's size when the answer names
+    it, else None), cut. Raises when no answer arrives at all.
+
+    Why the engine directly (2026-10-27; the same record as the
+    Scroll verify fix of 2026-10-26): the urllib layer over this
+    same engine was cut on fetch after fetch from the live site,
+    while the engine driven directly brought the same files down
+    whole."""
+    parts = urllib.parse.urlsplit(url)
+    host = parts.hostname
+    port = parts.port or 443
+    path = parts.path or "/"
+    if parts.query:
+        path += "?" + parts.query
+    headers = {"User-Agent": "ledger_verify/1.0"}
+    if range_from is not None:
+        headers["Range"] = f"bytes={range_from}-"
+    proxy = os.environ.get("https_proxy") or os.environ.get("HTTPS_PROXY")
+    ctx = ssl.create_default_context()
+    if proxy:
+        pp = urllib.parse.urlsplit(proxy if "//" in proxy
+                                   else "//" + proxy)
+        conn = http.client.HTTPSConnection(pp.hostname,
+                                           pp.port or 3128,
+                                           timeout=timeout,
+                                           context=ctx)
+        tunnel_headers = {}
+        if pp.username:
+            raw = (f"{urllib.parse.unquote(pp.username)}:"
+                   f"{urllib.parse.unquote(pp.password or '')}")
+            tunnel_headers["Proxy-Authorization"] = (
+                "Basic " + base64.b64encode(raw.encode()).decode())
+        conn.set_tunnel(host, port, headers=tunnel_headers)
+    else:
+        conn = http.client.HTTPSConnection(host, port,
+                                           timeout=timeout,
+                                           context=ctx)
+    try:
+        conn.request("GET", path, headers=headers)
+        resp = conn.getresponse()
+        status = resp.status
+        expected = None
+        if status == 200:
+            length = resp.getheader("Content-Length")
+            if length is not None and length.isdigit():
+                expected = int(length)
+        elif status == 206:
+            range_header = resp.getheader("Content-Range") or ""
+            if "/" in range_header:
+                tail = range_header.rsplit("/", 1)[1]
+                if tail.isdigit():
+                    expected = int(tail)
+        cut = False
+        try:
+            data = resp.read() or b""
+        except http.client.IncompleteRead as exc:
+            data = exc.partial or b""
+            cut = True
+        if status == 200 and expected is not None \
+                and len(data) < expected:
+            cut = True
+        if status == 206 and expected is not None \
+                and range_from is not None \
+                and len(data) < expected - range_from:
+            cut = True
+        return {"status": status, "data": data,
+                "expected": expected, "cut": cut}
+    finally:
+        conn.close()
+
+
+def _download_bytes(url):
+    """The whole file's bytes, down a ladder of different ways
+    (the step-down rule, 2026-10-26): rung 1, the connection
+    engine asks for the whole file at once; rung 2, the file is
+    picked up in pieces, each piece asking only for the bytes
+    still missing; rung 3, the old urllib road asks for the whole
+    file. A transfer whose bytes fall short of the length the
+    server stated counts as a failed rung, never as a downloaded
+    file. An error answer from the site is raised at once."""
+    errors = []
+    have = b""
+    expected = None
+    try:
+        answer = _fetch_once(url, timeout=90)
+        if answer["status"] >= 400:
+            raise RuntimeError(f"HTTP {answer['status']} for {url}")
+        if answer["status"] != 200:
+            raise RuntimeError(
+                f"unexpected HTTP {answer['status']} for {url}")
+        have = answer["data"]
+        expected = answer["expected"]
+        if not answer["cut"] and (expected is None
+                                  or len(have) == expected):
+            return have
+        errors.append(f"rung 1 cut at {len(have)} bytes")
+    except Exception as exc:
+        if isinstance(exc, RuntimeError) \
+                and str(exc).startswith("HTTP"):
+            raise
+        errors.append(f"rung 1 failed: {exc}")
+    try:
+        stalls = 0
+        pieces = 0
+        while pieces < 12:
+            if expected is not None and len(have) >= expected:
+                return have[:expected]
+            pieces += 1
+            answer = _fetch_once(url, timeout=90,
+                                 range_from=len(have))
+            if answer["status"] == 416 and have:
+                return have
+            if answer["status"] >= 400:
+                raise RuntimeError(f"HTTP {answer['status']} for {url}")
+            if answer["status"] == 200:
+                if not answer["cut"] and (
+                        answer["expected"] is None
+                        or len(answer["data"]) == answer["expected"]):
+                    return answer["data"]
+                if len(answer["data"]) > len(have):
+                    have = answer["data"]
+                    expected = answer["expected"]
+                    stalls = 0
+                else:
+                    stalls += 1
+            elif answer["status"] == 206:
+                if answer["expected"] is not None:
+                    expected = answer["expected"]
+                if answer["data"]:
+                    have += answer["data"]
+                    stalls = 0
+                else:
+                    stalls += 1
+            else:
+                raise RuntimeError(
+                    f"unexpected HTTP {answer['status']} for {url}")
+            if expected is not None and len(have) >= expected:
+                return have[:expected]
+            if stalls >= 2:
+                break
+        errors.append(
+            f"rung 2 stopped at {len(have)} of "
+            f"{expected if expected is not None else '?'} bytes")
+    except Exception as exc:
+        if isinstance(exc, RuntimeError) \
+                and str(exc).startswith("HTTP"):
+            raise
+        errors.append(f"rung 2 failed: {exc}")
+    try:
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "ledger_verify/1.0"})
+        with urllib.request.urlopen(req, timeout=90) as resp:
+            data = resp.read()
+            length = resp.headers.get("Content-Length")
+            if length is not None:
+                try:
+                    expected_n = int(length)
+                except ValueError:
+                    expected_n = None
+                if expected_n is not None and len(data) < expected_n:
+                    raise OSError(
+                        f"download came up short: got {len(data)} of "
+                        f"{expected_n} bytes from {url}")
+            return data
+    except Exception as exc:
+        errors.append(f"rung 3 failed: {exc}")
+    raise OSError(f"download of {url} failed on every rung — "
+                  + "; ".join(errors))
+
+
 def download(url, dest):
     """Download url to dest. Returns dest; raises on failure.
 
-    The tries climb a step-down ladder (2026-10-26): try 1 exactly
-    as before (one read, 30-second limit); try 2 after a 10-second
-    wait at a 60-second limit; try 3 after a 20-second wait at a
-    120-second limit. A transfer whose bytes fall short of the
+    The tries climb a step-down ladder (2026-10-26; the road under
+    the ladder moved to the connection engine directly on
+    2026-10-27 — see _fetch_once): try 1 exactly as before in
+    shape (one read of the whole file, 30-second limit rides the
+    ladder's first rung); the ladder's own rungs and waits live in
+    _download_bytes. A transfer whose bytes fall short of the
     length the server stated counts as a failed try, never as a
-    downloaded file — a cut read raises as one, and a short read
-    that raises nothing is caught by the count. Each failed try is
-    written to the log; after the third, the last error is raised,
-    as the one try raised before.
-    """
-    last_exc = None
-    for try_no, timeout in ((1, 30), (2, 60), (3, 120)):
-        if try_no > 1:
-            wait = 10 if try_no == 2 else 20
-            emit(f"download of {url}: try {try_no - 1} failed ({last_exc}); "
-                 f"waiting {wait} seconds before try {try_no}")
-            time.sleep(wait)
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "ledger_verify/1.0"})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                if getattr(resp, "status", 200) != 200:
-                    raise RuntimeError(f"HTTP {resp.status} for {url}")
-                data = resp.read()
-                length = resp.headers.get("Content-Length")
-                if length is not None:
-                    try:
-                        expected = int(length)
-                    except ValueError:
-                        expected = None
-                    if expected is not None and len(data) < expected:
-                        raise OSError(
-                            f"download came up short: got {len(data)} of "
-                            f"{expected} bytes from {url}")
-            Path(dest).write_bytes(data)
-            return dest
-        except Exception as exc:
-            last_exc = exc
-    raise last_exc
+    downloaded file."""
+    data = _download_bytes(url)
+    Path(dest).write_bytes(data)
+    return dest
 
 
 def _main():
