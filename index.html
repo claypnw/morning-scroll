@@ -805,6 +805,12 @@ body { font-family: Georgia, "Times New Roman", serif; }
 .month summary { font-variant: small-caps; letter-spacing: .05em; font-size: 1.05rem; }
 .gilded-link { border-top: 3px double var(--accent); background: var(--accent-wash); }
 </style>
+<style>
+.scroll-read-btn{font:inherit;font-size:0.9em;padding:8px 16px;border:1px solid #8a6d3b;border-radius:6px;background:#f7f0dc;color:#3a2f16;cursor:pointer}
+.scroll-read-btn.reading{background:#8a6d3b;color:#fff}
+.scroll-read-note{display:block;margin-top:6px;font-size:0.9em;color:#7a1f1f}
+.scroll-read-note[hidden]{display:none}
+</style>
 </head>
 <body>
   <a class="menu-back" href="https://claypnw.github.io/menu/hearth-menu.html">← Menu</a>
@@ -836,8 +842,8 @@ body { font-family: Georgia, "Times New Roman", serif; }
               <span class="date-range-track" aria-hidden="true"></span>
               <span class="date-range-fill" id="date-range-fill" aria-hidden="true"></span>
               <!-- Bounds emitted from the ordered distinct dates in scroll-search-index.json during this build. -->
-              <input id="date-range-start" type="range" min="0" max="32" step="1" value="0" data-min-date="2026-09-24" data-max-date="2026-10-27" aria-label="Start edition date" />
-              <input id="date-range-end" type="range" min="0" max="32" step="1" value="32" data-min-date="2026-09-24" data-max-date="2026-10-27" aria-label="End edition date" />
+              <input id="date-range-start" type="range" min="0" max="33" step="1" value="0" data-min-date="2026-09-24" data-max-date="2026-10-28" aria-label="Start edition date" />
+              <input id="date-range-end" type="range" min="0" max="33" step="1" value="33" data-min-date="2026-09-24" data-max-date="2026-10-28" aria-label="End edition date" />
             </div>
           </div>
           <p class="search-status" id="search-status" aria-live="polite" hidden></p>
@@ -847,8 +853,9 @@ body { font-family: Georgia, "Times New Roman", serif; }
         <details class="month" open>
           <summary>
             <span>October 2026</span>
-            <span class="count">27 editions</span>
+            <span class="count">28 editions</span>
           </summary>
+                                        <div class="issue-link"><a class="issue-open" href="https://claypnw.github.io/morning-scroll/edition-2026-10-28.html" aria-label="Read the Wednesday, October 28, 2026 edition: Halloween Week Fills the Holds With Music, Markets, and Treats"></a><div class="issue-date"><strong>Wednesday,</strong> October 28, 2026</div><div class="issue-copy"><p class="greeting">"Hail, guest of the Hearth, and good Middas morning to you — the clouds hang low and kind over the pines, the air sits mild at 69 degrees, and Mogollon’s Hearth sends warm greetings under a grey Rim Co…"</p><h2 class="issue-title">Halloween Week Fills the Holds With Music, Markets, and Treats</h2><div class="issue-number">Vol. 2610 · No. 28</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span></div></div>
                                         <div class="issue-link"><a class="issue-open" href="https://claypnw.github.io/morning-scroll/edition-2026-10-27.html" aria-label="Read the Tuesday, October 27, 2026 edition: Halloween Week Fills the Holds, and a New Pub Draws a Crowd"></a><div class="issue-date"><strong>Tuesday,</strong> October 27, 2026</div><div class="issue-copy"><p class="greeting">"Hail, wayfarer, and good Tirdas morning to you — the sun is up over the Rim, the pines stand bright and still, and Mogollon’s Hearth sends warm greetings on a sunny day that tops out at 68 degrees. PA…"</p><h2 class="issue-title">Halloween Week Fills the Holds, and a New Pub Draws a Crowd</h2><div class="issue-number">Vol. 2610 · No. 27</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span></div></div>
                                         <div class="issue-link"><a class="issue-open" href="https://claypnw.github.io/morning-scroll/edition-2026-10-26.html" aria-label="Read the Monday, October 26, 2026 edition: Halloween Week Opens With Music, Pumpkins, and Grey Skies"></a><div class="issue-date"><strong>Monday,</strong> October 26, 2026</div><div class="issue-copy"><p class="greeting">"PAYSON — Hail, wayfarer, and good Morndas to you! Grey clouds ride over the Rim this morning, yet the Holds are merry: bards tune up in Pine tonight, the library in Payson keeps its doors wide, story…"</p><h2 class="issue-title">Halloween Week Opens With Music, Pumpkins, and Grey Skies</h2><div class="issue-number">Vol. 2610 · No. 26</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span></div></div>
                                         <div class="issue-link"><a class="issue-open" href="#edition-2026-10-25" aria-label="Read the Sunday, October 25, 2026 edition: Sunshine, Markets, and Music Fill a Fine Sundas"></a><div class="issue-date"><strong>Sunday,</strong> October 25, 2026</div><div class="issue-copy"><p class="greeting">"PAYSON — Hail, wayfarer, and a bright good morning to you, under a clear sky and a kind sun over the pines! Today the Hold offers a farmers market in Sedona, a thoughtful discussion circle here in Pay…"</p><h2 class="issue-title">Sunshine, Markets, and Music Fill a Fine Sundas</h2><div class="issue-number">Vol. 2610 · No. 25</div></div><div class="issue-actions"><span class="read-mark" aria-hidden="true">→</span></div></div>
@@ -1019,11 +1026,36 @@ body { font-family: Georgia, "Times New Roman", serif; }
 
 
 
+                                <section class="edition-view" id="edition-2026-10-28" hidden aria-labelledby="edition-title-2026-10-28">
+        <nav class="back-row" aria-label="Archive navigation">
+          <a class="back-link" href="#archive"><span aria-hidden="true">←</span> All editions</a>
+          <span class="issue-number">Vol. 2610 · No. 28</span>
+          <button class="scroll-read-btn" id="scroll-read-btn" type="button">Read this edition aloud</button>
+        </nav>
+        <article class="edition-sheet">
+          <header class="edition-heading">
+            <div>
+              <p class="date">Wednesday, October 28, 2026</p>
+              <h1 id="edition-title-2026-10-28">Halloween Week Fills the Holds With Music, Markets, and Treats</h1>
+              <p class="edition-greeting">“Hail, guest of the Hearth, and good Middas morning to you — the clouds hang low and kind over the pines, the air sits mild at 69 degrees, and Mogollon’s Hearth sends warm greetings under a grey Rim Country sky. PAYSON — It is a quiet day here in the Payson Hold itself, and a merry one abroad: a concert in Sedona tonight, baking and open-mic music in Prescott, and adoptable dogs introduced live from Camp Verde. Then Halloween takes the week by both hands — a remembrance mural and a farmers market on Thursday, a brand-new gravel bike race rolling into Prescott on Friday, and trunk-or-treats from Camp Verde to Show Low on Saturday. One sad note, told plainly: Sedona’s Día de los Muertos celebration on Sunday, Nov. 1 is canceled, by the Nine — the venue’s own page says so — though its Marigold Mural Project still opens Thursday as planned.”</p>
+            </div>
+          </header>
+          <div class="reader-label">
+            <p>Tap a page to read it full-size.</p>
+          </div>
+          <div class="page-reader">
+          <img src="scroll-2026-10-28-page-1-r1-562d39c2.png" alt="Page 1 of the Wednesday, October 28, 2026 edition">
+          <img src="scroll-2026-10-28-page-2-r1-ebe18df8.png" alt="Page 2 of the Wednesday, October 28, 2026 edition">
+          <img src="scroll-2026-10-28-page-3-r1-431d78cb.png" alt="Page 3 of the Wednesday, October 28, 2026 edition">
+          <img src="scroll-2026-10-28-page-4-r1-db66b0d3.png" alt="Page 4 of the Wednesday, October 28, 2026 edition">
+          </div>
+        </article>
+      </section>
+
                                 <section class="edition-view" id="edition-2026-10-27" hidden aria-labelledby="edition-title-2026-10-27">
         <nav class="back-row" aria-label="Archive navigation">
           <a class="back-link" href="#archive"><span aria-hidden="true">←</span> All editions</a>
           <span class="issue-number">Vol. 2610 · No. 27</span>
-          <button class="scroll-read-btn" id="scroll-read-btn" type="button">Read this edition aloud</button>
         </nav>
         <article class="edition-sheet">
           <header class="edition-heading">
@@ -2552,6 +2584,9 @@ body { font-family: Georgia, "Times New Roman", serif; }
     (function () {
       var archive = document.getElementById('archive');
       var editions = {
+                                '#edition-2026-10-28': {
+            element: document.getElementById('edition-2026-10-28'),
+          },
                                 '#edition-2026-10-27': {
             element: document.getElementById('edition-2026-10-27'),
           },
@@ -3277,7 +3312,7 @@ body { font-family: Georgia, "Times New Roman", serif; }
         updateDateRange(dateRangeEnd);
         renderSearch();
       });
-      fetch('scroll-search-index.json?v=20261027')
+      fetch('scroll-search-index.json?v=20261028')
         .then(function (response) {
           if (!response.ok) throw new Error('Search index unavailable');
           return response.json();
@@ -3358,11 +3393,13 @@ body { font-family: Georgia, "Times New Roman", serif; }
   }
 })();
 </script>
+
 <script>
-/* scroll-read-player */
+/* scroll-read-player-archive */
 (function(){
   var audio = new Audio();
   audio.preload = 'none';
+  var triedArchive = false;
   var btn = document.querySelector('.scroll-read-btn');
   if (!btn) return;
   var section = btn.closest('section');
@@ -3384,17 +3421,26 @@ body { font-family: Georgia, "Times New Roman", serif; }
   }
   audio.addEventListener('ended', stopAll);
   audio.addEventListener('error', function(){
-    if (btn.classList.contains('reading')){ stopAll(); showNote(); }
+    if (btn.classList.contains('reading')){ fallback(); }
   });
+  function fallback(){
+    if (!triedArchive && date){
+      triedArchive = true;
+      audio.src = 'https://raw.githubusercontent.com/claypnw/scroll-archive-1/main/audio/morning-scroll-' + date + '.mp3';
+      var p = audio.play();
+      if (p && p.catch) p.catch(function(){ stopAll(); showNote(); });
+    } else { stopAll(); showNote(); }
+  }
   btn.addEventListener('click', function(){
     if (!audio.paused){ stopAll(); return; }
     note.hidden = true;
+    triedArchive = false;
     if (!date){ showNote(); return; }
     if (!audio.src) audio.src = 'audio/morning-scroll-' + date + '.mp3';
     btn.textContent = 'Stop';
     btn.classList.add('reading');
     var p = audio.play();
-    if (p && p.catch) p.catch(function(){ stopAll(); showNote(); });
+    if (p && p.catch) p.catch(function(){ fallback(); });
   });
 })();
 </script>
