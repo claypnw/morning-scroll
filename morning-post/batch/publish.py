@@ -175,10 +175,15 @@ def main():
                       f"edition (Vol. {vol}, No. {no})")
     new_names = [name for name, _, _ in entries if name not in UPDATED_FILES]
 
-    # Roll-off deletions: recordings past the 45-day keep, named by
-    # the build in batch/rolloff-DATE.txt. They leave the site in this
-    # same publish — the delete commands print with the upload list so
-    # the send step runs them together.
+    # Roll-off moves (Clay's design, 2026-10-27): recordings past the
+    # 45-day keep, named by the build in batch/rolloff-DATE.txt, are
+    # never deleted into nothing — they move to the archive repository
+    # (scroll-archive-1), which holds them from then on, and a tap on
+    # an old paper plays them from the archive. The move command
+    # prints with the upload list so the send step runs it together:
+    # archive_move.py proves each archive copy stands (read back, same
+    # size) before the file leaves the main repository, and a file
+    # whose move fails is set aside — nothing is taken down unproven.
     rolloff_names = []
     rolloff_path = BATCH_DIR / f"rolloff-{date_str}.txt"
     if rolloff_path.is_file():
@@ -198,11 +203,14 @@ def main():
         print(f"  {UPLOAD_DIR / name}")
     print("")
     if rolloff_names:
-        print(f"Roll-off deletions ({len(rolloff_names)}) — recordings past the 45-day keep "
-              f"roll off in this same publish; delete each from the repository with the "
-              f"GitHub key program:")
+        print(f"Roll-off moves ({len(rolloff_names)}) — recordings past the 45-day keep "
+              f"move to the archive repository in this same publish; run the move "
+              f"program once for the whole list:")
         for name in rolloff_names:
-            print(f"  github_publish.py --repo morning-scroll --delete {name}")
+            print(f"  moves: {name}")
+        print(f"  archive_move.py --list {rolloff_path} --archive-repo scroll-archive-1 "
+              f"--main-repo morning-scroll --mirror "
+              f"{Path.home() / 'workspace' / 'BACKUP-github-websites-only' / 'morning-scroll'}")
         print("")
     print("Commit directly to main.")
     print(f"Commit message: {commit_message}")
