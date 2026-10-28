@@ -862,7 +862,18 @@ def main():
     # Runs before
     # the JS validation below, so the player is syntax-checked with
     # the rest of the page script on every run.
-    if "scroll-read-player" not in final_text:
+    # Archive fallback update (2026-10-27): a page carrying the first
+    # player (marker "scroll-read-player" without the archive fallback)
+    # has that player block lifted out here, so the new block below —
+    # the same player with the archive road added — takes its place.
+    if "scroll-read-player-archive" not in final_text and "scroll-read-player" in final_text:
+        s0 = final_text.find("/* scroll-read-player */")
+        tag0 = final_text.rfind("<script>", 0, s0)
+        end0 = final_text.find("</script>", s0)
+        if tag0 >= 0 and end0 > s0:
+            final_text = final_text[:tag0] + final_text[end0 + len("</script>"):]
+            print("edit: the first read player was lifted out — the archive-fallback player takes its place")
+    if "scroll-read-player-archive" not in final_text:
         if final_text.count("</head>") != 1 or final_text.count("</body>") != 1:
             fail("anchor check failed: read-button furniture needs exactly one "
                  "</head> and one </body> to attach to")
@@ -880,10 +891,11 @@ def main():
         final_text = final_text.replace("</head>", style_block + "</head>", 1)
         player_block = (
             "<script>\n"
-            "/* scroll-read-player */\n"
+            "/* scroll-read-player-archive */\n"
             "(function(){\n"
             "  var audio = new Audio();\n"
             "  audio.preload = 'none';\n"
+            "  var triedArchive = false;\n"
             "  var btn = document.querySelector('.scroll-read-btn');\n"
             "  if (!btn) return;\n"
             "  var section = btn.closest('section');\n"
@@ -904,18 +916,27 @@ def main():
             "    btn.classList.remove('reading');\n"
             "  }\n"
             "  audio.addEventListener('ended', stopAll);\n"
-            "  audio.addEventListener('error', function(){\n"
-            "    if (btn.classList.contains('reading')){ stopAll(); showNote(); }\n"
+                        "  audio.addEventListener('error', function(){\n"
+            "    if (btn.classList.contains('reading')){ fallback(); }\n"
             "  });\n"
+            "  function fallback(){\n"
+            "    if (!triedArchive && date){\n"
+            "      triedArchive = true;\n"
+            "      audio.src = 'https://raw.githubusercontent.com/claypnw/scroll-archive-1/main/audio/morning-scroll-' + date + '.mp3';\n"
+            "      var p = audio.play();\n"
+            "      if (p && p.catch) p.catch(function(){ stopAll(); showNote(); });\n"
+            "    } else { stopAll(); showNote(); }\n"
+            "  }\n"
             "  btn.addEventListener('click', function(){\n"
             "    if (!audio.paused){ stopAll(); return; }\n"
             "    note.hidden = true;\n"
+            "    triedArchive = false;\n"
             "    if (!date){ showNote(); return; }\n"
             "    if (!audio.src) audio.src = 'audio/morning-scroll-' + date + '.mp3';\n"
             "    btn.textContent = 'Stop';\n"
             "    btn.classList.add('reading');\n"
             "    var p = audio.play();\n"
-            "    if (p && p.catch) p.catch(function(){ stopAll(); showNote(); });\n"
+                        "    if (p && p.catch) p.catch(function(){ fallback(); });\n"
             "  });\n"
             "})();\n"
             "</script>\n"
