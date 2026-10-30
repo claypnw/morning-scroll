@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payson's Morning Scroll — Fredas, the 30th of Frostfall (Friday, October 30, 2026)</title>
+<style>
+  @page { size: Letter; margin: 0.62in 0.5in 0.60in 0.5in;
+    @top-left { content: "Payson's Morning Scroll"; font-variant: small-caps; font-weight: bold; letter-spacing: 1px; font-size: 8.5pt; color: #3a2c1c; vertical-align: bottom; padding-bottom: 5px; }
+    @top-right { content: "30th of Frostfall (Oct 30, 2026)"; font-variant: small-caps; letter-spacing: 0.5px; font-size: 8pt; color: #3a2c1c; vertical-align: bottom; padding-bottom: 5px; }
+    @bottom-center { content: "\00B7  Page " counter(page) "  \00B7"; font-variant: small-caps; letter-spacing: 1px; font-size: 8.5pt; color: #3a2c1c; vertical-align: top; padding-top: 5px; }
+  }
+  @page :first { margin: 0.45in 0.5in 0.44in 0.5in;
+    @top-left { content: none; } @top-right { content: none; } @bottom-center { content: none; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1a1a1a; background: transparent;
+    margin: 0; padding: 0; font-size: 10pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .masthead { text-align: center; border-bottom: 4px double #1a1a1a; padding-bottom: 3px; }
+  .masthead .nameplate {
+    font-weight: 900; font-size: 36pt; letter-spacing: 1.5px;
+    margin: 0; line-height: 1.0; font-variant: small-caps; white-space: nowrap;
+  }
+  .masthead .dedication {
+    font-variant: small-caps; letter-spacing: 2px; font-size: 10pt;
+    margin: 2px 0 0 0;
+  }
+  .masthead .motto { font-style: italic; font-size: 9.5pt; margin: 1px 0 0 0; }
+  .masthead .publisher { font-variant: small-caps; letter-spacing: 2px; font-size: 9.5pt; font-weight: bold; margin: 2px 0 0 0; }
+  .dateline {
+    font-size: 8.5pt; font-variant: small-caps; letter-spacing: 0.5px;
+    border-bottom: 1px solid #1a1a1a; padding: 3px 2px; margin-bottom: 6px;
+    text-align: center; word-spacing: 6px;
+  }
+  .dateline .sec { white-space: nowrap; }
+  .weather {
+    border: 1.5px solid #1a1a1a; padding: 2px 6px; margin-bottom: 6px;
+    font-size: 8pt; width: 100%; box-sizing: border-box; line-height: 1.2;
+  }
+  .wxrow1 { display: table; width: 100%; }
+  .weather .wimg { display: table-cell; width: 1.55in; vertical-align: middle; padding-right: 8px; }
+  .weather .wimg img { width: 0.42in; display: block; float: left; margin-right: 6px; border: 1px solid #1a1a1a; }
+  .weather .wcap { font-size: 5.5pt; font-style: italic; color: #444; line-height: 1.3; padding-top: 1px; }
+  .weather .wbody { display: table-cell; vertical-align: middle; text-align: center; }
+  .weather .wbody > div { margin: 0; }
+  .weather .wtitle { font-weight: 900; font-variant: small-caps; letter-spacing: 1px; font-size: 9pt; }
+  .weather .wnow { font-size: 11.5pt; font-weight: 900; line-height: 1; }
+  .weather .wcond { font-size: 9pt; font-weight: bold; }
+  .weather .wcall { font-size: 8pt; font-style: italic; }
+  .weather .wdet { font-size: 6.5pt; color: #333; line-height: 1.25; }
+  .weather .wheard { font-size: 7pt; font-style: italic; color: #333; margin-top: 2px; }
+  .weather .wquote { display: table-cell; width: 1.3in; vertical-align: middle;
+    font-size: 6.5pt; font-style: italic; color: #333; line-height: 1.25;
+    border-left: 1px solid #999; padding-left: 8px; }
+  .weather .wqhead { font-size: 7pt; font-weight: 900; font-style: normal;
+    font-variant: small-caps; letter-spacing: 1px; color: #1a1a1a;
+    margin-bottom: 2px; }
+  .wxdiv { border-top: 1px solid #999; margin: 1px 0 0 0; }
+  /* By the Hours strip (the admin, 2026-10-23): four hour blocks under
+     the weather box. Words on the left of each block (temperature big,
+     condition under it), the fixed sky picture on the right, and under
+     the sky picture the fixed windsock picture with its mph number
+     printed under the sock. */
+  .wxrow2 { display: table; width: 100%; box-sizing: border-box; }
+  .wxbox { display: table-cell; width: 25%; box-sizing: border-box;
+    padding: 0 5px; border-left: 1px solid #999; text-align: center; }
+  .wxbox:first-child { border-left: none; }
+  .wxlabel { font-weight: 900; font-variant: small-caps; letter-spacing: 0.5px;
+    font-size: 6.5pt; margin-bottom: 1px; line-height: 1.1; }
+  .wxmain { display: table; width: 100%; }
+  .wxwords { display: table-cell; vertical-align: middle; text-align: center; }
+  .wxwords .wxtemp { display: inline; font-size: 10.5pt; font-weight: 900; line-height: 1; }
+  .wxwords .wxcond { display: inline; margin-left: 4px; }
+  .wxcond { font-size: 7pt; font-weight: bold; margin-top: 1px; }
+  .wxpics { display: table-cell; width: 0.42in; vertical-align: top; padding-left: 4px; white-space: nowrap; }
+  .wxpics img { width: 0.18in; display: inline-block; border: 1px solid #1a1a1a; }
+  .wxpics .wxsock { margin-left: 3px; }
+  .wxmph { display: inline; font-size: 6pt; color: #333; white-space: nowrap; margin-left: 3px; }
+  .box .ffig { float: left; width: 2.9in; margin: 2px 10px 4px 0; }
+  .box .ffig img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  .box .ffig figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .box .qfig { float: right; width: 2.7in; margin: 2px 0 4px 10px; }
+  .box .qfig img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  .box .qfig figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .clear { clear: both; }
+  .kicker { font-variant: small-caps; letter-spacing: 1.5px; font-size: 9pt; font-weight: bold; margin: 0 0 2px 0; }
+  h1.headline { font-size: 25pt; line-height: 1.08; margin: 0 0 2px 0; font-weight: 900; }
+  .byline { font-size: 8.5pt; font-style: italic; color: #444; margin: 0 0 8px 0; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+  .headrow { display: flex; gap: 14px; align-items: flex-start; margin: 0 0 8px 0; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+  .headtxt { flex: 1; }
+  .bylinestack { display: flex; flex-direction: column; align-items: center; }
+  .bylinestack .byline { margin: 3px 0 0 0; border: none; padding: 0; text-align: center; }
+  .bylinebadge { width: 1.05in; height: 1.05in; }
+  figure { margin: 0 0 8px 0; }
+  figure img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  figcaption { font-size: 8pt; font-style: italic; color: #444; padding-top: 3px; }
+  .frontpic { float: right; width: 2.0in; margin: 2px 0 8px 10px; }
+  .frontpic img { width: 100%; height: auto; border: 1px solid #1a1a1a; }
+  .frontpic figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .story::after { content: ""; display: block; clear: both; }
+  p.lead { font-size: 11.5pt; text-align: justify; hyphens: auto; margin: 0 0 10px 0; }
+  p.lead::first-letter { font-size: 15pt; font-weight: 900; }
+  ul.eventlist { list-style: none; margin: 0; padding: 0; border-top: 2.5px solid #1a1a1a; break-inside: auto; }
+  ul.eventlist li { position: relative; font-size: 10pt; line-height: 1.4;
+    padding: 4px 0 4px 20px; border-bottom: 1px solid #999; }
+  ul.eventlist li::before { content: "\2022"; position: absolute; left: 4px; top: 6px; font-size: 12pt; }
+  /* Days Ahead flow (the admin, 2026-10-01): a day's item may break BETWEEN its
+     indented event lines so the list fills the columns instead of leaving
+     a half-empty page — but the date header stays glued to its first line,
+     and no single event line ever splits. */
+  ul.eventlist li .dat { display: block; break-after: avoid; }
+  .subev { display: block; margin: 1px 0 1px 1.6em; break-inside: avoid; }
+  h3.evhead { font-variant: small-caps; letter-spacing: 1px; font-size: 11pt; font-weight: 900;
+    margin: 6px 0 0 0; padding-bottom: 2px; border-bottom: 1px solid #1a1a1a;
+    break-inside: avoid; break-after: avoid; }
+  ul.eventlist li.quiet { font-style: italic; color: #444; }
+  ul.eventlist li.quiet::before { content: ""; }
+  .holdbanner { height: .32in; vertical-align: -.06in; margin-right: .07in; }
+  /* Gap-filler engraving (the admin, 2026-10-01): an optional floated figure at the
+     top of The Days Ahead, closely related to what's on that page — fresh
+     every edition, fun and light. Text wraps around it. */
+  .wfig { float: right; width: 2.2in; margin: 2px 0 6px 10px; break-inside: avoid; }
+  /* Blank-space plates (the admin, 2026-10-01): old-timey pictures, local art, and
+     views of the town used to fill page/column gaps — never story filler. */
+  .plateitem { break-inside: avoid; padding-left: 0 !important; }
+  .plateitem::before { content: "" !important; }
+  .plateitem figure { margin: 4px 0 2px 0; }
+  .plateitem img { width: 100%; height: 1.5in; object-fit: cover; object-position: 50% 82%; display: block; border: 1px solid #1a1a1a; }
+  .wideplate { margin-top: 8px; break-inside: avoid; }
+  .wideplate img { width: 100%; height: 1.6in; object-fit: cover; display: block; border: 1px solid #1a1a1a; }
+  .wideplate figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .closingplate { margin: 4px auto 0 auto; width: 5.4in; break-inside: avoid; }
+  .closingplate img { width: 100%; height: 1.7in; object-fit: cover; display: block; border: 1px solid #1a1a1a; }
+  .closingplate figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; text-align: center; }
+  .story { column-count: 2; column-gap: 22px; margin-bottom: 10px; }
+  .story .lead { margin-bottom: 8px; }
+  .lower { margin-top: 8px; border-top: 1px solid #999; padding-top: 8px; }
+  .lower .box { margin-bottom: 8px; }
+  .sidecols { width: 100%; border-collapse: collapse; }
+  .sidecols td { vertical-align: top; padding: 0; }
+  .sidecols td.sidepic { width: 3.1in; }
+  .sidecols td.sidepic.padright { padding-right: 10px; }
+  .sidecols td.sidepic.padleft { padding-left: 10px; }
+  .sidecols td.sidepic img { width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; }
+  .sidecols td.sidepic figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .box { border: 1.5px solid #1a1a1a; break-inside: avoid; }
+  .box h2 {
+    margin: 0; padding: 5px 10px; font-size: 11.5pt; font-variant: small-caps;
+    letter-spacing: 1px; border-bottom: 1.5px solid #1a1a1a; background: #e7d3a3;
+  }
+  .box .body { padding: 6px 10px; font-size: 10.5pt; line-height: 1.45; }
+  .box .body p { margin: 0 0 6px 0; }
+  .box ul { margin: 0; padding-left: 15px; }
+  .box li { margin-bottom: 5px; }
+  .box figure img { border: none; border-bottom: 1px solid #1a1a1a; }
+  .due { font-style: italic; color: #444; }
+  .box.merchant { margin-top: 8px; break-inside: avoid; }
+  .box.featured { margin-top: 8px; break-inside: avoid; }
+  .weather .wmoons { display: table-cell; width: 1.3in; vertical-align: middle;
+    text-align: center; border-left: 1px solid #999; padding-left: 7px; }
+  .weather .wmhead { font-size: 6pt; font-weight: 900; font-variant: small-caps;
+    letter-spacing: 0.5px; margin-bottom: 0; }
+  .weather .wmcap { font-size: 5pt; color: #444; margin-top: 0; white-space: nowrap; }
+  .weather .wmoonrow { white-space: nowrap; }
+  .weather .wmoon { display: inline-block; vertical-align: middle; width: 16px; margin: 0 1px; }
+  .weather .wmoon.tonight { width: 20px; }
+  .weather .wmoon img { width: 100%; display: block; }
+  .weather .wmoon figcaption { font-size: 5.5pt; line-height: 1.15; color: #444; }
+  .weather .wmtrend { font-size: 5pt; font-style: italic; color: #555; margin-top: 0; line-height: 1.2; white-space: nowrap; }
+  .box.merchant .body { font-size: 9.5pt; line-height: 1.4; }
+  .box.taletale, .box.rimstories { margin-top: 8px; break-inside: avoid; }
+  .box.taletale .body, .box.rimstories .body { font-size: 9.5pt; line-height: 1.4; }
+  .taletitle { font-size: 12pt; font-weight: 900; font-variant: small-caps; letter-spacing: 1px; margin: 0 0 4px 0; }
+  .mname { font-size: 13pt; font-weight: 900; margin: 0 0 4px 0; }
+  .mtown { font-size: 10pt; font-weight: 400; font-style: italic; color: #444; }
+  .mcols { width: 100%; border-collapse: collapse; margin-top: 2px; }
+  .mcols td.mcol { vertical-align: top; padding: 0; }
+  .mcols td.mphoto { width: 2.3in; padding-right: 10px; }
+  .mcols td.mphoto img { width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; }
+  .mcols td.mphoto figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .mcols td.mtext1 { width: 2.85in; padding-right: 10px; }
+  .mcols td.mtext2 { padding-left: 10px; border-left: 1px solid #999; }
+  .mquote { font-style: italic; border-left: 2.5px solid #1a1a1a; padding-left: 8px; margin: 6px 0 0 0; }
+  .msrc { font-style: normal; font-size: 8.5pt; color: #444; }
+  .mvisit { font-size: 9pt; color: #333; margin: 0 0 6px 0; }
+  .mwhy { margin: 0; }
+  .colophon {
+    margin-top: 4px; border-top: 4px double #1a1a1a; padding-top: 4px;
+    font-size: 8.5pt; font-style: italic; text-align: center; color: #444;
+  }
+  .contact-btn {
+    display: inline-block; margin-top: 6px; padding: 4px 18px;
+    border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+    color: #3a2a12; text-decoration: none; font-style: normal; font-size: 9.5pt;
+  }
+  .contact-addr {
+    display: inline-block; margin-top: 3px; font-style: normal; font-size: 7.5pt;
+    color: #5a4a2e;
+  }
+  .listen { margin: 6px 0 0 0; text-align: right; }
+  .listen.top { margin: 0 0 6px 0; break-inside: avoid; }
+  .listen a {
+    display: inline-block; padding: 3px 12px;
+    border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+    color: #3a2a12; text-decoration: none; font-style: normal; font-size: 9pt;
+  }
+  a { color: #1a1a1a; text-decoration: underline; }
+</style>
+
+<style>
+/* The web page's screen sheet (2026-10-26): how the paper sits on a
+   screen — a parchment sheet at the paper's own width on a darker
+   ground; on narrow screens the sheet fills the screen and the
+   story's two columns flow as one. The paper's own styles above lay
+   out its parts; nothing here changes a word or hides a part. */
+html { background: #a08c62; }
+body { max-width: 8.5in; margin: 20px auto; padding: 0.32in 0.5in 0.55in;
+       background: #f2e6c2; box-shadow: 0 2px 18px rgba(40,28,8,.5); }
+img { max-width: 100%; }
+/* The By the Hours strip: Chrome lays the hour cells a touch wider
+   than the print engine does, and the wind number printed beside
+   the windsock rides over the weather box's edge. On screen it
+   stands under the windsock instead — where the paper's own design
+   note puts it — inside the cell at every width. */
+.wxpics .wxmph { display: block; margin: 1px 0 0 0; }
+@media (max-width: 700px) {
+  body { margin: 0; padding: 10px 12px 22px; }
+  .masthead .nameplate { font-size: 20pt; letter-spacing: 1px; }
+  h1.headline { font-size: 21pt; }
+  .story { column-count: 1; }
+  .frontpic, .wfig, .box .ffig, .box .qfig { float: none; width: 100%;
+    margin: 2px 0 8px 0; }
+  .headrow { flex-direction: column; }
+  .mcols td { display: block; width: auto; padding: 0 0 6px 0; }
+  .mcols td.mtext2 { border-left: none; padding-left: 0; }
+  /* The By the Hours strip on a narrow screen: each hour's words
+     and pictures stand side by side as two table cells, and the
+     picture cell cannot shrink below its pictures — in Chrome the
+     pictures paint over the next hour's degrees and run past the
+     sheet's edge. Stack them instead: the words over the pictures,
+     inside each hour's own quarter of the strip. */
+  .wxmain { display: block; }
+  .wxwords { display: block; }
+  .wxpics { display: block; width: auto; padding-left: 0; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="nameplate">Payson's Morning Scroll</p>
+  <p class="dedication">Made Exclusively for the Mogollon&rsquo;s Hearth Guests</p>
+  <p class="motto">&ldquo;All the news worth knowing before the mead hall opens.&rdquo;</p>
+  <p class="publisher">The Greybeards of High Hrothgar &mdash; Publisher &amp; Proprietor</p>
+</div>
+<div class="dateline"><span class="sec">Payson, Arizona</span> &middot; <span class="sec">Fredas, the 30th of Frostfall (Friday, October 30, 2026)</span> &middot; <span class="sec">Morning Edition &mdash; Vol. 2610, No. 30</span> &middot; <span class="sec">Price: One Septim</span></div>
+
+<div class="weather">
+ <div class="wxrow1">
+  <div class="wimg">
+    <img src="images/scroll-img-4eabf0a692.jpg" alt="The Hearth's cats in today's weather">
+    <div class="wcap">Gandy endures the hard rain under the eaves while Maevy bats at the raindrops.</div>
+  </div>
+  <div class="wbody">
+    <div class="wtitle">Skies O&rsquo;er the Hold &nbsp; <span class="wnow">65&deg; / 49&deg;</span> &nbsp; <span class="wcond">Hard rain</span></div>
+    <div class="wcall">A wet, mild day — hard rain, strong winds, and rain through the day.</div>
+    <div class="wdet">Wind 16 mph &nbsp;&middot;&nbsp; Feels like 59&deg; &nbsp;&middot;&nbsp; UV 2 (Low) &nbsp;&middot;&nbsp; Rain 94%</div>
+    <div class="wdet">Sunrise 6:43 AM &nbsp;&middot;&nbsp; Sunset 5:33 PM &nbsp;&middot;&nbsp; Tomorrow &mdash; Snow, 58/51</div>
+  </div>
+  
+  <div class="wmoons"><div class="wmhead">The Moon&rsquo;s Reckoning</div><div class="wmoonrow"><figure class="wmoon "><img src="images/scroll-img-ac4ab8d8e3.jpg" alt="The moon, Waning Gibbous" /></figure><figure class="wmoon tonight"><img src="images/scroll-img-a940250b3a.jpg" alt="The moon, Waning Gibbous" /></figure><figure class="wmoon "><img src="images/scroll-img-a42ce5ec91.jpg" alt="The moon, Last Quarter" /></figure></div><div class="wmcap">Yesterday &middot; Tonight (Waning Gibbous) &middot; Tomorrow (Last Quarter)</div><div class="wmtrend">waning toward the new moon</div></div>
+ </div>
+ <div class="wxdiv"></div>
+ <div class="wxrow2"><div class="wxbox"><div class="wxlabel">Morning</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">56&deg;</div><div class="wxcond">Overcast</div></div><div class="wxpics"><img src="images/scroll-img-0efa1fc163.jpg" alt="The sky at morning"><img class="wxsock" src="images/scroll-img-6e9dc3cf3d.jpg" alt="The windsock at morning"><div class="wxmph">6 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Noon</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">62&deg;</div><div class="wxcond">Overcast</div></div><div class="wxpics"><img src="images/scroll-img-0efa1fc163.jpg" alt="The sky at noon"><img class="wxsock" src="images/scroll-img-6e9dc3cf3d.jpg" alt="The windsock at noon"><div class="wxmph">10 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Late Afternoon</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">53&deg;</div><div class="wxcond">Drizzle</div></div><div class="wxpics"><img src="images/scroll-img-8499deb4f4.jpg" alt="The sky at late afternoon"><img class="wxsock" src="images/scroll-img-2b13ba1dad.jpg" alt="The windsock at late afternoon"><div class="wxmph">14 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Evening</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">52&deg;</div><div class="wxcond">Light rain</div></div><div class="wxpics"><img src="images/scroll-img-2da877515a.jpg" alt="The sky at evening"><img class="wxsock" src="images/scroll-img-6e9dc3cf3d.jpg" alt="The windsock at evening"><div class="wxmph">8 mph</div></div></div></div></div>
+</div>
+<div class="headrow">
+  <div class="headtxt">
+    <p class="kicker">Around the Holds &middot; The Week Ahead</p>
+    <h1 class="headline">Hard Rain, Bright Pumpkins, and a Halloween Eve Full of Music</h1>
+  </div>
+  <div class="bylinestack">
+    <img class="bylinebadge" src="images/scroll-img-3f692ac845.png" alt="The Dude, Bard of the Morning Scroll">
+    <p class="byline">Payson, Ariz.</p>
+  </div>
+</div>
+<div class="story">
+  <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-lead.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  <figure class="frontpic">
+    <img src="images/scroll-img-ba1685bd09.jpg" alt="Front page engraving">
+    <figcaption>Pumpkins, riders, and lanterns in the rain — Halloween eve stands merry across the Holds.</figcaption>
+  </figure>
+  <p class="lead">Hail, guest of the Hearth, and mind the puddles on the Fredas road — the rain comes down hard over the Rim today, the pines drip and shine, and Mogollon’s Hearth keeps a dry bench and a warm mug waiting for every traveler. PAYSON — Halloween eve brings live music to Payson tonight, with an acoustic set at 5 and the T-BoneZ at 7:30, while Sedona paints its Marigold Mural and Prescott opens a brand-new three-day gravel bike race, a spooky story night, and a murder-mystery dinner. Tomorrow the Holds turn full Halloween — trunk-or-treats in Camp Verde, Sedona, and Show Low — and on Sunday, Nov. 1, a brand-new TJ Maxx opens its doors right here in Payson. By the Nine, take an umbrella today and a costume tomorrow, and the weekend is yours.</p>
+  <h3 class="evhead">Happening in the Holds Today</h3>
+  <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-today.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  <ul class="eventlist">
+    <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-e4a707d8b9.jpg">Payson</b><span class="subev">&mdash; <a href="https://www.bandsintown.com/c/payson-az"><b>Jeordie — acoustic live music</b></a> — today at 5 in the afternoon at Tox Bar in Payson, as listed on Bandsintown. An early-evening acoustic set opens Halloween weekend in the Hold — small room, close music, and an easy stop before supper in town. Guests who like live music without a late night will find this the gentlest start to the weekend. Check the Bandsintown Payson page before heading out, as small-venue times can shift.</span><span class="subev">&mdash; <a href="https://www.bandsintown.com/c/payson-az"><b>The T-BoneZ — live music</b></a> — tonight at 7:30 at Janey’s Coffee Co. & Bodega in Payson, as listed on Bandsintown. A second, later set of local music on the same evening, in a coffee-house room made for sitting and listening. No costume is required — this is simply a good local-music stop on Halloween eve. Confirm the time on the Bandsintown Payson page, and bring a raincoat for the walk back to the car.</span></li>
+  <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-e733864f69.jpg">Sedona</b><span class="subev">&mdash; <a href="https://www.sedona.net/halloween"><b>Marigold Mural Project</b></a> — today from 11 in the morning to 5 in the afternoon at Tlaquepaque Arts & Shopping Village, 336 State Route 179 in Sedona. Visitors paint a tribute to a loved one on a 26-foot community remembrance wall, leading into Sunday’s Día de los Muertos celebration. It is hands-on and open to all ages — your own marigold art joins the wall. The village patios and shops make it an easy half-day trip under the red rocks.</span><span class="subev">&mdash; <a href="https://allevents.in/sedona/this-weekend?ref=footer-tr-category-buckets"><b>Frequency Friday — Meditation, BioCharger & Sound Bath</b></a> — tonight at 5:45 at 1730 West State Route 89A in West Sedona, per the AllEvents Sedona listing. A quiet, indoor evening of meditation and sound — a calm counterpoint to costumes and crowds on a rainy Halloween eve. Good for guests who want to end the day restored rather than rattled. Check the AllEvents listing for booking details before going.</span><span class="subev">&mdash; <a href="https://allevents.in/sedona/this-weekend?ref=footer-tr-category-buckets"><b>Sound Ceremony — Songs of the Forest</b></a> — tonight at 7 at 251 Arizona 179, Suite B1, in Sedona, per AllEvents. An immersive listening and sound-healing evening rather than a stage concert — the forest sung back to you in a small room. It is a second, later wellness option for a Friday night in red rock country. Seating for these sessions is usually limited, so confirm booking on the AllEvents page first.</span></li>
+  <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-af9299f669.jpg">Prescott</b><span class="subev">&mdash; <a href="https://prescottplaces.com/this-weekend"><b>Prescott — The Rough Rider</b></a> opens today at Courthouse Square in Prescott, a brand-new three-day gravel bike race running Friday, Oct. 30 through Sunday, Nov. 1. Riders take on three stages of high-desert roads based in historic downtown, and the weekend stages finish right on North Cortez Street. Spectators get the best of it: fast starts, dusty finishes, and a square full of food and cheer. Come wave the riders home like bards greeting heroes — rain gear advised today.</span><span class="subev">&mdash; <a href="https://prescottplaces.com/this-weekend"><b>Spooky Stories & S’mores</b></a> — tonight from 5:30 to 7 at the Highlands Center for Natural History in Prescott, free with registration first, per Prescott Places. A marshmallow in one hand and a spooky story in your ear, out among the pines — a family-friendly Halloween-eve outing, not a haunted-house scare fest. Registration is required, so sign up before driving over. Dress warm and dry; it is an outdoor evening in high country, and today’s rain is no respecter of storytellers.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/1633065754866712/"><b>On The Chopping Block — murder mystery dinner</b></a> — tonight at 6 at the Elks Performing Arts Center, Crystal Hall, 117 East Gurley Street in Prescott, $65 with dinner, per the listing. The Preskitt Mystery Company turns supper into a whodunit set at a cooking-show semi-final — six chefs, sharp judges, and clues served between courses. Guests meet the characters and help solve the mystery; it is immersive, not a sit-back stage play. It plays again Saturday night at 6 for those who miss tonight.</span></li>
+  </ul>
+  <h3 class="evhead">The Days Ahead</h3>
+  <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-ahead.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  
+  <ul class="eventlist">
+    <li><b class="dat">Sat, Oct. 31</b><span class="subev">&mdash; <a href="https://visitcampverde.com/camp-verde-events/"><b>Camp Verde Trunk or Treat</b></a> takes over Main Street in Camp Verde on Saturday, Oct. 31, from 5 to 7 in the evening. Businesses, groups, and neighbors line the street with decorated cars and booths, handing out candy to crowds the town counts in the thousands. There are haunted houses, games, music, and a Haunted Jail for the brave, plus a decorating contest. Costumes are the order of the night — bring a bag with room to spare.</span><span class="subev">&mdash; <a href="https://azstateparks.com/fort-verde/events/a-haunting-at-the-fort"><b>A Haunting at the Fort</b></a> — Saturday, Oct. 31, from 6 to 8 in the evening at Fort Verde State Historic Park, 125 East Hollamon Street in Camp Verde. A lantern-lit, after-hours walk with ghost stories and a chance to visit with those who still call the fort home after 150 years, per Arizona State Parks. There is no extra cost beyond regular park admission. It sits a short walk from the Main Street candy line — trunk-or-treat first, then slip into the fort as darkness falls.</span><span class="subev">&mdash; <a href="https://www.signalsaz.com/articles/sedona-halloween-event-features-haunted-ambulance/"><b>Uptown Trick or Treat</b></a> in Sedona, Saturday, Oct. 31, from 5 to 8 in the evening along Uptown’s main street on State Route 89A. Shops stay open late handing out candy as costumed families wander door to door under the red rocks. Look for the “Thriller” flash-mob dance at Sinagua Plaza and the Fire Department’s Haunted Ambulance nearby. It is Sedona’s biggest Halloween gathering — joyful, glowing, and full of tiny dragons and knights.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/2207238083168563/"><b>Show Low Main Street Trunk or Treat</b></a> — Saturday, Oct. 31, from 3 to 8 in the evening at Hatch Toyota, 1051 North Auto Mall Parkway in Show Low. Trunk-or-treating, music, food, a haunted house, and a Kids Zone, with a trunk-decorating contest offering cash prizes. Presented by Show Low Main Street, it is the town’s main Halloween gathering. Families from across the White Mountains make the trip for this one.</span></li>
+  <li><b class="dat">Sun, Nov. 1</b><span class="subev">&mdash; <a href="https://www.usatoday.com/story/money/retail/2026/10/03/tj-maxx-store-closings-new-openings/92076981007/"><b>TJ Maxx Grand Opening</b></a> — Payson’s own brand-new TJ Maxx throws open its doors Sunday, Nov. 1, at 400 East State Highway 260, with opening-day hours from 8 in the morning to 8 at night. Off-price treasures are the house specialty — clothes, shoes, home goods, and gifts at prices to make a bard sing. Arrive early for the best pick of the racks; the whole Hold has waited for this one. Valley Dwellers riding up for the weekend can be first through the door.</span><span class="subev">&mdash; <a href="https://www.sedona.net/halloween"><b>Día de los Muertos at Tlaquepaque</b></a> — Sunday, Nov. 1, from 11 in the morning to 5 in the afternoon at Tlaquepaque Arts & Shopping Village in Sedona. A colorful celebration of life and remembrance fills the patios and fountains — traditional altars, large cultural installations, papel picado, music, and dance. It follows four days of the Marigold Mural Project, where visitors painted tributes on the community wall. All ages are welcome at one of Sedona’s most loved fall gatherings.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/2068371354031155/"><b>Sedona Community Farmers Market</b></a> — Sunday, Nov. 1, from 8 to 11 in the morning at 2201 West State Route 89A in Sedona. Local growers and makers spread their tables under the red rocks — produce, baked goods, and handmade wares for a slow Sunday morning. Go early for the best pick of the bread, then ride on to Tlaquepaque for the afternoon. A fine, calm close to Halloween weekend.</span></li>
+  <li><b class="dat">Tue, Nov. 3</b><span class="subev">&mdash; <a href="https://www.facebook.com/events/3932841286846969/"><b>Trail Day Volunteer Build in Pine</b></a> — Tuesday, Nov. 3, from 7 in the morning to noon, off Highway 87 just before Pine. Pine Strawberry Fuel Reduction calls hikers, bikers, runners, and neighbors to help clear brush, move rocks, and shape a trail the whole community will use for years. The work also opens better access for fire crews, so every hour given does double duty. Tools are provided and no experience is needed — bring water, gloves if you have them, and sturdy shoes, and sign up at trails@psfuelreduction.org.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/858240197259563/"><b>Snakes! Lizards! Tortoises!</b></a> — Tuesday, Nov. 3, at 11 in the morning at Tlaquepaque, 336 Arizona 179 in Sedona, free and open to the public, per the event listing. Sonoran Reptiles brings native and non-native lizards, snakes, and tortoises to see up close, with handlers glad to answer questions. A fine midweek stop for families and anyone curious about desert wildlife. Confirm the start time on the event page before the ride over.</span></li>
+  </ul>
+</div>
+
+
+<div class="lower">
+  <div class="box">
+    <h2>Quests of the Hearth</h2>
+    <div class="body">
+      <figure class="qfig"><img src="images/scroll-img-0bf1f4f1ae.jpg" alt="Workshop, engraving"><figcaption>The shield, the torch sconces, and the doors wait their turn on the workshop bench.</figcaption></figure>
+      <p><b>Quests awaiting:</b></p>
+      <ul>
+        <li>&#9744; <b>Print the torch sconces</b> &mdash; Print two torches plus the socket test piece, and test-fit the bulb and socket first.</li>
+          <li>&#9744; <b>Design and prep the torch sconces</b> &mdash; Scale the sconce model to the flame bulb, slice in PETG, and check the door-light wiring.</li>
+          <li>&#9744; <b>Finish and install the torches</b> &mdash; Paint, seal against the sun, wire into the door-light boxes with the breaker off, and test at dusk.</li>
+          <li>&#9744; <b>Build the Mogollon’s Hearth shield</b> &mdash; Laser-cut layered plywood, 3D-print the troll relief, and finish with spar urethane.</li>
+          <li>&#9744; <b>Mount the shield by the front door</b> &mdash; Hang it on a French cleat beside the front door, where the walkway sees it best.</li>
+          <li>&#9744; <b>Doors — Mogollon Hearth</b> &mdash; The front and side door work that ties the shield and torches together.</li>
+      </ul>
+      <p class="due">All six quests stand ready — the torch sconces and the Hearth shield have waited longest, so the workshop calls their names first.</p>
+      <div class="clear"></div>
+    </div>
+  </div>
+  
+  
+</div>
+
+<div class="box merchant">
+  <h2>Merchant of the Hold</h2>
+  <div class="body">
+    <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-merchant.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+    <p class="mname">The Hike Shack <span class="mtown">&middot; Prescott</span></p>
+    <table class="mcols"><tr>
+      <td class="mcol mphoto"><figure style="margin:0 0 8px 0"><img src="images/scroll-img-76b6cdec56.jpg" alt="Engraving of a medieval outfitter’s shop with a shopkeeper fitting a hiking boot, maps, packs, and a dog watching"><figcaption>Inside The Hike Shack, where the boots are fitted by folks who hike.</figcaption></figure></td>
+      <td class="mcol mtext1">Prescott’s local outfitter just off Courthouse Plaza, stocked for everything from a Thumb Butte day hike to an extended trek — camping gear and apparel, sleeping bags, trail maps, climbing gear and harnesses, and hiking boots fitted by staff who actually hike. Their motto says it plain: it all starts with a good Base Camp — and by the Nine, a spell of true-fitting means those boots will not pinch a toe from here to Granite Mountain.
+        <p class="mquote">&ldquo;Great selection of quality gear, knowledgeable helpful staff and dog friendly store. We also really appreciate the fact that the prices are reasonable.&rdquo; <span class="msrc">&mdash; <a href="https://wanderlog.com/place/details/1592699/hike-shack">Wanderlog (Google review)</a></span></p>
+      </td>
+      <td class="mcol mtext2">
+        <p class="mvisit">104 North Montezuma Street, Prescott. Open Monday to Saturday 9 to 6, Sunday 10 to 6 — so open today, Friday, Oct. 30, 9 to 6. Phone 928-443-8565. Prices are moderate ($$). Good to know: the store is dog-friendly, and staff are trained for custom boot fittings — ask, and they will bring out several pairs to try. &middot; <a href="http://www.thehikeshack.com/">their scrying-mirror page (other travelers call it a ‘website’)</a></p>
+        <p class="mwhy"><b>Why the Hearth sends you:</b> Real trail fuel for the feet — local trail knowledge and a proper boot fitting in one stop, right off Courthouse Plaza, before any Prescott trail.</p>
+      </td>
+    </tr></table>
+  </div>
+</div>
+
+<div class="box rimstories">
+  <h2>Stories Around the Rim</h2>
+  <div class="body">
+    <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-rim.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+    <p class="taletitle">A Voice Rolled Down the Mountain</p>
+    <table class="mcols"><tr>
+      <td class="mcol mphoto"><figure style="margin:0"><img src="images/scroll-img-7c75e6c703.jpg" alt="Engraving of amazed villagers on a ridge pointing at a high mountain tower as a shout rolls down, a tiny distant hooded figure on the trail"><figcaption>The mountain called, the Hold listened — and, as ever, arrived ten minutes late.</figcaption></figure></td>
+      <td class="mcol"><p>Word comes this week by a mule driver down the north road, who swears — swears, mind you — that three nights past a voice rolled down off the high mountain like thunder with words in it, and every goat on the slope stood still to listen.</p><p>The high grey monks of the mountain shrine, the mule driver says, had called a name into the storm, calling the hooded one up the seven thousand steps. A shepherd on the lower trail swears he passed a lone hooded figure climbing through the rain not ten minutes after the call — staff in hand, never hurrying, gone around a bend before the shepherd thought to speak.</p><p>Mabel doesn’t believe a word of it, as is proper. But the trapper who winters by the pass has left a lantern lit on his porch three nights running now, “just in case the mountain calls this way.” The Hold, as ever, arrived ten minutes late — and heard only the echo.</p></td>
+    </tr></table>
+  </div>
+</div>
+
+<div class="box taletale">
+  <h2>Tales from the Treeline</h2>
+  <div class="body">
+    <p class="listen top"><a href="https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-10-30-tale.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+    <p class="taletitle">The Great Raincoat Fitting</p>
+    <table class="mcols"><tr>
+      <td class="mcol mphoto"><figure style="margin:0"><img src="images/scroll-img-87903a09cc.jpg" alt="Engraving of a shaggy monster fitting a tarp raincoat on an elk, an orc holding an umbrella, and a chicken watching from a crate"><figcaption>Jethro fits, Gus shelters, Henny supervises — Earl stays dry.</figcaption></figure></td>
+      <td class="mcol"><p>Fredas dawned with the rain coming down hard, and Jethro (the Mogollon Monster) declared that no friend of the Hearth would go to the Halloween market wet — beginning with Earl (an elk).</p><p>The raincoat was a yellow tarp, cut generous, with holes argued over and cut again. Gus (an orc) held an oiled-cloth umbrella over the fitting like a royal canopy, and every time Jethro pulled the tarp straight, Earl’s great antlers poked out at a new and grander angle. Henny (the Hearth’s chicken) watched from a dry crate and offered no help at all, which everyone agreed was her finest work.</p><p>At last the tarp stood fastened, the antlers wore two small sleeves of their own, and Earl stepped into the downpour with his dignity entirely dry. The rain, impressed, kept falling anyway — and Earl, pleased despite himself, wore the yellow tarp all the way to the porch and back, twice.</p></td>
+    </tr></table>
+  </div>
+</div>
+
+<div class="colophon">
+  Printed with pride in Payson, in the shadow of the Rim &middot; Set in hot metal by Dude, Bard of the Morning Scroll &middot; May your Fredas be free of sabre cats, the admin.
+  <br><a class="contact-btn" href="mailto:mogollonshearth@gmail.com?subject=The%20Payson%20Morning%20Scroll%20-%20October%2030%2C%202026">Ask the Hearth &#9993;</a>
+  <br><span class="contact-addr">…or write to us straight: mogollonshearth@gmail.com</span>
+</div>
+
+
+</body>
+</html>
