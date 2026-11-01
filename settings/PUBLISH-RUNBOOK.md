@@ -1,14 +1,14 @@
 # Morning Scroll — Daily Publish Runbook
 
 **Mirrored on GitHub:** `claypnw/morning-scroll/settings/PUBLISH-RUNBOOK.md`
-(Clay's request 2026-10-05 — second copy in case anything happens to this one.
+(The admin's request 2026-10-05 — second copy in case anything happens to this one.
 Update both when the procedure changes.)
 
 **Purpose:** The exact steps to publish a Morning Scroll edition to the public
 archive. Follow this every time. Do not rely on memory. Do not improvise the
-order. Clay taps **Publish** once — that is the only authorization needed.
+order. The admin taps **Publish** once — that is the only authorization needed.
 
-**BATCH CHAIN (2026-10-17, Clay's direction — the mechanical steps below are
+**BATCH CHAIN (2026-10-17, the admin's direction — the mechanical steps below are
 batch jobs now):** Steps 1, 2, 2b, 3, 4, and 7 are performed by the programs
 in `~/workspace/morning-post/batch/` — `run_chain.sh YYYY-MM-DD` runs
 build + build-output sanity checks (page count, dimensions, parchment
@@ -25,13 +25,13 @@ rebuilds: `--force`, which prints a loud FORCED line).
 **Canonical site:** https://claypnw.github.io/morning-scroll/
 **Repo:** `claypnw/morning-scroll` (branch `main`, files at root)
 **Backup mirror:** `~/workspace/BACKUP-github-websites-only/morning-scroll/`
-(must match GitHub byte-for-byte after every publish — Clay's rule)
+(must match GitHub byte-for-byte after every publish — the admin's rule)
 
 **Standing rules that apply every publish:**
-- Clay is never the copy editor. Never ask him to proofread.
+- the admin is never the copy editor. Never ask him to proofread.
 - Corrections/rebuilds touch only the current day's edition. Old editions stay as printed.
 - Check the current edition's links before publishing; fix dead ones. Old Scrolls are never re-audited.
-- Any real person's name or private-looking address in an event: flag to Clay FIRST (tappable options: include as-is / replacement text / drop). Never redact or include silently.
+- Any real person's name or private-looking address in an event: flag to the admin FIRST (tappable options: include as-is / replacement text / drop). Never redact or include silently.
 - After two failed attempts at any step: stop, say plainly why it can't be done. No third, fourth, fifth tries.
 
 ---
@@ -66,7 +66,7 @@ The copy of `index.html` in `publish-upload/` goes stale. Direct fixes made
 on GitHub (e.g. the Oct 10 promo-card removal, commit b074f4f) exist only
 there — editing the old local copy and uploading it silently reintroduces
 removed content. This is exactly what happened on the Oct 12 publish: the
-stale local copy still had the Gilded Pages and yard-sales promo cards Clay
+stale local copy still had the Gilded Pages and yard-sales promo cards the admin
 had ordered removed, and uploading it put them back on the live site.
 
 Before making Step 3's edits, download the current `index.html` from
@@ -124,7 +124,7 @@ Run every phase in order. No publication without the Phase 5 sign-off.
 - [ ] Every fact verified: names and titles, numbers and calculations,
       dates, quotes with correct attribution
 - [ ] Headlines, captions, and blurbs checked — consistent with body copy
-- [ ] Any real person's name or private-looking address: flagged to Clay
+- [ ] Any real person's name or private-looking address: flagged to the admin
       FIRST (include as-is / replacement text / drop) — never silently
 
 ### Phase 2 — Links, references & interactive elements
@@ -134,16 +134,16 @@ Run every phase in order. No publication without the Phase 5 sign-off.
       (Oct 12: council "live stream" pointed at Amherst, VA).
 - [ ] The "Ask the Hearth" mailto button uses an ASCII-only subject line —
       no em dashes or other non-ASCII in the mailto: URL (Oct 12: the em
-      dash broke the button on Clay's Android PDF viewer).
+      dash broke the button on the admin's Android PDF viewer).
 - [ ] No invented URLs — only URLs actually seen during research.
 
 ### Phase 3 — Visuals & layout
 - [ ] All images present, correctly placed, captions match the picture
 - [ ] No unintended blank pages; page count and page order correct
 - [ ] No overflow text (text running past its box or column)
-- [ ] Blank-space rule (Clay, 2026-10-12): minimize empty space — fill the
+- [ ] Blank-space rule (the admin, 2026-10-12): minimize empty space — fill the
       page; some whitespace is unavoidable, the rule is to try
-- [ ] Edition checked on the phone path (page-image reader) — Clay reads
+- [ ] Edition checked on the phone path (page-image reader) — the admin reads
       on his phone
 
 ### Phase 4 — File integrity (preflight)
@@ -158,14 +158,18 @@ Run every phase in order. No publication without the Phase 5 sign-off.
 - [ ] Date slider spans the full range through the new date
 - [ ] Month edition counts are correct (count the issue entries per month)
 - [ ] Previously removed elements stay removed (e.g. no `class="gilded-link"`
-      promo cards — Clay ordered these off the archive page 2026-10-10)
+      promo cards — the admin ordered these off the archive page 2026-10-10)
 - [ ] Working copy was refreshed from GitHub per Step 2b (no stale-copy
       regressions)
 
 ### Phase 5 — Sign-off (the publisher's gate)
 - [ ] One final cold read of the checklist above, top to bottom, after all
       fixes are in. Record sign-off: date + edition (one line in the daily
-      memory log). No publication without it.
+      memory log) AND write the sign-off file the batch chain's publish
+      gate reads — `batch/logs/sign-off-<edition date>.txt` holding exactly
+      three lines, one per line: `cold_read_done: true`,
+      `date: <edition date>`, `edition: <edition date>`. The publish step
+      stops if any of the three lines is missing. No publication without it.
 
 ### Phase 6 — Post-publish verification & corrections
 - [ ] Live site verified in a signed-out session: new edition newest, pages
@@ -177,7 +181,7 @@ Run every phase in order. No publication without the Phase 5 sign-off.
 
 ## Step 6 — Push to GitHub
 
-**Auth method (confirmed 2026-10-05):** Browser task with Clay's GitHub session.
+**Auth method (confirmed 2026-10-05):** Browser task with the admin's GitHub session.
 The browser stays signed in via saved session state — no sign-in or 2FA was
 needed on Oct 5. Spawn a `browser.spawn_task` to
 `https://github.com/claypnw/morning-scroll`, pass the 7 files via the `files`
@@ -188,7 +192,7 @@ parameter, and have it:
 - Commit directly to `main` (two commits: one for the updated files, one for
   the new files — or a single commit; either is fine)
 
-**Do NOT ask Clay for credentials.** The saved login works. Asking again
+**Do NOT ask the admin for credentials.** The saved login works. Asking again
 after he called it out on Oct 5 is a trust hit.
 
 Commit message: `Publish <Mon DD, YYYY> edition (Vol. YYMM, No. DD)`
@@ -236,7 +240,7 @@ Copy the final uploaded files to
 matches GitHub byte-for-byte. If index.html or the search index was corrected
 after the first backup copy, re-copy. Verify with `diff -r` or checksums.
 
-## Step 9 — Report to Clay
+## Step 9 — Report to the admin
 
 Plain summary with the clickable public link:
 https://claypnw.github.io/morning-scroll/
@@ -250,14 +254,44 @@ Say what published (edition date, Vol/No, headline). No technical narration.
 | Failure | Action |
 |---|---|
 | prep_publish.py errors | Read the traceback, fix the input (usually edition.json), re-run. |
-| Browser task can't sign in | Report to Clay what happened (2FA? locked?). Do NOT ask for his password in chat — use the secure flow only if he offers. |
+| Browser task can't sign in | Report to the admin what happened (2FA? locked?). Do NOT ask for his password in chat — use the secure flow only if he offers. |
 | GitHub web upload fails mid-way | Check which files landed (repo file list), upload only the missing ones. Never re-upload everything blindly. |
 | Live site doesn't show the edition after 5 min | GitHub Pages can lag. Wait, re-check. If still missing after 15 min, inspect the repo — the push may have missed `main`. |
-| Second failed attempt at any step | STOP. Tell Clay plainly what can't be done and why. No third attempt. |
+| Second failed attempt at any step | STOP. Tell the admin plainly what can't be done and why. No third attempt. |
 
 ---
 
-*Created 2026-10-05 at Clay's request: "do you have steps you perform on a daily
+## Build change — login-walled links and the guest tablet (2026-10-31)
+
+Clay's rule: no logins on his guest Fire tablet — not his, not a guest's.
+The tablet is singled out by a mark saved in its browser at setup
+(~/workspace/guest-tablet/tablet-setup.html; localStorage key
+`hearthGuestTablet`). The build's part:
+
+- `build_paper.py` marks every link it writes whose address sits on a
+  walled host with the attribute `data-login-link` — one pass over the
+  finished page (`_mark_login_links`, called at the end of
+  `render_page`). THE WALLED LIST is the one named place:
+  `LOGIN_LINK_WALLED_HOSTS` at the top of that code. It starts with
+  facebook.com only — the proven wall. The print road ignores the
+  attribute; nothing else about the paper changes.
+- `build_edition_page.py` adds one script line before the closing body
+  tag loading `guest-tablet-check.js`, which stands on the Scroll's own
+  site beside the edition pages (published there 2026-10-31; its source
+  is ~/workspace/guest-tablet/link-check.js). In a browser carrying the
+  mark, the checker turns marked links into plain words; in every other
+  browser it changes nothing.
+- Proof (2026-10-31, before the change ever builds a live edition): the
+  test-stand proof page passed both cases in a headless DOM harness,
+  and a dry build of the 2026-10-31 edition — which holds seven true
+  facebook.com event links — passed both cases on the paper's own
+  words (test stand: scroll-mark-dry-test.html). The first live edition
+  under the change is 2026-11-01, judged by its own run. A full
+  in-browser proof on the tablet itself is still owed at setup time.
+
+---
+
+*Created 2026-10-05 at the admin's request: "do you have steps you perform on a daily
 basis — if you don't, create them so you don't have to 'remember'."*
 *Auth method confirmed via browser task 2026-10-05 (task completed without
 re-asking for credentials).*
