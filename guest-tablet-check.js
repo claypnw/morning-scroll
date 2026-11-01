@@ -1,13 +1,13 @@
-// link-check.js — the guest-tablet mark checker (one shared file, 2026-10-31).
+// link-check.js — the guest-tablet flag checker (one shared file, 2026-10-31).
 //
-// The mark: at tablet setup, a tap on the setup page saves a small mark in
+// The flag: at tablet setup, a tap on the setup page saves a small flag in
 // this browser's storage for the claypnw.github.io site — localStorage key
 // "hearthGuestTablet", value "1". Only pages on this site can read it.
 //
-// What this file does at page load: it reads the mark. If the mark stands,
+// What this file does at page load: it reads the flag. If the flag stands,
 // every link carrying data-login-link (a link that leans on a login, marked
 // at build time) is replaced by its own words as plain text — no link, no
-// login wall. If no mark stands, it changes nothing.
+// login wall. If no flag stands, it changes nothing.
 (function () {
   function run() {
     var marked = false;
