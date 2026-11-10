@@ -378,10 +378,10 @@ img { max-width: 100%; }
   }
   function goBegin() {
     if (done) { load(0, false); return; }
-    if (audio.currentTime > 0) {
-      audio.currentTime = 0; showLine();
-    } else if (idx > 0) {
+    if (audio.currentTime <= 5 && idx > 0) {
       load(idx - 1, !audio.paused);
+    } else {
+      audio.currentTime = 0; showLine();
     }
   }
   function goNext() {
