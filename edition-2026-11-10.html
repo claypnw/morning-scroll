@@ -279,13 +279,25 @@ img { max-width: 100%; }
 </style>
 
 <style>
-/* The story player's bar (2026-11-10): one black rounded bar, one
-   row of seven buttons, white shapes and words inside the bar; the
-   "Story N of M" line and the time line stand under the bar. */
-.whole-player { text-align: center; margin: 10px auto 4px; max-width: 980px; }
+/* The story player (2026-11-10, the Scroll's pop-up form): the
+   block stands hidden while a guest is only reading; on a Listen
+   tap it pops up as one black rounded panel floating at the TOP
+   RIGHT of the screen — all seven buttons in one row inside it,
+   white shapes and words, the "Story N of M" line with the title
+   and the time line under the buttons — and hides again on Stop
+   or at the last story's end. The panel is capped at the screen's
+   width so it stands fully on screen and tappable at phone width
+   as well as desktop width. */
+#scroll-player { display: none; }
+#scroll-player.wp-open { display: block; position: fixed;
+  top: 10px; right: 10px; z-index: 9999;
+  width: min(430px, calc(100vw - 20px));
+  background: #111; border-radius: 22px;
+  padding: 12px 14px 10px; text-align: center;
+  box-shadow: 0 6px 28px rgba(0,0,0,.55); }
 .whole-player .wp-bar { display: flex; flex-wrap: nowrap;
   align-items: flex-start; background: #111; border-radius: 60px;
-  padding: 12px 14px; }
+  padding: 0; }
 .whole-player .wp-bar .wp-btn { flex: 1 1 0; width: auto; min-width: 0;
   min-height: 0; margin: 0; padding: 3px 1px; background: transparent;
   border: none; border-radius: 16px; color: #fff; cursor: pointer;
@@ -296,9 +308,17 @@ img { max-width: 100%; }
 .whole-player .wp-bar .wp-btn .word { display: block; font-size: 11px;
   font-weight: 400; margin-top: 3px; color: #fff; }
 .whole-player #now-playing { font-weight: 700; margin: 10px 0 0;
-  font-size: 15.5px; }
-.whole-player .wp-time { margin: 2px 0 8px; font-size: 14px;
-  color: #333; font-variant-numeric: tabular-nums; }
+  font-size: 15.5px; color: #fff; }
+.whole-player .wp-time { margin: 2px 0 0; font-size: 14px;
+  color: #ccc; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  #scroll-player.wp-open { top: 6px; right: 6px;
+    width: calc(100vw - 12px); border-radius: 18px;
+    padding: 10px 8px 8px; }
+  .whole-player .wp-bar .wp-btn .sym svg { width: 26px; height: 26px; }
+  .whole-player .wp-bar .wp-btn .word { font-size: 9.5px; }
+  .whole-player #now-playing { font-size: 14px; }
+}
 </style>
 </head>
 <body>
@@ -310,7 +330,7 @@ img { max-width: 100%; }
   <p class="publisher">The Greybeards of High Hrothgar &mdash; Publisher &amp; Proprietor</p>
 </div>
 <div class="dateline"><span class="sec">Payson, Arizona</span> &middot; <span class="sec">Tirdas, the 10th of Sun's Dusk (Tuesday, November 10, 2026)</span> &middot; <span class="sec">Morning Edition &mdash; Vol. 2611, No. 10</span> &middot; <span class="sec">Price: One Septim</span></div>
-  <div class="listen whole-player">
+  <div class="listen whole-player" id="scroll-player">
     <div class="wp-bar">
     <button class="wp-btn" id="btn-begin" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="11" width="5" height="26" fill="#fff"/><polygon points="25,11 10,24 25,37" fill="#fff"/><polygon points="41,11 26,24 41,37" fill="#fff"/></svg></span><span class="word">Start of story or story before</span></button>
     <button class="wp-btn" id="btn-back" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="23,7 9,20 23,33" fill="#fff"/><polygon points="40,7 26,20 40,33" fill="#fff"/><text x="24" y="45" font-size="11" font-weight="bold" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" fill="#fff">10</text></svg></span><span class="word">Back 10 seconds</span></button>
@@ -350,7 +370,10 @@ img { max-width: 100%; }
   var audio = document.getElementById('edition-audio');
   var nowEl = document.getElementById('now-playing');
   var timeEl = document.getElementById('time-line');
+  var player = document.getElementById('scroll-player');
   var idx = 0, done = false;
+  function showPlayer() { player.classList.add('wp-open'); }
+  function hidePlayer() { player.classList.remove('wp-open'); }
   function fmt(s) {
     if (!isFinite(s) || s < 0) s = 0;
     s = Math.floor(s);
@@ -396,7 +419,7 @@ img { max-width: 100%; }
     audio.pause();
   });
   document.getElementById('btn-stop').addEventListener('click', function () {
-    audio.pause(); load(0, false);
+    audio.pause(); load(0, false); hidePlayer();
   });
   document.getElementById('btn-begin').addEventListener('click', goBegin);
   document.getElementById('btn-back').addEventListener('click', function () {
@@ -417,8 +440,34 @@ img { max-width: 100%; }
   audio.addEventListener('loadedmetadata', showLine);
   audio.addEventListener('ended', function () {
     if (idx < TRACKS.length - 1) { load(idx + 1, true); }
-    else { done = true; showLine(); }
+    else { done = true; showLine(); hidePlayer(); }
   });
+  // The pop-up's door (2026-11-10): the page's own listen lines.
+  // A tap on a story's "Listen to this story" line starts the
+  // player at that story and pops the bar up, instead of opening
+  // the recording in a new window. The wiring waits for the whole
+  // page: this script stands above the stories, so at its first
+  // run the listen lines below it are not in the page yet.
+  function wireListenLinks() {
+    TRACKS.forEach(function (track, i) {
+      var links = document.querySelectorAll('a');
+      for (var k = 0; k < links.length; k++) {
+        if (links[k].getAttribute('href') === track.href ||
+            links[k].href === track.href) {
+          links[k].addEventListener('click', function (e) {
+            e.preventDefault();
+            showPlayer();
+            load(i, true);
+          });
+        }
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireListenLinks);
+  } else {
+    wireListenLinks();
+  }
   if ('mediaSession' in navigator) {
     try {
       navigator.mediaSession.setActionHandler('nexttrack', goNext);
