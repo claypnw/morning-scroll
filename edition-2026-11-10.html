@@ -277,6 +277,29 @@ img { max-width: 100%; }
   .weather .wimg img { margin: 0 auto 3px auto; }
 }
 </style>
+
+<style>
+/* The story player's bar (2026-11-10): one black rounded bar, one
+   row of seven buttons, white shapes and words inside the bar; the
+   "Story N of M" line and the time line stand under the bar. */
+.whole-player { text-align: center; margin: 10px auto 4px; max-width: 980px; }
+.whole-player .wp-bar { display: flex; flex-wrap: nowrap;
+  align-items: flex-start; background: #111; border-radius: 60px;
+  padding: 12px 14px; }
+.whole-player .wp-bar .wp-btn { flex: 1 1 0; width: auto; min-width: 0;
+  min-height: 0; margin: 0; padding: 3px 1px; background: transparent;
+  border: none; border-radius: 16px; color: #fff; cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif; line-height: 1.25; }
+.whole-player .wp-bar .wp-btn:active { background: #333; }
+.whole-player .wp-bar .wp-btn .sym { display: block; line-height: 0; }
+.whole-player .wp-bar .wp-btn .sym svg { width: 32px; height: 32px; }
+.whole-player .wp-bar .wp-btn .word { display: block; font-size: 11px;
+  font-weight: 400; margin-top: 3px; color: #fff; }
+.whole-player #now-playing { font-weight: 700; margin: 10px 0 0;
+  font-size: 15.5px; }
+.whole-player .wp-time { margin: 2px 0 8px; font-size: 14px;
+  color: #333; font-variant-numeric: tabular-nums; }
+</style>
 </head>
 <body>
 
@@ -287,6 +310,125 @@ img { max-width: 100%; }
   <p class="publisher">The Greybeards of High Hrothgar &mdash; Publisher &amp; Proprietor</p>
 </div>
 <div class="dateline"><span class="sec">Payson, Arizona</span> &middot; <span class="sec">Tirdas, the 10th of Sun's Dusk (Tuesday, November 10, 2026)</span> &middot; <span class="sec">Morning Edition &mdash; Vol. 2611, No. 10</span> &middot; <span class="sec">Price: One Septim</span></div>
+  <div class="listen whole-player">
+    <div class="wp-bar">
+    <button class="wp-btn" id="btn-begin" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="11" width="5" height="26" fill="#fff"/><polygon points="25,11 10,24 25,37" fill="#fff"/><polygon points="41,11 26,24 41,37" fill="#fff"/></svg></span><span class="word">Start of story or story before</span></button>
+    <button class="wp-btn" id="btn-back" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="23,7 9,20 23,33" fill="#fff"/><polygon points="40,7 26,20 40,33" fill="#fff"/><text x="24" y="45" font-size="11" font-weight="bold" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" fill="#fff">10</text></svg></span><span class="word">Back 10 seconds</span></button>
+    <button class="wp-btn" id="btn-play" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="17,10 38,24 17,38" fill="#fff"/></svg></span><span class="word">Play</span></button>
+    <button class="wp-btn" id="btn-pause" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="15" y="11" width="6.5" height="26" fill="#fff"/><rect x="26.5" y="11" width="6.5" height="26" fill="#fff"/></svg></span><span class="word">Pause</span></button>
+    <button class="wp-btn" id="btn-fwd" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="8,7 22,20 8,33" fill="#fff"/><polygon points="25,7 39,20 25,33" fill="#fff"/><text x="24" y="45" font-size="11" font-weight="bold" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" fill="#fff">10</text></svg></span><span class="word">Forward 10 seconds</span></button>
+    <button class="wp-btn" id="btn-next" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="7,11 22,24 7,37" fill="#fff"/><polygon points="23,11 38,24 23,37" fill="#fff"/><rect x="39" y="11" width="5" height="26" fill="#fff"/></svg></span><span class="word">Next story</span></button>
+    <button class="wp-btn" id="btn-stop" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="12" y="12" width="24" height="24" fill="#fff"/></svg></span><span class="word">Stop</span></button>
+    </div>
+    <p id="now-playing">Story 1 of 5 — A Week of Thanks: Wreaths, Parades, and a Groundbreaking</p>
+    <p class="wp-time" id="time-line">0:00 of 0:00</p>
+    <audio id="edition-audio" preload="metadata"></audio>
+<script>
+(function () {
+  var TRACKS = [
+  {
+    "title": "A Week of Thanks: Wreaths, Parades, and a Groundbreaking",
+    "href": "https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-11-10-lead.mp3"
+  },
+  {
+    "title": "Happening in the Holds Today",
+    "href": "https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-11-10-today.mp3"
+  },
+  {
+    "title": "The Days Ahead",
+    "href": "https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-11-10-ahead.mp3"
+  },
+  {
+    "title": "Merchant of the Hold",
+    "href": "https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-11-10-merchant.mp3"
+  },
+  {
+    "title": "Tales from the Treeline",
+    "href": "https://claypnw.github.io/morning-scroll/audio/morning-scroll-2026-11-10-tale.mp3"
+  }
+];
+  var audio = document.getElementById('edition-audio');
+  var nowEl = document.getElementById('now-playing');
+  var timeEl = document.getElementById('time-line');
+  var idx = 0, done = false;
+  function fmt(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    s = Math.floor(s);
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+  function showLine() {
+    if (done) {
+      nowEl.textContent = 'All ' + TRACKS.length + ' stories are done';
+    } else {
+      nowEl.textContent = 'Story ' + (idx + 1) + ' of ' + TRACKS.length + ' \u2014 ' + TRACKS[idx].title;
+    }
+    timeEl.textContent = fmt(audio.currentTime) + ' of ' + fmt(audio.duration);
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: TRACKS[idx].title, artist: 'Payson Morning Scroll' });
+      } catch (e) {}
+    }
+  }
+  function load(i, autoplay) {
+    idx = i; done = false;
+    audio.src = TRACKS[i].href;
+    audio.load();
+    showLine();
+    if (autoplay) { audio.play(); }
+  }
+  function goBegin() {
+    if (done) { load(0, false); return; }
+    if (audio.currentTime > 0) {
+      audio.currentTime = 0; showLine();
+    } else if (idx > 0) {
+      load(idx - 1, !audio.paused);
+    }
+  }
+  function goNext() {
+    if (done) { load(0, true); return; }
+    if (idx < TRACKS.length - 1) { load(idx + 1, true); }
+  }
+  document.getElementById('btn-play').addEventListener('click', function () {
+    if (done) { load(0, true); return; }
+    audio.play();
+  });
+  document.getElementById('btn-pause').addEventListener('click', function () {
+    audio.pause();
+  });
+  document.getElementById('btn-stop').addEventListener('click', function () {
+    audio.pause(); load(0, false);
+  });
+  document.getElementById('btn-begin').addEventListener('click', goBegin);
+  document.getElementById('btn-back').addEventListener('click', function () {
+    audio.currentTime = Math.max(0, audio.currentTime - 10); showLine();
+  });
+  document.getElementById('btn-fwd').addEventListener('click', function () {
+    var d = audio.duration;
+    if (isFinite(d) && audio.currentTime + 10 >= d) {
+      if (idx < TRACKS.length - 1) { load(idx + 1, !audio.paused); }
+      else { audio.currentTime = d; }
+    } else {
+      audio.currentTime = Math.min(d || 0, audio.currentTime + 10);
+    }
+    showLine();
+  });
+  document.getElementById('btn-next').addEventListener('click', goNext);
+  audio.addEventListener('timeupdate', showLine);
+  audio.addEventListener('loadedmetadata', showLine);
+  audio.addEventListener('ended', function () {
+    if (idx < TRACKS.length - 1) { load(idx + 1, true); }
+    else { done = true; showLine(); }
+  });
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler('nexttrack', goNext);
+      navigator.mediaSession.setActionHandler('previoustrack', goBegin);
+    } catch (e) { /* older browser: buttons still work */ }
+  }
+  load(0, false);
+})();
+</script>
+  </div>
 
 <div class="weather">
  <div class="wxrow1">
