@@ -10,12 +10,16 @@ Full mode:
   4. Write batch/manifest-DATE.txt over the publish-upload copies.
 
 --manifest-only mode: skip prep_publish.py and archive_update.py; still
-do the PDF check, the upload PDF/PNG copies, and the manifest.
+do the PDF check, the PNG copies, and the manifest.
 
-PDF rule: the upload PDF is ALWAYS copied from the goal-files build
-output (the source of truth). If the staging PDF's md5 differs from the
-build output, print a loud COPY MISMATCH line and copy the build output
-over the staging PDF and the pdf-host copy too.
+PDF rule: the build PDF is a LOCAL PROOF ONLY (Clay's order, 2026-11-10 —
+the Scroll's one production version is the web edition page,
+edition-DATE.html). It is still checked here as the proof source, and it
+is ALWAYS taken from the goal-files build output (the source of truth).
+If the staging PDF's md5 differs from the build output, print a loud
+COPY MISMATCH line and copy the build output over the staging PDF and
+the pdf-host copy too. The PDF is never copied into publish-upload,
+never listed in the manifest, and never published.
 
 The voice block (before the archive step) drains the standing retry
 queue (batch/voice-queue.json), records this edition's reading, works
@@ -407,7 +411,7 @@ def parchment_problems(pdf_path):
 def check_build_pdf(pdf_path, meta):
     """Sanity-check the BUILD OUTPUT before it may heal staging (Q4).
 
-    The build output is the source of truth for the upload PDF, so it is
+    The build output is the source of truth for the local proof PDF, so it is
     checked itself: page count vs edition meta, page dimensions vs the
     meta's rendered size (meta pixels are 3x PDF points), and a render
     spot-check that page 1's margins are parchment-colored, not white.
@@ -693,9 +697,17 @@ def main():
         print(f"copied: {goal_pdf} -> {pdf_host}")
 
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    # Clay's order, 2026-11-10: the Scroll's ONE production version is the
+    # web edition page. The build PDF is a local proof on this machine
+    # only — it is never copied into the publish bundle, never listed in
+    # the manifest, and never published. If an earlier shape left one in
+    # the upload dir under this edition's name, take it out so the bundle
+    # check can never send it.
     upload_pdf = UPLOAD_DIR / pdf_name
-    shutil.copyfile(goal_pdf, upload_pdf)
-    print(f"output: {upload_pdf} ({upload_pdf.stat().st_size} bytes)")
+    if upload_pdf.is_file():
+        upload_pdf.unlink()
+        print(f"cleanup: removed the local proof PDF from the publish bundle {upload_pdf}")
+    print(f"note: {pdf_name} stays local (proof only) — not copied to the publish bundle")
 
     # ---- Step 2: hashed PNG copies ---------------------------------------------
     png_re = re.compile(rf"^scroll-{re.escape(date_str)}-page-(\d+)\.png$")
@@ -1018,7 +1030,7 @@ def main():
         landed_name = f"audio/morning-scroll-{landed_date}.mp3"
         if (UPLOAD_DIR / landed_name).is_file() and landed_name not in audio_names:
             audio_names.append(landed_name)
-    names = ["index.html", "scroll-search-index.json", pdf_name] + audio_names + png_names + page_files
+    names = ["index.html", "scroll-search-index.json"] + audio_names + png_names + page_files
     manifest_lines = [
         "# Morning Scroll publish manifest",
         f"date: {date_str}",
