@@ -12,8 +12,9 @@ Mechanizes PUBLISH-RUNBOOK Steps 2b + 3 + 4 for one edition date:
     page — tonight's and later editions link to their HTML edition
     page; earlier editions link to their standing reader section
     on this page), and take every Download PDF button off the
-    archive (the same ruling: the PDF file itself still publishes
-    at its address every day; only the buttons go).
+    archive (the same ruling; and since Clay's one-version order,
+    2026-11-10, no PDF of the Scroll is published at all — the web
+    edition page is the one production version).
 
 No AI judgment inside: every string is built from edition-meta.json,
 search-text.txt, and the date, by fixed rules. Prints a plain log,
@@ -519,8 +520,9 @@ def main():
     # button stands anywhere on the archive: the buttons in the
     # downloaded base (one on each issue card, one in each reader
     # section) come off here, and the new item and reader section
-    # below are generated without one. The PDF file itself still
-    # publishes at its address every day — only the buttons go.
+    # below are generated without one. Since Clay's one-version
+    # order (2026-11-10) no PDF of the Scroll is published at all —
+    # the web edition page is the one production version.
     # The self-check at the end fails the run if any button
     # survives.
     _STEP = "download-button removal"
