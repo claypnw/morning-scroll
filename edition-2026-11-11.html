@@ -320,11 +320,29 @@ img { max-width: 100%; }
   .whole-player #now-playing { font-size: 14px; }
 }
 </style>
+
+<style>
+/* The maps corner (2026-11-11): the standing atlas link in the
+   masthead's right flank. The box is sized to stand inside the
+   masthead, beside the dedication lines and above the double
+   rule; on a narrow screen it narrows with the sheet. */
+.mapscorner { float: right; width: 1.55in; margin: 1px 0 2px 10px;
+  border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+  padding: 4px 6px 5px; text-align: center; }
+.mapscorner a { display: block; color: #3a2a12; text-decoration: none;
+  font-size: 10pt; font-weight: bold; line-height: 1.25; }
+@media (max-width: 700px) {
+  .mapscorner { width: 1.3in; }
+  .mapscorner a { font-size: 9pt; }
+}
+</style>
 </head>
 <body>
 
 <div class="masthead">
   <p class="nameplate">Payson's Morning Scroll</p>
+  
+  <div class="mapscorner"><a href="https://claypnw.github.io/mogollon-s-hearth-build-page/maps/">World of Nirn &mdash; the maps</a></div>
   <p class="dedication">Made Exclusively for the Mogollon&rsquo;s Hearth Guests</p>
   <p class="motto">&ldquo;All the news worth knowing before the mead hall opens.&rdquo;</p>
   <p class="publisher">The Greybeards of High Hrothgar &mdash; Publisher &amp; Proprietor</p>
