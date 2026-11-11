@@ -3,8 +3,11 @@
 
 Standalone live check: download every file in a publish manifest from
 the live GitHub Pages site and compare md5 + size against the manifest.
-Also checks the live PDF's page count (PyMuPDF) against the manifest
-"pages:" value, and that the number of reader page PNGs in the manifest
+When a PDF stands in the manifest, it also checks the live PDF's page
+count (PyMuPDF) against the manifest "pages:" value; since Clay's order
+of 2026-11-10 the Scroll's manifest carries no PDF (the web edition is
+the one production version), and that page-count check is skipped. It
+always checks that the number of reader page PNGs in the manifest
 equals that page count.
 
 Manifest selection (fix round 2026-10-17, Q1): an explicit DATE or
@@ -613,7 +616,13 @@ def run_attempt(attempt_no, entries, want_pages, pdf_name):
             mismatches += 1
         if name == pdf_name:
             pdf_bytes = data
-    if pdf_bytes is None:
+    if pdf_name is None:
+        # No PDF in the manifest: the web edition is the Scroll's one
+        # production version (Clay's order, 2026-11-10), so there is no
+        # PDF page count to check.
+        log("SKIP pdf-page-count (no PDF in the manifest — the web edition "
+            "is the one production version)")
+    elif pdf_bytes is None:
         log("FAIL pdf-page-count (PDF did not download)")
         ok = False
         download_errors += 1
