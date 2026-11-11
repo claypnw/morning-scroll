@@ -5,7 +5,9 @@ Reads the approved PDF + edition.json and writes publish-staging/<date>/:
   scroll-<date>-page-N.png  (alpha PNGs, 1836x2376)
   edition-meta.json         (archive entry: headline, greeting, pages, links)
   search-text.txt           (labeled full-text index sections)
-  payson-morning-scroll-<date>.pdf  (copy for GitHub Pages hosting)
+  payson-morning-scroll-<date>.pdf  (staging copy — a local chain input only;
+    since Clay's one-version order, 2026-11-10, the Scroll's PDF is a local
+    proof and is never published)
 """
 import html
 import json
