@@ -159,6 +159,49 @@ def _retryable_http(code):
     return code in (408, 429) or 500 <= code <= 599
 
 
+# The last HTTP answer the fetch roads saw, kept so the published
+# check can record what GitHub actually said — above all on a
+# rate-limit refusal (403/429), whose headers carry the wait
+# GitHub states (added 2026-11-11: the Scroll stops of 2026-11-09
+# and 2026-11-11 recorded the refusal's code but not its stated
+# wait, so the briefing job's rate-limit retry could only guess
+# a fixed 45 minutes). The roads below note every answer they
+# see; the listing read in main() resets this first, so what
+# stands here afterwards is that read's answer. The curl road
+# notes nothing (it returns bytes only) — a refusal never
+# reaches it: a 403 is raised on the first try, and a 429's
+# headers are noted at the try that received it.
+def _blank_http_answer():
+    return {"status": None, "retry_after": None,
+            "x_ratelimit_remaining": None, "x_ratelimit_reset": None}
+
+
+_LAST_HTTP_ANSWER = _blank_http_answer()
+
+
+def _reset_http_answer():
+    _LAST_HTTP_ANSWER.update(_blank_http_answer())
+
+
+def _capture_http_answer(status, headers):
+    """Note one HTTP answer's status and rate-limit headers.
+    Header reads are case-insensitive (urllib hands back an
+    email.message.Message); a header GitHub did not send records
+    as None — never invented."""
+    def _get(name):
+        try:
+            value = headers.get(name) if headers is not None else None
+        except Exception:
+            value = None
+        return value if value is None else str(value)
+    _LAST_HTTP_ANSWER.update({
+        "status": status,
+        "retry_after": _get("Retry-After"),
+        "x_ratelimit_remaining": _get("X-RateLimit-Remaining"),
+        "x_ratelimit_reset": _get("X-RateLimit-Reset"),
+    })
+
+
 def _open_url(url, headers, timeout, extra_headers=None):
     merged = dict(headers or {})
     merged.update(extra_headers or {})
@@ -201,6 +244,7 @@ def _read_body(resp, deadline_end):
 
 def _read_whole_road(url, headers, timeout, deadline_end):
     with _open_url(url, headers, timeout) as resp:
+        _capture_http_answer(resp.status, resp.headers)
         return _read_body(resp, deadline_end)
 
 
@@ -233,6 +277,7 @@ def _read_parts_road(url, headers, timeout, deadline_end):
         try:
             resp = _open_url(url, headers, timeout, range_header)
         except urllib.error.HTTPError as err:
+            _capture_http_answer(err.code, err.headers)
             if err.code == 416:
                 _, _, stated_total = _parse_content_range(
                     err.headers.get("Content-Range") if err.headers else None)
@@ -246,6 +291,7 @@ def _read_parts_road(url, headers, timeout, deadline_end):
                     f"and no proof they reach the end of the file")
             raise
         with resp:
+            _capture_http_answer(resp.status, resp.headers)
             if resp.status == 200:
                 # The Range ask was ignored: the answer is the whole
                 # file from the start. It replaces the kept bytes —
@@ -323,6 +369,7 @@ def _fetch_ladder(what, url, headers=None):
         try:
             return road(url, headers, _TRY_TIMEOUTS[try_no - 1], deadline_end)
         except urllib.error.HTTPError as exc:
+            _capture_http_answer(exc.code, exc.headers)
             if not _retryable_http(exc.code):
                 print(f"{what}: answer {exc.code} cannot be fixed by "
                       f"another try; not retrying", flush=True)
@@ -522,11 +569,14 @@ def main():
         fetched_blob_sha = None
         repo_blob_sha = None
         checksum_match = False
+        listing_answer = _blank_http_answer()
         if raw_index is not None:
             fetched_blob_sha = hashlib.sha1(
                 b"blob " + str(len(raw_index)).encode("ascii") + b"\x00" + raw_index
             ).hexdigest()
 
+            _reset_http_answer()
+            listing_exc = None
             try:
                 listing_body = _fetch_ladder(
                     "published check: read of the file's listing",
@@ -536,14 +586,29 @@ def main():
                 repo_blob_sha = json.loads(
                     listing_body.decode("utf-8")).get("sha")
             except Exception as exc:
+                listing_exc = exc
+                repo_blob_sha = None
+            # What GitHub's answer said — on a rate-limit refusal,
+            # the wait it states. Recorded in the fetch state below
+            # either way; the briefing job's retry reads it there.
+            listing_answer = dict(_LAST_HTTP_ANSWER)
+            if listing_exc is not None:
                 # The reason is printed, never swallowed: with no
                 # listing, no checksum match can be proven, and the
                 # gate record below says so — the morning record
                 # quotes this line for why.
+                wait_note = ""
+                if listing_answer["retry_after"]:
+                    wait_note = (f"; GitHub stated retry-after "
+                                 f"{listing_answer['retry_after']} seconds")
+                elif listing_answer["x_ratelimit_remaining"] == "0" \
+                        and listing_answer["x_ratelimit_reset"]:
+                    wait_note = (f"; GitHub's rate-limit window resets at "
+                                 f"epoch {listing_answer['x_ratelimit_reset']}")
                 print(f"published check: read of the file's listing "
-                      f"failed after the ladder's tries ({exc}); no "
+                      f"failed after the ladder's tries ({listing_exc})"
+                      f"{wait_note}; no "
                       f"checksum match can be proven", flush=True)
-                repo_blob_sha = None
             checksum_match = (repo_blob_sha is not None
                               and fetched_blob_sha == repo_blob_sha)
             try:
@@ -557,6 +622,10 @@ def main():
             "checksum_source": "github contents listing blob sha (main)",
             "repo_blob_sha": repo_blob_sha,
             "fetched_blob_sha": fetched_blob_sha,
+            "http_status": listing_answer["status"],
+            "retry_after": listing_answer["retry_after"],
+            "x_ratelimit_remaining": listing_answer["x_ratelimit_remaining"],
+            "x_ratelimit_reset": listing_answer["x_ratelimit_reset"],
             "garbled": garbled,
             "ambiguous": ambiguous,
             "fell_back_to_old_copy_silently": False,
