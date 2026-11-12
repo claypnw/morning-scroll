@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Morning Scroll has moved</title>
+<script>
+  (function () {
+    var prefix = "/morning-scroll";
+    var path = window.location.pathname;
+    if (path.indexOf(prefix) === 0) {
+      path = path.slice(prefix.length);
+    }
+    if (path === "" || path === "/") {
+      path = "/";
+    }
+    var target = "https://morning-scroll-53x.pages.dev" + path + window.location.search + window.location.hash;
+    window.location.replace(target);
+  })();
+</script>
+<meta http-equiv="refresh" content="0; url=https://morning-scroll-53x.pages.dev/">
+</head>
+<body>
+<p>The Morning Scroll has moved. You are being taken to its new home:
+<a href="https://morning-scroll-53x.pages.dev/">morning-scroll-53x.pages.dev</a></p>
+</body>
+</html>
