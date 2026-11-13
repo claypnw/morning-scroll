@@ -59,7 +59,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BATCH_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = ROOT / "publish-upload"
 MIRROR_DIR = Path.home() / "workspace" / "BACKUP-github-websites-only" / "morning-scroll"
-SITE_BASE = "https://claypnw.github.io/morning-scroll"
+SITE_BASE = "https://morning-scroll-53x.pages.dev"
 PHOENIX = ZoneInfo("America/Phoenix")
 ENTRY_RE = re.compile(r"^([0-9a-f]{32})\s+(\d+)\s+(\S+)$")
 

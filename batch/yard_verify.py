@@ -4,7 +4,7 @@ yard_verify.py — post-publish verification for the yard & estate sales sheets.
 
 For each of the two stable-named PDFs, compares:
   - built  (~/workspace/yard-estate-sales/)
-  - live   (https://claypnw.github.io/morning-scroll/, cache-busted download)
+  - live   (https://morning-scroll-53x.pages.dev/, cache-busted download)
   - mirror (~/workspace/BACKUP-github-websites-only/morning-scroll/)
 
 live-vs-built is the verdict driver; mirror-vs-built is a second check.
@@ -42,7 +42,7 @@ TZ = ZoneInfo("America/Phoenix")
 HOME = Path.home()
 BUILT_DIR = HOME / "workspace" / "yard-estate-sales"
 MIRROR_DIR = HOME / "workspace" / "BACKUP-github-websites-only" / "morning-scroll"
-LIVE_BASE = "https://claypnw.github.io/morning-scroll"
+LIVE_BASE = "https://morning-scroll-53x.pages.dev"
 LOG_DIR = HOME / "workspace" / "batch-logs" / "yard-estate-sales-refresh"
 
 FILENAMES = [

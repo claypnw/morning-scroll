@@ -41,7 +41,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_UPLOAD_DIR = ROOT / "publish-upload"
 RAW_BASE = "https://raw.githubusercontent.com/claypnw/morning-scroll/main"
-SITE_BASE = "https://claypnw.github.io/morning-scroll"
+SITE_BASE = "https://morning-scroll-53x.pages.dev"
 
 # An edition's title link on the archive page (the empty overlay
 # anchor that makes the whole issue card tappable). The admin's
