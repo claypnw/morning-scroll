@@ -51,10 +51,10 @@ LOG_DIR = WORKSPACE / "batch-logs" / JOBDIR
 DEFAULT_STATE = WORKSPACE / "stewards-ledger" / "state.json"
 EDITION_LOCAL_TMPL = str(WORKSPACE / "stewards-ledger" / "editions" / "stewards-ledger-{date}.html")
 EDITION_MIRROR_TMPL = str(WORKSPACE / "BACKUP-github-websites-only" / "morning-scroll" / "stewards-ledger-{date}.html")
-EDITION_LIVE_TMPL = "https://claypnw.github.io/morning-scroll/stewards-ledger-{date}.html"
+EDITION_LIVE_TMPL = "https://morning-scroll-53x.pages.dev/stewards-ledger-{date}.html"
 INDEX_LOCAL = WORKSPACE / "yard-estate-sales" / "stewards-ledger.html"
 INDEX_MIRROR = WORKSPACE / "BACKUP-github-websites-only" / "morning-scroll" / "stewards-ledger.html"
-INDEX_LIVE = "https://claypnw.github.io/morning-scroll/stewards-ledger.html"
+INDEX_LIVE = "https://morning-scroll-53x.pages.dev/stewards-ledger.html"
 PHOENIX = ZoneInfo("America/Phoenix")
 
 # --- Rule log (the admin's design, 2026-10-18) ---------------------------------
@@ -395,6 +395,9 @@ def _fetch_once(url, timeout, range_from=None):
                 tail = range_header.rsplit("/", 1)[1]
                 if tail.isdigit():
                     expected = int(tail)
+        location = None
+        if status in (301, 302, 303, 307, 308):
+            location = resp.getheader("Location")
         cut = False
         try:
             data = resp.read() or b""
@@ -409,9 +412,30 @@ def _fetch_once(url, timeout, range_from=None):
                 and len(data) < expected - range_from:
             cut = True
         return {"status": status, "data": data,
-                "expected": expected, "cut": cut}
+                "expected": expected, "cut": cut,
+                "location": location}
     finally:
         conn.close()
+
+
+REDIRECT_STATUSES = (301, 302, 303, 307, 308)
+
+
+def _resolve_redirects(url):
+    """Follow the site's address changes (up to 5 hops) and return
+    the final address. Added 2026-11-13: the Cloudflare address
+    answers a page's .html address with a 308 change to the same
+    page without .html; the ladder below stops on a 308."""
+    current = url
+    for _hop in range(5):
+        answer = _fetch_once(current, timeout=30)
+        if answer["status"] in REDIRECT_STATUSES \
+                and answer.get("location"):
+            current = urllib.parse.urljoin(
+                current, answer["location"])
+            continue
+        return current
+    return current
 
 
 def _download_bytes(url):
@@ -426,6 +450,7 @@ def _download_bytes(url):
     errors = []
     have = b""
     expected = None
+    url = _resolve_redirects(url)
     try:
         answer = _fetch_once(url, timeout=90)
         if answer["status"] >= 400:

@@ -342,6 +342,9 @@ def _fetch_once(url, timeout, range_from=None, read_limit=None):
                 tail = range_header.rsplit("/", 1)[1]
                 if tail.isdigit():
                     expected = int(tail)
+        location = None
+        if status in (301, 302, 303, 307, 308):
+            location = resp.getheader("Location")
         cut = False
         if read_limit is not None:
             data = resp.read(read_limit) or b""
@@ -359,9 +362,88 @@ def _fetch_once(url, timeout, range_from=None, read_limit=None):
                     and len(data) < expected - range_from:
                 cut = True
         return {"status": status, "data": data,
-                "expected": expected, "cut": cut}
+                "expected": expected, "cut": cut,
+                "location": location}
     finally:
         conn.close()
+
+
+REDIRECT_STATUSES = (301, 302, 303, 307, 308)
+
+
+def _download_following_redirects(url, name):
+    """Fetch a file whole, following the site's address changes.
+
+    First try (2026-11-13): the Cloudflare address answers a page's
+    .html address with a 308 change to the same page without .html.
+    A normal browser follows that change at once. This fetch follows
+    up to 5 changes, then treats the file like verify's lower rungs:
+    pieces with Range asks on the final address, then one plain ask.
+    An error answer from the final address (the file is not there)
+    is raised at once, like the rest of verify."""
+    current = url
+    for _hop in range(6):
+        answer = _fetch_once(current, timeout=90)
+        if answer["status"] in REDIRECT_STATUSES \
+                and answer.get("location"):
+            current = urllib.parse.urljoin(
+                current, answer["location"])
+            continue
+        break
+    else:
+        raise RuntimeError(
+            f"download of {name} failed: too many address changes")
+    if answer["status"] >= 400:
+        raise RuntimeError(f"HTTP {answer['status']}")
+    if answer["status"] == 200 and not answer["cut"] and (
+            answer["expected"] is None
+            or len(answer["data"]) == answer["expected"]):
+        return answer["data"]
+    # The whole-file answer was cut short: pick the file up in
+    # pieces from the final address, like verify's rung 2.
+    have = answer["data"] if answer["status"] == 200 else b""
+    expected = answer["expected"]
+    stalls = 0
+    pieces = 0
+    while pieces < 12:
+        if expected is not None and len(have) >= expected:
+            return have[:expected]
+        pieces += 1
+        part = _fetch_once(current, timeout=90,
+                           range_from=len(have))
+        if part["status"] == 416 and have:
+            return have
+        if part["status"] >= 400:
+            raise RuntimeError(f"HTTP {part['status']}")
+        if part["status"] == 200:
+            if not part["cut"] and (
+                    part["expected"] is None
+                    or len(part["data"]) == part["expected"]):
+                return part["data"]
+            if len(part["data"]) > len(have):
+                have = part["data"]
+                expected = part["expected"]
+                stalls = 0
+            else:
+                stalls += 1
+        elif part["status"] == 206:
+            if part["expected"] is not None:
+                expected = part["expected"]
+            if part["data"]:
+                have += part["data"]
+                stalls = 0
+            else:
+                stalls += 1
+        else:
+            raise RuntimeError(
+                f"unexpected HTTP {part['status']}")
+        if expected is not None and len(have) >= expected:
+            return have[:expected]
+        if stalls >= 2:
+            break
+    raise RuntimeError(
+        f"download of {name} stopped at {len(have)} of "
+        f"{expected if expected is not None else '?'} bytes")
 
 
 def site_file_stands(name):
@@ -573,6 +655,19 @@ def download(url, name):
             return resp.read()
     except Exception as exc:
         errors.append(f"rung 3 failed: {exc}")
+    # Rung 4 (added 2026-11-13): follow the site's address changes.
+    # The Cloudflare address answers a page's .html address with a
+    # 308 change to the same page without .html; rungs 1-2 stop on
+    # the 308 and rung 3's urllib ask is refused (403) on that road,
+    # so the edition's two HTML pages could never be checked. This
+    # rung follows the change on the engine road, like a browser.
+    try:
+        return _download_following_redirects(url, name)
+    except Exception as exc:
+        if isinstance(exc, RuntimeError) \
+                and str(exc).startswith("HTTP"):
+            raise
+        errors.append(f"rung 4 failed: {exc}")
     raise RuntimeError(f"download of {name} failed on every rung — "
                        + "; ".join(errors))
 
