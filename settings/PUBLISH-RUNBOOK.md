@@ -181,19 +181,9 @@ Run every phase in order. No publication without the Phase 5 sign-off.
 
 ## Step 6 — Push to GitHub
 
-**Auth method (confirmed 2026-10-05):** Browser task with the admin's GitHub session.
-The browser stays signed in via saved session state — no sign-in or 2FA was
-needed on Oct 5. Spawn a `browser.spawn_task` to
-`https://github.com/claypnw/morning-scroll`, pass the 7 files via the `files`
-parameter, and have it:
-- Upload the 2 updated files via "Add file" > "Upload files" (overwrites
-  same-named files — same result as the Edit flow)
-- Upload the 5 new files via "Add file" > "Upload files"
-- Commit directly to `main` (two commits: one for the updated files, one for
-  the new files — or a single commit; either is fine)
+**Auth method:** publishing runs under the admin's own GitHub sign-in, arranged by the admin ahead of time. The edition files are uploaded to the repository and committed directly to `main`.
 
-**Do NOT ask the admin for credentials.** The saved login works. Asking again
-after he called it out on Oct 5 is a trust hit.
+Credentials stay with the admin. The publishing road never needs them in chat, and they are never asked for there.
 
 Commit message: `Publish <Mon DD, YYYY> edition (Vol. YYMM, No. DD)`
 
@@ -222,7 +212,7 @@ publish-upload source against the manifest BEFORE copying, so a bad source
 can never overwrite a good mirror copy.
 
 A second, independent net runs on the clock: the systemd timer
-`scroll-verify.timer` runs `verify.py` daily at **06:10 Arizona time**
+`scroll-verify.timer` runs `verify.py` once each morning
 against **today's manifest, picked by edition date**, and writes its verdict
 to `batch/logs/clock-verify-YYYY-MM-DD.txt`. The morning briefing quotes both
 verdicts (see the morning job's step 10); a missing or FAIL clock verdict is
