@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payson's Morning Scroll — Tirdas, the 17th of Sun's Dusk (Tuesday, November 17, 2026)</title>
+<style>
+  @page { size: Letter; margin: 0.62in 0.5in 0.60in 0.5in;
+    @top-left { content: "Payson's Morning Scroll"; font-variant: small-caps; font-weight: bold; letter-spacing: 1px; font-size: 8.5pt; color: #3a2c1c; vertical-align: bottom; padding-bottom: 5px; }
+    @top-right { content: "17th of Sun's Dusk (Nov 17, 2026)"; font-variant: small-caps; letter-spacing: 0.5px; font-size: 8pt; color: #3a2c1c; vertical-align: bottom; padding-bottom: 5px; }
+    @bottom-center { content: "\00B7  Page " counter(page) "  \00B7"; font-variant: small-caps; letter-spacing: 1px; font-size: 8.5pt; color: #3a2c1c; vertical-align: top; padding-top: 5px; }
+  }
+  @page :first { margin: 0.45in 0.5in 0.44in 0.5in;
+    @top-left { content: none; } @top-right { content: none; } @bottom-center { content: none; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1a1a1a; background: transparent;
+    margin: 0; padding: 0; font-size: 10pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .masthead { text-align: center; border-bottom: 4px double #1a1a1a; padding-bottom: 3px; }
+  .masthead .nameplate {
+    font-weight: 900; font-size: 36pt; letter-spacing: 1.5px;
+    margin: 0; line-height: 1.0; font-variant: small-caps; white-space: nowrap;
+  }
+  .masthead .dedication {
+    font-variant: small-caps; letter-spacing: 2px; font-size: 10pt;
+    margin: 2px 0 0 0;
+  }
+  .masthead .motto { font-style: italic; font-size: 9.5pt; margin: 1px 0 0 0; }
+  .masthead .publisher { font-variant: small-caps; letter-spacing: 2px; font-size: 9.5pt; font-weight: bold; margin: 2px 0 0 0; }
+  .dateline {
+    font-size: 8.5pt; font-variant: small-caps; letter-spacing: 0.5px;
+    border-bottom: 1px solid #1a1a1a; padding: 3px 2px; margin-bottom: 6px;
+    text-align: center; word-spacing: 6px;
+  }
+  .dateline .sec { white-space: nowrap; }
+  .weather {
+    border: 1.5px solid #1a1a1a; padding: 6px 8px; margin-bottom: 6px;
+    font-size: 10.5pt; width: 100%; box-sizing: border-box; line-height: 1.25;
+  }
+  .wxrow1 { display: table; width: 100%; }
+  .weather .wimg { display: table-cell; width: 1.8in; vertical-align: middle; padding-right: 10px; }
+  .weather .wimg img { width: 1.6in; display: block; margin: 0 0 3px 0; border: 1px solid #1a1a1a; }
+  .weather .wcap { font-size: 10pt; font-style: italic; color: #444; line-height: 1.3; padding-top: 1px; }
+  .weather .wbody { display: table-cell; vertical-align: middle; text-align: center; }
+  .weather .wbody > div { margin: 0; }
+  .weather .wtitle { font-weight: 900; font-variant: small-caps; letter-spacing: 1px; font-size: 12pt; }
+  .weather .wnow { font-size: 22pt; font-weight: 900; line-height: 1.1; }
+  .weather .wcond { font-size: 12pt; font-weight: bold; }
+  .weather .wcall { font-size: 11pt; font-style: italic; }
+  .weather .wdet { font-size: 10.5pt; color: #333; line-height: 1.3; }
+  .weather .wheard { font-size: 10.5pt; font-style: italic; color: #333; margin-top: 2px; }
+  .weather .wquote { display: table-cell; width: 1.55in; vertical-align: middle;
+    font-size: 10.5pt; font-style: italic; color: #333; line-height: 1.3;
+    border-left: 1px solid #999; padding-left: 8px; }
+  .weather .wqhead { font-size: 10.5pt; font-weight: 900; font-style: normal;
+    font-variant: small-caps; letter-spacing: 1px; color: #1a1a1a;
+    margin-bottom: 2px; }
+  .wxdiv { border-top: 1px solid #999; margin: 1px 0 0 0; }
+  /* By the Hours strip (the admin, 2026-10-23): four hour blocks under
+     the weather box. Words on the left of each block (temperature big,
+     condition under it), the fixed sky picture on the right, and under
+     the sky picture the fixed windsock picture with its mph number
+     printed under the sock. */
+  .wxrow2 { display: table; width: 100%; box-sizing: border-box; }
+  .wxbox { display: table-cell; width: 25%; box-sizing: border-box;
+    padding: 0 3px; border-left: 1px solid #999; text-align: center; }
+  .wxbox:first-child { border-left: none; }
+  .wxlabel { font-weight: 900; font-variant: small-caps; letter-spacing: 0.5px;
+    font-size: 11pt; margin-bottom: 2px; line-height: 1.15; }
+  .wxmain { display: table; width: 100%; }
+  .wxwords { display: table-cell; vertical-align: middle; text-align: center; }
+  .wxwords .wxtemp { display: block; font-size: 16pt; font-weight: 900; line-height: 1.1; }
+  .wxwords .wxcond { display: block; margin-left: 0; }
+  .wxcond { font-size: 11pt; font-weight: bold; margin-top: 2px; }
+  .wxpics { display: table-cell; width: 1.04in; vertical-align: top; padding-left: 4px; white-space: nowrap; }
+  .wxpics img { width: 0.5in; display: inline-block; border: 1px solid #1a1a1a; }
+  .wxpics .wxsock { margin-left: 3px; }
+  .wxmph { display: block; font-size: 10pt; color: #333; white-space: nowrap; margin: 1px 0 0 0; }
+  .box .ffig { float: left; width: 2.9in; margin: 2px 10px 4px 0; }
+  .box .ffig img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  .box .ffig figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .box .qfig { float: right; width: 2.7in; margin: 2px 0 4px 10px; }
+  .box .qfig img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  .box .qfig figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .clear { clear: both; }
+  .kicker { font-variant: small-caps; letter-spacing: 1.5px; font-size: 9pt; font-weight: bold; margin: 0 0 2px 0; }
+  h1.headline { font-size: 25pt; line-height: 1.08; margin: 0 0 2px 0; font-weight: 900; }
+  .byline { font-size: 8.5pt; font-style: italic; color: #444; margin: 0 0 8px 0; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+  .headrow { display: flex; gap: 14px; align-items: flex-start; margin: 0 0 8px 0; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+  .headtxt { flex: 1; }
+  .writermark { width: 0.34in; height: 0.34in; vertical-align: middle; margin-right: 5px; }
+  figure { margin: 0 0 8px 0; }
+  figure img { width: 100%; display: block; border: 1px solid #1a1a1a; }
+  figcaption { font-size: 8pt; font-style: italic; color: #444; padding-top: 3px; }
+  .frontpic { float: right; width: 2.0in; margin: 2px 0 8px 10px; }
+  .frontpic img { width: 100%; height: auto; border: 1px solid #1a1a1a; }
+  .frontpic figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .story::after { content: ""; display: block; clear: both; }
+  p.lead { font-size: 11.5pt; text-align: justify; hyphens: auto; margin: 0 0 10px 0; }
+  p.lead::first-letter { font-size: 15pt; font-weight: 900; }
+  ul.eventlist { list-style: none; margin: 0; padding: 0; border-top: 2.5px solid #1a1a1a; break-inside: auto; }
+  ul.eventlist li { position: relative; font-size: 10pt; line-height: 1.4;
+    padding: 4px 0 4px 20px; border-bottom: 1px solid #999; }
+  ul.eventlist li::before { content: "\2022"; position: absolute; left: 4px; top: 6px; font-size: 12pt; }
+  /* Days Ahead flow (the admin, 2026-10-01): a day's item may break BETWEEN its
+     indented event lines so the list fills the columns instead of leaving
+     a half-empty page — but the date header stays glued to its first line,
+     and no single event line ever splits. */
+  ul.eventlist li .dat { display: block; break-after: avoid; }
+  .subev { display: block; margin: 1px 0 1px 1.6em; break-inside: avoid; }
+  h3.evhead { font-variant: small-caps; letter-spacing: 1px; font-size: 11pt; font-weight: 900;
+    margin: 6px 0 0 0; padding-bottom: 2px; border-bottom: 1px solid #1a1a1a;
+    break-inside: avoid; break-after: avoid; }
+  ul.eventlist li.quiet { font-style: italic; color: #444; }
+  ul.eventlist li.quiet::before { content: ""; }
+  .holdbanner { height: .32in; vertical-align: -.06in; margin-right: .07in; }
+  /* Gap-filler engraving (the admin, 2026-10-01): an optional floated figure at the
+     top of The Days Ahead, closely related to what's on that page — fresh
+     every edition, fun and light. Text wraps around it. */
+  .wfig { float: right; width: 2.2in; margin: 2px 0 6px 10px; break-inside: avoid; }
+  /* Blank-space plates (the admin, 2026-10-01): old-timey pictures, local art, and
+     views of the town used to fill page/column gaps — never story filler. */
+  .plateitem { break-inside: avoid; padding-left: 0 !important; }
+  .plateitem::before { content: "" !important; }
+  .plateitem figure { margin: 4px 0 2px 0; }
+  .plateitem img { width: 100%; height: 1.5in; object-fit: cover; object-position: 50% 82%; display: block; border: 1px solid #1a1a1a; }
+  .wideplate { margin-top: 8px; break-inside: avoid; }
+  .wideplate img { width: 100%; height: 1.6in; object-fit: cover; display: block; border: 1px solid #1a1a1a; }
+  .wideplate figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .closingplate { margin: 4px auto 0 auto; width: 5.4in; break-inside: avoid; }
+  .closingplate img { width: 100%; height: 1.7in; object-fit: cover; display: block; border: 1px solid #1a1a1a; }
+  .closingplate figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; text-align: center; }
+  /* Closing filler advertisement (2026-10-30): a fake display ad in the
+     newspaper manner, filling the last page's open bottom (gap 13). Double-rule
+     border like the masthead. The box height is set inline by filler_ad_html()
+     from the night's measured last-page remainder (see the height rule by
+     FILLER_ADS below); the form variants shrink the type as the box shrinks. */
+  .fillerad { margin-top: 10px; border: 4px double #1a1a1a; padding: 10px 16px 8px 16px;
+    text-align: center; break-inside: avoid; box-sizing: border-box; overflow: hidden; }
+  .fillerad .fadtag { font-variant: small-caps; letter-spacing: 2px; font-size: 8pt; color: #444; margin: 0 0 4px 0; }
+  .fillerad .fadhead { font-size: 21pt; font-weight: 900; line-height: 1.08; margin: 0 0 2px 0; }
+  .fillerad .fadsub { font-size: 12pt; font-weight: 900; font-variant: small-caps; letter-spacing: 1px; margin: 0 0 4px 0; }
+  .fillerad img.fadart { width: auto; max-width: 92%; display: block; margin: 2px auto 6px auto; }
+  .fillerad .fadcopy { font-size: 10.5pt; line-height: 1.42; margin: 0 0 5px 0; }
+  .fillerad .fadfoot { border-top: 1px solid #1a1a1a; padding-top: 4px; font-size: 8.5pt;
+    font-variant: small-caps; letter-spacing: 1px; margin: 5px 0 0 0; }
+  .fillerad.short { padding: 8px 14px 6px 14px; }
+  .fillerad.short .fadhead { font-size: 17pt; }
+  .fillerad.compact { margin-top: 6px; padding: 5px 10px 4px 10px; }
+  .fillerad.compact .fadtag { font-size: 7pt; margin: 0 0 2px 0; }
+  .fillerad.compact .fadhead { font-size: 13pt; margin: 0 0 1px 0; }
+  .fillerad.compact .fadsub { font-size: 9.5pt; margin: 0; }
+  .fillerad.compact img.fadart { margin: 1px auto 2px auto; }
+  .fillerad.micro { margin-top: 6px; padding: 4px 10px 3px 10px; }
+  .fillerad.micro .fadhead { font-size: 12pt; margin: 0 0 1px 0; }
+  .fillerad.micro .fadsub { font-size: 9pt; margin: 0; }
+  .story { column-count: 2; column-gap: 22px; margin-bottom: 10px; }
+  .story .lead { margin-bottom: 8px; }
+  .lower { margin-top: 8px; border-top: 1px solid #999; padding-top: 8px; }
+  .lower .box { margin-bottom: 8px; }
+  .sidecols { width: 100%; border-collapse: collapse; }
+  .sidecols td { vertical-align: top; padding: 0; }
+  .sidecols td.sidepic { width: 3.1in; }
+  .sidecols td.sidepic.padright { padding-right: 10px; }
+  .sidecols td.sidepic.padleft { padding-left: 10px; }
+  .sidecols td.sidepic img { width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; }
+  .sidecols td.sidepic figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .box { border: 1.5px solid #1a1a1a; break-inside: avoid; }
+  .box h2 {
+    margin: 0; padding: 5px 10px; font-size: 11.5pt; font-variant: small-caps;
+    letter-spacing: 1px; border-bottom: 1.5px solid #1a1a1a; background: #e7d3a3;
+  }
+  .box .body { padding: 6px 10px; font-size: 10.5pt; line-height: 1.45; }
+  .box .body p { margin: 0 0 6px 0; }
+  .box ul { margin: 0; padding-left: 15px; }
+  .box li { margin-bottom: 5px; }
+  .box figure img { border: none; border-bottom: 1px solid #1a1a1a; }
+  .due { font-style: italic; color: #444; }
+  .box.merchant { margin-top: 8px; break-inside: avoid; }
+  .box.featured { margin-top: 8px; break-inside: avoid; }
+  .weather .wmoons { display: table-cell; width: 1.55in; vertical-align: middle;
+    text-align: center; border-left: 1px solid #999; padding-left: 7px; }
+  .weather .wmhead { font-size: 10.5pt; font-weight: 900; font-variant: small-caps;
+    letter-spacing: 0.5px; margin-bottom: 1px; }
+  .weather .wmcap { font-size: 10pt; color: #444; margin-top: 1px; line-height: 1.3; }
+  .weather .wmoonrow { white-space: nowrap; }
+  .weather .wmoon { display: inline-block; vertical-align: middle; width: 30px; margin: 0 1px; }
+  .weather .wmoon.tonight { width: 38px; }
+  .weather .wmoon img { width: 100%; display: block; }
+  .weather .wmoon figcaption { font-size: 10pt; line-height: 1.2; color: #444; }
+  .weather .wmtrend { font-size: 10pt; font-style: italic; color: #555; margin-top: 1px; line-height: 1.3; }
+  .box.merchant .body { font-size: 9.5pt; line-height: 1.4; }
+  .box.taletale, .box.rimstories { margin-top: 8px; break-inside: avoid; }
+  .box.taletale .body, .box.rimstories .body { font-size: 9.5pt; line-height: 1.4; }
+  .taletitle { font-size: 12pt; font-weight: 900; font-variant: small-caps; letter-spacing: 1px; margin: 0 0 4px 0; }
+  .mname { font-size: 13pt; font-weight: 900; margin: 0 0 4px 0; }
+  .mtown { font-size: 10pt; font-weight: 400; font-style: italic; color: #444; }
+  .mcols { width: 100%; border-collapse: collapse; margin-top: 2px; }
+  .mcols td.mcol { vertical-align: top; padding: 0; }
+  .mcols td.mphoto { width: 2.3in; padding-right: 10px; }
+  .mcols td.mphoto img { width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; }
+  .mcols td.mphoto figcaption { font-size: 7.5pt; font-style: italic; color: #444; padding-top: 2px; }
+  .mcols td.mtext1 { width: 2.85in; padding-right: 10px; }
+  .mcols td.mtext2 { padding-left: 10px; border-left: 1px solid #999; }
+  .mquote { font-style: italic; border-left: 2.5px solid #1a1a1a; padding-left: 8px; margin: 6px 0 0 0; }
+  .msrc { font-style: normal; font-size: 8.5pt; color: #444; }
+  .mvisit { font-size: 9pt; color: #333; margin: 0 0 6px 0; }
+  .mwhy { margin: 0; }
+  .colophon {
+    margin-top: 4px; border-top: 4px double #1a1a1a; padding-top: 4px;
+    font-size: 8.5pt; font-style: italic; text-align: center; color: #444;
+  }
+  .contact-btn {
+    display: inline-block; margin-top: 6px; padding: 4px 18px;
+    border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+    color: #3a2a12; text-decoration: none; font-style: normal; font-size: 9.5pt;
+  }
+  .contact-addr {
+    display: inline-block; margin-top: 3px; font-style: normal; font-size: 7.5pt;
+    color: #5a4a2e;
+  }
+  .listen { margin: 6px 0 0 0; text-align: right; }
+  .listen.top { margin: 0 0 6px 0; break-inside: avoid; }
+  .listen a {
+    display: inline-block; padding: 3px 12px;
+    border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+    color: #3a2a12; text-decoration: none; font-style: normal; font-size: 9pt;
+  }
+  a { color: #1a1a1a; text-decoration: underline; }
+</style>
+
+<style>
+/* The web page's screen sheet (2026-10-26): how the paper sits on a
+   screen — a parchment sheet at the paper's own width on a darker
+   ground; on narrow screens the sheet fills the screen and the
+   story's two columns flow as one. The paper's own styles above lay
+   out its parts; nothing here changes a word or hides a part. */
+html { background: #a08c62; }
+body { max-width: 8.5in; margin: 20px auto; padding: 0.32in 0.5in 0.55in;
+       background: #f2e6c2; box-shadow: 0 2px 18px rgba(40,28,8,.5); }
+img { max-width: 100%; }
+/* The By the Hours strip: Chrome lays the hour cells a touch wider
+   than the print engine does, and the wind number printed beside
+   the windsock rides over the weather box's edge. On screen it
+   stands under the windsock instead — where the paper's own design
+   note puts it — inside the cell at every width. */
+.wxpics .wxmph { display: block; margin: 1px 0 0 0; }
+@media (max-width: 700px) {
+  body { margin: 0; padding: 10px 12px 22px; }
+  .masthead .nameplate { font-size: 20pt; letter-spacing: 1px; }
+  h1.headline { font-size: 21pt; }
+  .story { column-count: 1; }
+  .frontpic, .wfig, .box .ffig, .box .qfig { float: none; width: 100%;
+    margin: 2px 0 8px 0; }
+  .headrow { flex-direction: column; }
+  .mcols td { display: block; width: auto; padding: 0 0 6px 0; }
+  .mcols td.mtext2 { border-left: none; padding-left: 0; }
+  /* The By the Hours strip on a narrow screen: each hour's words
+     and pictures stand side by side as two table cells, and the
+     picture cell cannot shrink below its pictures — in Chrome the
+     pictures paint over the next hour's degrees and run past the
+     sheet's edge. Stack them instead: the words over the pictures,
+     inside each hour's own quarter of the strip. */
+  .wxmain { display: block; }
+  .wxwords { display: block; }
+  .wxpics { display: block; width: auto; padding-left: 0; text-align: center; }
+  .wxrow1 { display: block; }
+  .weather .wimg, .weather .wbody, .weather .wquote, .weather .wmoons {
+    display: block; width: auto; border-left: none; padding-left: 0;
+    margin: 6px 0 0 0; }
+  .weather .wimg img { margin: 0 auto 3px auto; }
+}
+</style>
+
+<style>
+/* The story player (2026-11-10, the Scroll's pop-up form): the
+   block stands hidden while a guest is only reading; on a Listen
+   tap it pops up as one black rounded panel floating at the TOP
+   RIGHT of the screen — all seven buttons in one row inside it,
+   white shapes and words, the "Story N of M" line with the title
+   and the time line under the buttons — and hides again on Stop
+   or at the last story's end. The panel is capped at the screen's
+   width so it stands fully on screen and tappable at phone width
+   as well as desktop width. */
+#scroll-player { display: none; }
+#scroll-player.wp-open { display: block; position: fixed;
+  top: 10px; right: 10px; z-index: 9999;
+  width: min(430px, calc(100vw - 20px));
+  background: #111; border-radius: 22px;
+  padding: 12px 14px 10px; text-align: center;
+  box-shadow: 0 6px 28px rgba(0,0,0,.55); }
+.whole-player .wp-bar { display: flex; flex-wrap: nowrap;
+  align-items: flex-start; background: #111; border-radius: 60px;
+  padding: 0; }
+.whole-player .wp-bar .wp-btn { flex: 1 1 0; width: auto; min-width: 0;
+  min-height: 0; margin: 0; padding: 3px 1px; background: transparent;
+  border: none; border-radius: 16px; color: #fff; cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif; line-height: 1.25; }
+.whole-player .wp-bar .wp-btn:active { background: #333; }
+.whole-player .wp-bar .wp-btn .sym { display: block; line-height: 0; }
+.whole-player .wp-bar .wp-btn .sym svg { width: 32px; height: 32px; }
+.whole-player .wp-bar .wp-btn .word { display: block; font-size: 11px;
+  font-weight: 400; margin-top: 3px; color: #fff; }
+.whole-player #now-playing { font-weight: 700; margin: 10px 0 0;
+  font-size: 15.5px; color: #fff; }
+.whole-player .wp-time { margin: 2px 0 0; font-size: 14px;
+  color: #ccc; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  #scroll-player.wp-open { top: 6px; right: 6px;
+    width: calc(100vw - 12px); border-radius: 18px;
+    padding: 10px 8px 8px; }
+  .whole-player .wp-bar .wp-btn .sym svg { width: 26px; height: 26px; }
+  .whole-player .wp-bar .wp-btn .word { font-size: 9.5px; }
+  .whole-player #now-playing { font-size: 14px; }
+}
+</style>
+
+<style>
+/* The maps corner (2026-11-11): the standing atlas link in the
+   masthead's right flank. The box is sized to stand inside the
+   masthead, beside the dedication lines and above the double
+   rule; on a narrow screen it narrows with the sheet. */
+.mapscorner { float: right; width: 1.55in; margin: 1px 0 2px 10px;
+  border: 1.5px solid #7a5c2e; border-radius: 6px; background: #e7d3a3;
+  padding: 4px 6px 5px; text-align: center; }
+.mapscorner a { display: block; color: #3a2a12; text-decoration: none;
+  font-size: 10pt; font-weight: bold; line-height: 1.25; }
+@media (max-width: 700px) {
+  .mapscorner { width: 1.3in; }
+  .mapscorner a { font-size: 9pt; }
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="nameplate">Payson's Morning Scroll</p>
+  
+  <div class="mapscorner"><a href="https://claypnw.github.io/mogollon-s-hearth-build-page/maps/">World of Nirn &mdash; the maps</a></div>
+  <p class="dedication">Made Exclusively for the Mogollon&rsquo;s Hearth Guests</p>
+  <p class="motto">&ldquo;All the news worth knowing before the mead hall opens.&rdquo;</p>
+  <p class="publisher">The Greybeards of High Hrothgar &mdash; Publisher &amp; Proprietor</p>
+</div>
+<div class="dateline"><span class="sec">Payson, Arizona</span> &middot; <span class="sec">Tirdas, the 17th of Sun's Dusk (Tuesday, November 17, 2026)</span> &middot; <span class="sec">Morning Edition &mdash; Vol. 2611, No. 17</span> &middot; <span class="sec">Price: One Septim</span></div>
+  <div class="listen whole-player" id="scroll-player">
+    <div class="wp-bar">
+    <button class="wp-btn" id="btn-begin" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="11" width="5" height="26" fill="#fff"/><polygon points="25,11 10,24 25,37" fill="#fff"/><polygon points="41,11 26,24 41,37" fill="#fff"/></svg></span><span class="word">Start of story or story before</span></button>
+    <button class="wp-btn" id="btn-back" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="23,7 9,20 23,33" fill="#fff"/><polygon points="40,7 26,20 40,33" fill="#fff"/><text x="24" y="45" font-size="11" font-weight="bold" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" fill="#fff">10</text></svg></span><span class="word">Back 10 seconds</span></button>
+    <button class="wp-btn" id="btn-play" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="17,10 38,24 17,38" fill="#fff"/></svg></span><span class="word">Play</span></button>
+    <button class="wp-btn" id="btn-pause" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="15" y="11" width="6.5" height="26" fill="#fff"/><rect x="26.5" y="11" width="6.5" height="26" fill="#fff"/></svg></span><span class="word">Pause</span></button>
+    <button class="wp-btn" id="btn-fwd" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="8,7 22,20 8,33" fill="#fff"/><polygon points="25,7 39,20 25,33" fill="#fff"/><text x="24" y="45" font-size="11" font-weight="bold" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" fill="#fff">10</text></svg></span><span class="word">Forward 10 seconds</span></button>
+    <button class="wp-btn" id="btn-next" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><polygon points="7,11 22,24 7,37" fill="#fff"/><polygon points="23,11 38,24 23,37" fill="#fff"/><rect x="39" y="11" width="5" height="26" fill="#fff"/></svg></span><span class="word">Next story</span></button>
+    <button class="wp-btn" id="btn-stop" type="button"><span class="sym"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="12" y="12" width="24" height="24" fill="#fff"/></svg></span><span class="word">Stop</span></button>
+    </div>
+    <p id="now-playing">Story 1 of 5 — Rain Over the Rim, Music in the Hall, and Trees in Prescott</p>
+    <p class="wp-time" id="time-line">0:00 of 0:00</p>
+    <audio id="edition-audio" preload="metadata"></audio>
+<script>
+(function () {
+  var TRACKS = [
+  {
+    "title": "Rain Over the Rim, Music in the Hall, and Trees in Prescott",
+    "href": "https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-lead.mp3"
+  },
+  {
+    "title": "Happening in the Holds Today",
+    "href": "https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-today.mp3"
+  },
+  {
+    "title": "The Days Ahead",
+    "href": "https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-ahead.mp3"
+  },
+  {
+    "title": "Merchant of the Hold",
+    "href": "https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-merchant.mp3"
+  },
+  {
+    "title": "Tales from the Treeline",
+    "href": "https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-tale.mp3"
+  }
+];
+  var audio = document.getElementById('edition-audio');
+  var nowEl = document.getElementById('now-playing');
+  var timeEl = document.getElementById('time-line');
+  var player = document.getElementById('scroll-player');
+  var idx = 0, done = false;
+  function showPlayer() { player.classList.add('wp-open'); }
+  function hidePlayer() { player.classList.remove('wp-open'); }
+  function fmt(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    s = Math.floor(s);
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+  function showLine() {
+    if (done) {
+      nowEl.textContent = 'All ' + TRACKS.length + ' stories are done';
+    } else {
+      nowEl.textContent = 'Story ' + (idx + 1) + ' of ' + TRACKS.length + ' \u2014 ' + TRACKS[idx].title;
+    }
+    timeEl.textContent = fmt(audio.currentTime) + ' of ' + fmt(audio.duration);
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: TRACKS[idx].title, artist: 'Payson Morning Scroll' });
+      } catch (e) {}
+    }
+  }
+  function load(i, autoplay) {
+    idx = i; done = false;
+    audio.src = TRACKS[i].href;
+    audio.load();
+    showLine();
+    if (autoplay) { audio.play(); }
+  }
+  function goBegin() {
+    if (done) { load(0, false); return; }
+    if (audio.currentTime <= 5 && idx > 0) {
+      load(idx - 1, !audio.paused);
+    } else {
+      audio.currentTime = 0; showLine();
+    }
+  }
+  function goNext() {
+    if (done) { load(0, true); return; }
+    if (idx < TRACKS.length - 1) { load(idx + 1, true); }
+  }
+  document.getElementById('btn-play').addEventListener('click', function () {
+    if (done) { load(0, true); return; }
+    audio.play();
+  });
+  document.getElementById('btn-pause').addEventListener('click', function () {
+    audio.pause();
+  });
+  document.getElementById('btn-stop').addEventListener('click', function () {
+    audio.pause(); load(0, false); hidePlayer();
+  });
+  document.getElementById('btn-begin').addEventListener('click', goBegin);
+  document.getElementById('btn-back').addEventListener('click', function () {
+    audio.currentTime = Math.max(0, audio.currentTime - 10); showLine();
+  });
+  document.getElementById('btn-fwd').addEventListener('click', function () {
+    var d = audio.duration;
+    if (isFinite(d) && audio.currentTime + 10 >= d) {
+      if (idx < TRACKS.length - 1) { load(idx + 1, !audio.paused); }
+      else { audio.currentTime = d; }
+    } else {
+      audio.currentTime = Math.min(d || 0, audio.currentTime + 10);
+    }
+    showLine();
+  });
+  document.getElementById('btn-next').addEventListener('click', goNext);
+  audio.addEventListener('timeupdate', showLine);
+  audio.addEventListener('loadedmetadata', showLine);
+  audio.addEventListener('ended', function () {
+    if (idx < TRACKS.length - 1) { load(idx + 1, true); }
+    else { done = true; showLine(); hidePlayer(); }
+  });
+  // The pop-up's door (2026-11-10): the page's own listen lines.
+  // A tap on a story's "Listen to this story" line starts the
+  // player at that story and pops the bar up, instead of opening
+  // the recording in a new window. The wiring waits for the whole
+  // page: this script stands above the stories, so at its first
+  // run the listen lines below it are not in the page yet.
+  function wireListenLinks() {
+    TRACKS.forEach(function (track, i) {
+      var links = document.querySelectorAll('a');
+      for (var k = 0; k < links.length; k++) {
+        if (links[k].getAttribute('href') === track.href ||
+            links[k].href === track.href) {
+          links[k].addEventListener('click', function (e) {
+            e.preventDefault();
+            showPlayer();
+            load(i, true);
+          });
+        }
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireListenLinks);
+  } else {
+    wireListenLinks();
+  }
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler('nexttrack', goNext);
+      navigator.mediaSession.setActionHandler('previoustrack', goBegin);
+    } catch (e) { /* older browser: buttons still work */ }
+  }
+  load(0, false);
+})();
+</script>
+  </div>
+
+<div class="weather">
+ <div class="wxrow1">
+  <div class="wimg">
+    <img src="images/scroll-img-0f3da9d23b.jpg" alt="The Hearth's cats in today's weather">
+    <div class="wcap">Gandy endures the rain under the eaves while Maevy bats at the raindrops.</div>
+  </div>
+  <div class="wbody">
+    <div class="wtitle">Skies O&rsquo;er the Hold &nbsp; <span class="wnow">51&deg; / 38&deg;</span> &nbsp; <span class="wcond">Rain</span></div>
+    <div class="wcall">A wet, cool day — rain through the day, strong winds, and rain through the day.</div>
+    <div class="wdet">Wind 21 mph &nbsp;&middot;&nbsp; Feels like 46&deg; &nbsp;&middot;&nbsp; UV 3 (Moderate) &nbsp;&middot;&nbsp; Rain 75%</div>
+    <div class="wdet">Sunrise 7:00 AM &nbsp;&middot;&nbsp; Sunset 5:19 PM &nbsp;&middot;&nbsp; Tomorrow &mdash; Overcast, 52/36</div>
+  </div>
+  
+  <div class="wmoons"><div class="wmhead">The Moon&rsquo;s Reckoning</div><div class="wmoonrow"><figure class="wmoon "><img src="images/scroll-img-945fd29983.jpg" alt="The moon, First Quarter" /></figure><figure class="wmoon tonight"><img src="images/scroll-img-579411b6f4.jpg" alt="The moon, First Quarter" /></figure><figure class="wmoon "><img src="images/scroll-img-c58c6e91cc.jpg" alt="The moon, First Quarter" /></figure></div><div class="wmcap">Yesterday &middot; Tonight (First Quarter) &middot; Tomorrow</div><div class="wmtrend">waxing toward the full moon</div></div>
+ </div>
+ <div class="wxdiv"></div>
+ <div class="wxrow2"><div class="wxbox"><div class="wxlabel">Morning</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">49&deg;</div><div class="wxcond">Foggy</div></div><div class="wxpics"><img src="images/scroll-img-0efa1fc163.jpg" alt="The sky at morning"><img class="wxsock" src="images/scroll-img-2b13ba1dad.jpg" alt="The windsock at morning"><div class="wxmph">14 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Noon</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">49&deg;</div><div class="wxcond">Drizzle</div></div><div class="wxpics"><img src="images/scroll-img-8499deb4f4.jpg" alt="The sky at noon"><img class="wxsock" src="images/scroll-img-2b13ba1dad.jpg" alt="The windsock at noon"><div class="wxmph">19 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Late Afternoon</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">47&deg;</div><div class="wxcond">Mostly sunny</div></div><div class="wxpics"><img src="images/scroll-img-8d36713235.jpg" alt="The sky at late afternoon"><img class="wxsock" src="images/scroll-img-dc6b1961ea.jpg" alt="The windsock at late afternoon"><div class="wxmph">4 mph</div></div></div></div><div class="wxbox"><div class="wxlabel">Evening</div><div class="wxmain"><div class="wxwords"><div class="wxtemp">41&deg;</div><div class="wxcond">Clear</div></div><div class="wxpics"><img src="images/scroll-img-8d36713235.jpg" alt="The sky at evening"><img class="wxsock" src="images/scroll-img-dc6b1961ea.jpg" alt="The windsock at evening"><div class="wxmph">4 mph</div></div></div></div></div>
+</div>
+<div class="headrow">
+  <div class="headtxt">
+    <p class="kicker">Around the Holds &middot; The Week Ahead</p>
+    <h1 class="headline">Rain Over the Rim, Music in the Hall, and Trees in Prescott</h1>
+  </div>
+</div>
+<div class="story">
+  <p class="byline"><img class="writermark" src="images/scroll-img-68db0594a5.png" alt="Muggy"> By Muggy &middot; Payson, Ariz.</p>
+  <p class="listen top"><a href="https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-lead.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  <figure class="frontpic">
+    <img src="images/scroll-img-b112b82c43.jpg" alt="Front page engraving">
+    <figcaption>Bards of the golden age sing in the hall, trail crews work in the pines, and Prescott’s trees glow — a rainy Tirdas in the Holds.</figcaption>
+  </figure>
+  <p class="lead">Hail, guest of the Hearth, and a wet Tirdas to you — come in out of the rain and shake the drops off your cloak by the fire. Payson sings tonight as The Dreamboats bring the golden age of rock and roll to town, while Longhorn wrestlers meet Show Low and Blue Ridge on the mat. Trail volunteers build in Pine this morning despite the wet, Sedona sounds its crystal bowls, Prescott opens its Festival of Trees with a gala tonight, and the days ahead bring a flag dedication, comedy, charcuterie, and Saturday’s Turkey Trot.</p>
+  <h3 class="evhead">Happening in the Holds Today</h3>
+  <p class="listen top"><a href="https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-today.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  <ul class="eventlist">
+    <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-e4a707d8b9.jpg">Payson</b><span class="subev">&mdash; <a href="https://www.facebook.com/events/2171065433666655/" data-login-link><b>The Dreamboats</b></a>, 7:00 PM at 301 S. McLane Road, Payson. This four-piece band revives the golden age of rock and roll, with the heartthrob energy of Elvis Presley, Chuck Berry, Buddy Holly, and The Beatles brought back to life on stage. Expect classic tunes you can sing along to from the first chorus. Music lovers of every age will feel right at home. A perfect rainy-night reason to get out of the house and into a warm hall.</span><span class="subev">&mdash; <a href="https://ftp.pusd10.org/calendar/wrestling-vs-showlow-blue-ridge/"><b>Wrestling vs. Show Low / Blue Ridge</b></a>, 4:00–9:00 PM at 902 W. Main Street, Payson. Payson’s wrestlers meet two White Mountain rivals on the mat in one long evening of matches. Expect grit, quick pins, and a loud hometown crowd in the gym. Families and students fill the stands, and every bout carries school pride. Come lend your voice to the Longhorns before the music starts across town.</span></li>
+  <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-4903bd11e4.jpg">Pine-Strawberry</b><span class="subev">&mdash; <b>Trail Day Volunteer Build</b>, 7:00 AM on Highway 87 in Pine, with Pine Strawberry Fuel Reduction. Do not just use the trail — help build it. Hikers, bikers, runners, and neighbors clear brush, move rocks, and shape new trail that will serve the twin villages for years. Bring gloves, water, and a willing back; the crew brings the know-how. Rain or shine, work done together under the pines is Hold-building at its best.</span></li>
+  <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-e733864f69.jpg">Sedona</b><span class="subev">&mdash; <b>Uptown Sedona Crystal Tones Temple Sound Bath</b>, 10:00 AM and 1:00 PM at Peace Place Gifts & Reiki Center, 355 Jordan Road, Sedona. Start the day inside a ring of alchemy crystal singing bowls sounding against the red rocks. The session is a quiet, restful pause — travelers call it a Sedona must-do for recharging body and mind. Arrive a little early to settle in. A gentle way to spend a rainy Tirdas.</span></li>
+  <li class="towngroup"><b class="dat"><img class="holdbanner" src="images/scroll-img-af9299f669.jpg">Prescott</b><span class="subev">&mdash; <a href="https://prescottwomanmagazine.com/a-forest-of-giving/"><b>A Christmas City Gala — Festival of Trees Opening Night</b></a>, 5:30–9:00 PM at Sam Hill Warehouse, 232 N. Granite Street, Prescott. The dressy opening-night party gives a first look at dozens of decorated Christmas trees and wreaths before the festival opens to everyone. Tickets are $100 per person, and proceeds support the Eric Marsh Foundation, which helps firefighters and their families. An elegant evening to open the Christmas season in Arizona’s Christmas City. Reserve ahead — this night is ticketed.</span></li>
+  </ul>
+  <h3 class="evhead">The Days Ahead</h3>
+  <p class="listen top"><a href="https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-ahead.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+  
+  <ul class="eventlist">
+    <li><b class="dat">Wed, Nov. 18</b><span class="subev">&mdash; <b>Rally Around the Flag Memorial Dedication</b>, 10:00 AM at the Gila County complex in Payson. New flagpoles now carry the American flag, the Arizona flag, the six military branch flags, and the POW/MIA flag, and this ceremony raises them in dedication. Veterans, families, and neighbors are invited to stand together for the raising. A solemn and proud hour for the Hold. All are welcome.</span><span class="subev">&mdash; <a href="https://myemail.constantcontact.com/Rim-Country-Camera-Club-Meeting.html?soid=1138963539660&amp;aid=330b3rxydPk"><b>Rim Country Camera Club Meeting</b></a>, 4:30–6:30 PM in the Payson Library large meeting room, 328 N. McLane Road. Photography lovers share a photo review and talk pictures with fellow shutter-keepers. Members may send up to three jpeg photos ahead for the review. New faces are welcome — bring your curiosity if not your camera. A warm room on a cool evening.</span></li>
+  <li><b class="dat">Thu, Nov. 19</b><span class="subev">&mdash; <a href="https://www.positivelyprescott.com/prescott-events"><b>Festival of Trees Prescott</b></a>, November 19–21, 10:00 AM–8:00 PM daily at Sam Hill Warehouse, 232 N. Granite Street, Prescott. Rows of decorated Christmas trees and wreaths fill the old warehouse, with holiday vendors, live entertainment, visits with Santa, and crafts for children. Admission is $10 for adults and $2 for children, and proceeds benefit the Eric Marsh Foundation. Valley Dwellers making the climb will find the hall merry and bright. Go early in the day for the easiest wandering.</span></li>
+  <li><b class="dat">Fri, Nov. 20</b><span class="subev">&mdash; <a href="https://www.facebook.com/events/1154647870288248/" data-login-link><b>Charcuterie Make ’n Take — Holiday Season Edition</b></a>, 6:00–8:00 PM at 501 W. Frontier Street, Payson. A hands-on class where you build your own Thanksgiving- and Christmas-inspired charcuterie board, learning arrangement tricks that make a board look like a feast. All supplies and a handmade board are included, and $5 of each registration goes to St. Mary’s Food Bank. You take your creation home, ready to impress family and guests. Festive, tasty, and practical all at once.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/1061650360201729/" data-login-link><b>Salty Corner — Dry Bar Comedy</b></a>, 7:00 PM at 200 W. Frontier Street, Payson. The last Salty Corner show of 2026 promises big laughs and good company in a clean-comedy night out. Tickets were announced as free, so follow the organizers for the release. Bring friends, settle in, and end the year laughing together. A merry Fredas night in the Hold.</span></li>
+  <li><b class="dat">Sat, Nov. 21</b><span class="subev">&mdash; <a href="https://allevents.in/payson-az/thanksgiving"><b>Turkey Trot</b></a>, 8:00 AM at Green Valley Park, 1000 W. Country Club Drive, Payson. The annual fun run awards prizes for fastest stroller, best themed outfit, and more, with event shirts while supplies last. Runners, walkers, and costumed trotters of every age are welcome. Sign up through Payson Parks and Recreation. The merriest way to earn your feast.</span><span class="subev">&mdash; <a href="https://www.facebook.com/events/1097505215949357/" data-login-link><b>Payson Showdown</b></a>, 11:00 AM at the Payson Event Center. A hometown showdown gathering with vendors and food trucks rolling in for the day. Browse the booths, eat well, and visit with neighbors between events. The organizers sought vendors and food trucks through the Town of Payson this fall, so expect a lively field. A fine midday stop after the Turkey Trot.</span></li>
+  <li><b class="dat">Sun, Nov. 22</b><span class="subev">&mdash; <b>Revolutionaries — Beethoven and America Concert</b>, 3:00 PM at Sedona Performing Arts Center, 995 Upper Red Rock Loop Road, Sedona. Chamber Music Sedona opens its 44th season with a concert pairing Beethoven’s revolutionary fire with American music. Red rocks outside, great music inside — a fine Sundas outing for travelers and locals alike. Music lovers will want to arrive early and settle in. A grand close to the week in the Holds.</span></li>
+  </ul>
+</div>
+
+
+<div class="lower">
+  
+  
+</div>
+
+<div class="box merchant">
+  <h2>Merchant of the Hold</h2>
+  <div class="body">
+    <p class="listen top"><a href="https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-merchant.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+    <p class="mname">Backwoods Bar &amp; Grill <span class="mtown">&middot; Payson</span></p>
+    <table class="mcols"><tr>
+      <td class="mcol mphoto"><figure style="margin:0 0 8px 0"><img src="images/scroll-img-50442e0d3d.jpg" alt="Engraving of a barkeeper serving a burger and a wood-fired meat pizza to travelers in a timber mead-hall style bar"><figcaption>Backwoods Bar &amp; Grill in Payson — sixteen taps, a jalapeño-ranch meat pizza, and a patio that welcomes dogs.</figcaption></figure></td>
+      <td class="mcol mtext1">A rustic sports-bar haven on Highway 260 pouring from a 16-tap bar and serving hearty comfort food — burgers, wings, pulled pork, and pizzas — with a dog-friendly patio for travelers who bring their hounds. A touch of Hearth-magic keeps every mug cold as a mountain spring, no matter how warm the room grows. The signature plate is the meat pizza drizzled with jalapeño ranch, with the Dirty Verde burger close behind.
+        <p class="mquote">&ldquo;Visitors praise the friendly bartenders, the very good food, and a welcome warm enough that guests say they will definitely come back again.&rdquo; <span class="msrc">&mdash; Visitor reports collected online</span></p>
+      </td>
+      <td class="mcol mtext2">
+        <p class="mvisit">210 AZ-260, Payson, AZ · Sun–Thu 11 AM–9 PM, Fri–Sat 11 AM–10 PM · 928-474-6883 · Moderate prices · Good to know: the patio is dog-friendly, and the kitchen was voted Best Pizza in the 2023 Best of the Rim. &middot; <a href="https://backwoodspayson.com/">their scrying-mirror page (other travelers call it a ‘website’)</a></p>
+        <p class="mwhy"><b>Why the Hearth sends you:</b> The Hearth sends guests here because a rainy Tirdas calls for a warm hall, a cold mug, and a pizza worth crossing the Hold for.</p>
+      </td>
+    </tr></table>
+  </div>
+</div>
+
+
+<div class="box taletale">
+  <h2>Tales from the Treeline</h2>
+  <div class="body">
+    <p class="listen top"><a href="https://morning-scroll-53x.pages.dev/audio/morning-scroll-2026-11-17-tale.mp3" target="_blank" rel="noopener">Listen to this story</a></p>
+    <p class="taletitle">The Necklace That Melted by Supper</p>
+    <table class="mcols"><tr>
+      <td class="mcol mphoto"><figure style="margin:0"><img src="images/scroll-img-d02e3f5eab.jpg" alt="Engraving of a small dragon freezing raindrops into beads while a chicken wears a necklace of them and a shaggy monster strings more"><figcaption>Flurry’s rain-bead necklace: worn with pride at noon, drunk with satisfaction by supper.</figcaption></figure></td>
+      <td class="mcol"><p>That dang ol’ Flurry (a young ice-breathing dragon) watched the Tirdas rain drum on the Hearth deck and had an idea worthy of a bard. If rain falls as drops, he said, why should it not be worn as jewels? So he breathed his gentlest ice-mist into the downpour, and the raindrops froze in mid-air into glittering beads.</p><p>Jethro (the Mogollon Monster) strung the beads onto a thread with his enormous careful fingers, and Henny (the Hearth’s plump chicken) stood very still to be fitted, which for Henny is a great act of patience. The necklace caught what light the grey day had and threw it back in sparkles. Henny wore it around the deck twice, accepting compliments.</p><p>Then, right on time, the late-afternoon sun broke through, warm as a promise. Bead by bead, the necklace melted — plink, plink — into a small shining puddle at Henny’s feet. She looked down, considered the matter, and drank it.</p><p>Mabel (a wood elf) says it was the finest necklace ever worn in the Hold, and the only one that quenched the wearer’s thirst. Flurry has promised another at the next rain. Henny has already taken her place by the rail.</p></td>
+    </tr></table>
+  </div>
+</div>
+
+<div class="colophon">
+  Printed with pride in Payson, in the shadow of the Rim &middot; Set in hot metal by Muggy, Bard of the Morning Scroll &middot; May your Tirdas be free of wolves, the admin.
+  <br><a class="contact-btn" href="mailto:mogollonshearth@gmail.com?subject=The%20Payson%20Morning%20Scroll%20-%20November%2017%2C%202026">Ask the Hearth &#9993;</a>
+  <br><span class="contact-addr">…or write to us straight: mogollonshearth@gmail.com</span>
+</div>
+
+<div class="fillerad" style="height:360.0pt"><p class="fadtag">&mdash; Advertisement &mdash;</p><p class="fadhead">DRAGON ATE YOUR SWORD?</p><p class="fadsub">It happens more than you’d think.</p><img class="fadart" src="images/scroll-img-341dcfeb4e.jpg" alt="An anvil and hammer, drawn by our staff artist" style="height:133.2pt"><p class="fadcopy">Rimrock Forge re-forges, re-edges, and re-fits any blade a dragon, bandit, or butter knife has ruined. Sharpening while you wait. Mammoth-tusk handles fitted Thursdays.</p><p class="fadcopy">Mention this notice and the anvil rings twice — once for the steel, once for luck.</p><p class="fadfoot">Rimrock Forge &amp; Smithy · Below the Rim, Payson Hold · Ask for Bryn</p></div>
+
+<script src="guest-tablet-check.js"></script>
+</body>
+</html>
