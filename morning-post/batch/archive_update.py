@@ -15,6 +15,17 @@ Mechanizes PUBLISH-RUNBOOK Steps 2b + 3 + 4 for one edition date:
     archive (the same ruling; and since Clay's one-version order,
     2026-11-10, no PDF of the Scroll is published at all — the web
     edition page is the one production version).
+  - Give every JS edition-map entry a title (fix 2026-11-20): the
+    archive page's router sets the browser title from the selected
+    entry's title field, and the entries this program inserted
+    from 2026-10-05 on carried no title field at all, so opening
+    an edition inside the archive (the #edition-DATE route) set
+    the browser title to "undefined". The original hand-built
+    entries (2026-09-24 to 2026-10-04) carry the title in the
+    shape "<Month D, YYYY> — The Payson Morning Scroll"; new
+    entries are now built with that field, existing entries that
+    lack it are backfilled in the same pass, and the self-check
+    refuses to write the page if any entry still lacks one.
 
 No AI judgment inside: every string is built from edition-meta.json,
 search-text.txt, and the date, by fixed rules. Prints a plain log,
@@ -78,6 +89,77 @@ def web_title_links(text):
     return ISSUE_OPEN_RE.subn(
         lambda mo: f"{mo.group(1)}{title_target(mo.group(2))}{mo.group(3)}",
         text)
+
+
+# The browser title for one edition inside the archive. The
+# archive page's router reads it from the JS edition map:
+#   document.title = selected ? selected.title : 'Morning Scroll Archive';
+# An entry with no title field therefore puts the literal word
+# "undefined" in the browser tab (found by the 2026-11-18
+# migration verification; fixed 2026-11-20). The shape matches
+# the original hand-built entries exactly.
+def edition_title(date_str):
+    """The JS edition-map title for one edition date, in the
+    shape the original entries carry."""
+    day = datetime.strptime(date_str, "%Y-%m-%d").date()
+    return f"{calendar.month_name[day.month]} {day.day}, {day.year} — The Payson Morning Scroll"
+
+
+_EDITION_ENTRY_RE = re.compile(r"'#edition-(\d{4}-\d{2}-\d{2})': \{")
+
+
+def backfill_edition_titles(lines):
+    """Add the missing title line to every JS edition-map entry
+    in `lines` (the archive page's lines) that lacks one. The
+    title line goes directly after the entry's element line, at
+    the same indentation, in edition_title()'s shape. Entries
+    that already carry a title are left exactly as they stand.
+    Returns (new_lines, backfilled_count)."""
+    out = []
+    count = 0
+    i = 0
+    while i < len(lines):
+        m = _EDITION_ENTRY_RE.search(lines[i])
+        if not m:
+            out.append(lines[i])
+            i += 1
+            continue
+        # One entry: copy its lines through its closing brace,
+        # remembering the element line so the title can follow it.
+        entry = [lines[i]]
+        j = i + 1
+        has_title = False
+        element_at = None
+        while j < len(lines):
+            entry.append(lines[j])
+            if "title:" in lines[j]:
+                has_title = True
+            if element_at is None and "element: document.getElementById(" in lines[j]:
+                element_at = len(entry) - 1
+            j += 1
+            if lines[j - 1].strip() in ("},", "}"):
+                break
+        if not has_title and element_at is not None:
+            indent = entry[element_at][:len(entry[element_at]) - len(entry[element_at].lstrip())]
+            entry.insert(element_at + 1,
+                         f"{indent}title: '{edition_title(m.group(1))}'")
+            count += 1
+        out.extend(entry)
+        i = j
+    return out, count
+
+
+def edition_entries_missing_title(text):
+    """The edition dates whose JS edition-map entry in `text`
+    carries no title field. Empty list means every entry is
+    titled. Used by the self-check so a title-less entry can
+    never reach the published page again."""
+    missing = []
+    for mo in re.finditer(r"'#edition-(\d{4}-\d{2}-\d{2})': \{(.*?)\n\s*\},?",
+                          text, re.S):
+        if "title:" not in mo.group(2):
+            missing.append(mo.group(1))
+    return missing
 
 
 # --- Shared error program (standards wiring step A, 2026-10-21) -------------
@@ -601,6 +683,13 @@ def main():
             converted += n
     print(f"edit: {converted} existing edition title link(s) now point at their web pages")
 
+    # a0b. JS edition-map titles (fix 2026-11-20): every existing
+    # entry that lacks a title field gets one backfilled, in the
+    # original entries' shape. Without it the archive router puts
+    # "undefined" in the browser title for that edition's route.
+    lines, backfilled = backfill_edition_titles(lines)
+    print(f"edit: {backfilled} existing edition map entr(ies) given their missing title")
+
     headline_esc = html.escape(headline, quote=True)
     greeting_esc = html.escape(greeting, quote=True)
     teaser_raw = greeting if len(greeting) <= 200 else greeting[:200].rstrip() + "…"
@@ -794,6 +883,7 @@ def main():
     entry_lines = [
         " " * 32 + f"'#edition-{date_str}': {{",
         f"            element: document.getElementById('edition-{date_str}'),",
+        f"            title: '{edition_title(date_str)}'",
         '          },',
     ]
     lines[map_idx[0] + 1:map_idx[0] + 1] = entry_lines
@@ -834,6 +924,13 @@ def main():
     if 'class="pdf-button"' in final_text or '>Download PDF<' in final_text:
         fail("self-check failed: a Download PDF button still stands "
              "on the archive page")
+    # Edition-map title audit (fix 2026-11-20): every entry must
+    # carry a title, or the archive router shows "undefined" as
+    # the browser title on that edition's route.
+    _missing_titles = edition_entries_missing_title(final_text)
+    if _missing_titles:
+        fail(f"self-check failed: edition map entries without a title "
+             f"remain for: {', '.join(sorted(set(_missing_titles)))}")
     if new_search_data[0].get("date") != date_str:
         fail("self-check failed: new search entry is not first")
     btn_total = final_text.count('<button class="scroll-read-btn"')
