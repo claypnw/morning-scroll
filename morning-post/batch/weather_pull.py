@@ -37,6 +37,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -318,6 +319,11 @@ def main():
     # below claimed 3 tries and gave "None" as the reason. Only the
     # last try's failure takes the standing FAIL path below, with the
     # last error, exactly as the single try did before.
+    # One answer never climbs the ladder (pacing — Clay's standing
+    # order, 2026-11-22: pacing is a default, not a fix): a rate
+    # limit (HTTP 429) stops the run on the try that receives it,
+    # named as a rate limit — the next scheduled run, hours later,
+    # is the retry, never a retry minutes later.
     # Time bound: the ladder's worst case is 60+15+90+30+120 = 315
     # seconds. The invoking record — step 5 of the morning briefing
     # job (daily, 03:30), which runs this program as a step and reads
@@ -326,6 +332,7 @@ def main():
     # have run.
     data = None
     last_exc = None
+    rate_limited = False
     for try_no, timeout in ((1, 60), (2, 90), (3, 120)):
         if try_no > 1:
             wait = 15 if try_no == 2 else 30
@@ -341,12 +348,26 @@ def main():
                     "the forecast answer was empty (JSON null)")
                 continue
             break
+        except urllib.error.HTTPError as exc:
+            data = None
+            last_exc = exc
+            if exc.code == 429:
+                rate_limited = True
+                print("weather fetch try %d answered a rate limit "
+                      "(HTTP 429); stopping at once, no further tries"
+                      % try_no, flush=True)
+                break
         except Exception as exc:
             data = None
             last_exc = exc
     if data is None:
-        print("WEATHER PULL FAIL: could not fetch Open-Meteo forecast "
-              "in 3 tries: %s" % last_exc, flush=True)
+        if rate_limited:
+            print("WEATHER PULL FAIL: Open-Meteo answered a rate "
+                  "limit (HTTP 429); the run stopped at the first "
+                  "such answer and made no further asks", flush=True)
+        else:
+            print("WEATHER PULL FAIL: could not fetch Open-Meteo forecast "
+                  "in 3 tries: %s" % last_exc, flush=True)
         _report_to_shared_error(
             "fetch forecast", f"could not fetch Open-Meteo forecast: {last_exc}",
             kind="foreseen")
