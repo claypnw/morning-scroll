@@ -127,7 +127,8 @@ readable GitHub file always wins over saved notes; a broken one is a question, n
   day's actual weather; only the sky, weather, and the chicken's gear change.
 - The Overheard line is a FRESH saying every day — never repeated or closely resembled
   (kept in a log). The Dragonborn stars in it only rarely — never back-to-back days,
-  roughly once a week at most — and is named when the gag is his near-miss. Default fare:
+  and about once every two months at most (Clay's rate, set 2026-11-26) — and is named
+  when the gag is his near-miss. Default fare:
   everyday folk humor and tall rumors, creatures in the woods, mead-hall wisdom. When the
   Dragonborn does appear elsewhere, weave him in rarely, a little at a time.
 - Payson's sawmill horns sound at 11:54 AM and 4:54 PM (Clay's firsthand times) — a living
